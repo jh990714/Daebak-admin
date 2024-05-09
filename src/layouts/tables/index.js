@@ -32,11 +32,13 @@ import authorsTableData from "layouts/tables/data/authorsTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 import parentcategorisTableData from "layouts/tables/data/parentcategoriesTableData";
 import categorisTableData from "layouts/tables/data/categoriesTableData";
+import reviewTableData from "layouts/tables/data/reviewTableData";
 
 function Tables() {
   const { columns, rows } = authorsTableData();
   const { columns: parentcategoryColumns, rows: parentcategoryRows } = parentcategorisTableData();
   const { columns: categoryColumns, rows: categoryRows } = categorisTableData();
+  const { columns: reviewColumns, rows: reviewRows } = reviewTableData();
   const { columns: pColumns, rows: pRows } = projectsTableData();
 
   return (
@@ -143,7 +145,7 @@ function Tables() {
               </MDBox>
               <MDBox pt={3}>
                 <DataTable
-                  table={{ columns: pColumns, rows: pRows }}
+                  table={{ columns: reviewColumns, rows: reviewRows }}
                   isSorted={false}
                   entriesPerPage={false}
                   showTotalEntries={false}

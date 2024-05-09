@@ -32,7 +32,11 @@ import productsTableData from "layouts/products/data/productsTableData";
 import productDealsTableData from "layouts/products/data/productDealsTableData";
 
 function Products() {
-  const { columns: productsColumns, rows: productsRows } = productsTableData();
+  const {
+    columns: productsColumns,
+    rows: productsRows,
+    recommendedRows: recommendedProductsRows,
+  } = productsTableData();
   const { columns: productDealsColumns, rows: productDealsRows } = productDealsTableData();
 
   return (
@@ -75,12 +79,39 @@ function Products() {
                 py={3}
                 px={2}
                 variant="gradient"
+                bgColor="error"
+                borderRadius="lg"
+                coloredShadow="error"
+              >
+                <MDTypography variant="h6" color="white">
+                  추천 상품
+                </MDTypography>
+              </MDBox>
+              <MDBox pt={3}>
+                <DataTable
+                  table={{ columns: productsColumns, rows: recommendedProductsRows }}
+                  isSorted={false}
+                  entriesPerPage={false}
+                  showTotalEntries={false}
+                  noEndBorder
+                />
+              </MDBox>
+            </Card>
+          </Grid>
+          <Grid item xs={12}>
+            <Card>
+              <MDBox
+                mx={2}
+                mt={-3}
+                py={3}
+                px={2}
+                variant="gradient"
                 bgColor="info"
                 borderRadius="lg"
                 coloredShadow="info"
               >
                 <MDTypography variant="h6" color="white">
-                  상품 상세 정보
+                  전체 상품
                 </MDTypography>
               </MDBox>
               <MDBox pt={3}>

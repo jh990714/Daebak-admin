@@ -53,8 +53,8 @@ export default function data() {
       regularPrice: 100,
       salePrice: 0,
       description: "NULL",
-      stockQuantity: 45,
-      recommended: 0,
+      stockQuantity: 39,
+      recommended: 1,
       maxQuantityPerDelivery: 3,
     },
     {
@@ -74,7 +74,7 @@ export default function data() {
       salePrice: 2000,
       description: "(400g내외x3팩)",
       stockQuantity: 23,
-      recommended: 0,
+      recommended: 1,
       maxQuantityPerDelivery: 10,
     },
     {
@@ -322,10 +322,23 @@ export default function data() {
   const [rowData, setRowData] = useState(datas[0]); // 수정할 행의 데이터
   const [editDialogs, setEditDialogs] = useState(Array(datas.length).fill(false));
 
-  const handleClick = (event, index) => {
+  const handleClick = (event, index, productId = null) => {
     setAnchorEl(event.currentTarget);
-    setDialogAnchorEl(index);
-    setRowData(datas[index]);
+
+    // 추천 상품 id 기준으로 전체 상품의 몇 번째 index인 지 찾음.
+    if (productId) {
+      console.log("pId", productId);
+      const foundIndex = datas.findIndex((data) => data.productId === productId);
+      if (foundIndex !== -1) {
+        setDialogAnchorEl(foundIndex);
+        setRowData(datas[foundIndex]);
+      } else {
+        console.error("해당 상품을 찾는 것에 실패하였습니다.");
+      }
+    } else {
+      setDialogAnchorEl(index);
+      setRowData(datas[index]);
+    }
   };
 
   const handleClose = () => {
@@ -337,6 +350,11 @@ export default function data() {
       ...prevState,
       [dialogAnchorEl]: true,
     }));
+    handleClose();
+  };
+
+  const handleRecommendedToggle = () => {
+    // datas[dialogAnchorEl].recommended = !datas[dialogAnchorEl].recommended;
     handleClose();
   };
 
@@ -406,10 +424,12 @@ export default function data() {
     { Header: "설명", accessor: "description", align: "center" },
     { Header: "재고", accessor: "stockQuantity", align: "center" },
     { Header: "재고 위험도", accessor: "risk", align: "center" },
-    { Header: "추천 수", accessor: "recommended", align: "center" },
+    { Header: "추천 상품 여부", accessor: "recommended", align: "center" },
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
     { Header: "action", accessor: "action", align: "center" },
   ];
+
+  const recommendedProducts = datas.filter((data) => data.recommended === 1);
   return {
     columns: dataColumns,
 
@@ -435,6 +455,9 @@ export default function data() {
           </IconButton>
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
             <MenuItem onClick={handleEdit}>수정</MenuItem>
+            <MenuItem onClick={handleRecommendedToggle}>
+              {rowData.recommended ? "추천 상품 해제" : "추천 상품 등록"}
+            </MenuItem>
             <MenuItem onClick={handleDelete}>삭제</MenuItem>
           </Menu>
           <Dialog
@@ -445,7 +468,7 @@ export default function data() {
           >
             <DialogTitle>행 수정</DialogTitle>
             <DialogContent>
-              {data && (
+              {rowData && (
                 <Card>
                   <MDBox
                     mx={2}
@@ -524,17 +547,7 @@ export default function data() {
                               />
                             ),
                             risk: <Progress value={(1 - rowData.stockQuantity / 100) * 100} />,
-                            recommended: (
-                              <MDInput
-                                type="number"
-                                label="추천 수"
-                                value={rowData.recommended}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, recommended: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
+                            recommended: [data.recommended],
                             maxQuantityPerDelivery: (
                               <MDInput
                                 type="number"
@@ -565,6 +578,37 @@ export default function data() {
               <Button onClick={handleEditDialogSubmit}>저장</Button>
             </DialogActions>
           </Dialog>
+        </>
+      ),
+    })),
+
+    recommendedRows: recommendedProducts.map((data, index) => ({
+      product: <Product image={LogoAsana} name={data.productName} />,
+      regularPrice: [data.regularPrice],
+      salePrice: [data.salePrice],
+      finalPrice: [data.regularPrice] - [data.salePrice],
+      description: [data.description],
+      stockQuantity: [data.stockQuantity],
+      risk: <Progress value={(data.stockQuantity / 100) * 100} />,
+      recommended: [data.recommended],
+      maxQuantityPerDelivery: [data.maxQuantityPerDelivery],
+      action: (
+        <>
+          <IconButton
+            aria-label="more"
+            onClick={(e) => {
+              handleClick(e, index, data.productId);
+            }}
+          >
+            <MoreVert />
+          </IconButton>
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleEdit}>수정</MenuItem>
+            <MenuItem onClick={handleRecommendedToggle}>
+              {rowData.recommended ? "추천 상품 해제" : "추천 상품 등록"}
+            </MenuItem>
+            <MenuItem onClick={handleDelete}>삭제</MenuItem>
+          </Menu>
         </>
       ),
     })),
