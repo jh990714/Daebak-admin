@@ -41,6 +41,7 @@ import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import logoInvesion from "assets/images/small-logos/logo-invision.svg";
 
 import { useEffect, useState } from "react";
+import { ProductTable } from "../productTable";
 
 export default function data() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -460,124 +461,13 @@ export default function data() {
             </MenuItem>
             <MenuItem onClick={handleDelete}>삭제</MenuItem>
           </Menu>
-          <Dialog
-            open={editDialogs[index]}
-            onClose={handleEditDialogClose}
-            fullWidth={true}
-            maxWidth={"xl"}
-          >
-            <DialogTitle>행 수정</DialogTitle>
-            <DialogContent>
-              {rowData && (
-                <Card>
-                  <MDBox
-                    mx={2}
-                    mt={-3}
-                    py={3}
-                    px={2}
-                    variant="gradient"
-                    bgColor="info"
-                    borderRadius="lg"
-                    coloredShadow="info"
-                  >
-                    <MDTypography variant="h6" color="white">
-                      상품 상세 정보
-                    </MDTypography>
-                  </MDBox>
-                  <MDBox pt={3}>
-                    <DataTable
-                      table={{
-                        columns: dataColumns,
-                        rows: [
-                          {
-                            product: (
-                              <MDInput
-                                type="text"
-                                label="상품명"
-                                value={rowData.productName}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, productName: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                            regularPrice: (
-                              <MDInput
-                                type="number"
-                                label="정상가"
-                                value={rowData.regularPrice}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, regularPrice: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                            salePrice: (
-                              <MDInput
-                                type="number"
-                                label="할인"
-                                value={rowData.salePrice}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, salePrice: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                            finalPrice: [rowData.regularPrice] - [rowData.salePrice],
-                            description: (
-                              <MDInput
-                                type="text"
-                                label="설명"
-                                value={rowData.description}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, description: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                            stockQuantity: (
-                              <MDInput
-                                type="number"
-                                label="재고"
-                                value={rowData.stockQuantity}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, stockQuantity: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                            risk: <Progress value={(1 - rowData.stockQuantity / 100) * 100} />,
-                            recommended: [data.recommended],
-                            maxQuantityPerDelivery: (
-                              <MDInput
-                                type="number"
-                                label="배송비 당 최대 허용 수"
-                                value={rowData.maxQuantityPerDelivery}
-                                onChange={(e) => {
-                                  const newData = {
-                                    ...rowData,
-                                    maxQuantityPerDelivery: e.target.value,
-                                  };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                          },
-                        ],
-                      }}
-                      isSorted={false}
-                      entriesPerPage={false}
-                      showTotalEntries={false}
-                    />
-                  </MDBox>
-                </Card>
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleEditDialogClose}>취소</Button>
-              <Button onClick={handleEditDialogSubmit}>저장</Button>
-            </DialogActions>
-          </Dialog>
+          <ProductTable
+            rowData={rowData}
+            setRowData={setRowData}
+            isOpen={editDialogs[index]}
+            handleEditDialogClose={handleEditDialogClose}
+            handleEditDialogSubmit={handleEditDialogSubmit}
+          />
         </>
       ),
     })),
