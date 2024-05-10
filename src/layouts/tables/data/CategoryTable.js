@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { CategoryUpdate } from "../update/categoryUpdate";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -71,6 +72,12 @@ function CategoryTable() {
       ],
     },
   ]);
+  // const [categories, setCategories] = useState([]);
+
+  // useEffect(async () => {
+  //   const response = await axios.get(`http://localhost:8080/categories`);
+  //   setCategories(response.data);
+  // }, []);
 
   const handleSaveCategory = () => {
     const updatedCategories = categories.map((category) => {
@@ -96,7 +103,7 @@ function CategoryTable() {
   };
 
   return (
-    <div className="flex flex-wrap justify-around">
+    <div className="flex flex-wrap px-10 gap-20">
       {categories.map((category, index) => (
         <div key={index} className="rounded-md">
           <div key={index} className="flex gap-5 items-center border-b-4">
