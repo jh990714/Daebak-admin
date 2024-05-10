@@ -17,6 +17,7 @@ export const ProductTable = ({
   handleEditDialogSubmit,
 }) => {
   const dataColumns = [
+    { Header: "이미지", accessor: "image", align: "left" },
     { Header: "상품", accessor: "product", align: "left" },
     { Header: "정상가", accessor: "regularPrice", align: "center" },
     { Header: "할인", accessor: "salePrice", align: "center" },
@@ -26,6 +27,7 @@ export const ProductTable = ({
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
   ];
 
+  console.log(rowData.image);
   return (
     <Dialog open={isOpen} onClose={handleEditDialogClose} fullWidth={true} maxWidth={"xl"}>
       <DialogTitle>행 수정</DialogTitle>
@@ -50,6 +52,32 @@ export const ProductTable = ({
                 columns: dataColumns,
                 rows: [
                   {
+                    image: (
+                      <>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const newData = { ...rowData, image: event.target.result };
+                                setRowData(newData);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                        {rowData.image && (
+                          <img
+                            src={rowData.image}
+                            alt="Selected Image"
+                            className="w-[150px] h-auto object-cover rounded-md mt-2"
+                          />
+                        )}
+                      </>
+                    ),
                     product: (
                       <MDInput
                         type="text"

@@ -58,6 +58,7 @@ function Products() {
     console.log(rowData);
   };
 
+  console.log("index");
   return (
     <>
       <DashboardLayout>
