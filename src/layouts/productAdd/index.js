@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Autocomplete, TextField, Button } from "@mui/material";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
@@ -9,13 +9,7 @@ import MDTypography from "components/MDTypography";
 import MDProgress from "components/MDProgress";
 
 import DataTable from "examples/Tables/DataTable";
-export const ProductTable = ({
-  rowData,
-  setRowData,
-  isOpen,
-  handleEditDialogClose,
-  handleEditDialogSubmit,
-}) => {
+export const ProductAdd = ({ isOpen, onClose }) => {
   const dataColumns = [
     { Header: "이미지", accessor: "image", align: "left" },
     { Header: "상품", accessor: "product", align: "left" },
@@ -27,10 +21,15 @@ export const ProductTable = ({
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
   ];
 
-  console.log(rowData.image);
+  const [rowData, setRowData] = useState("");
+
+  const handleDialogSubmit = () => {
+    console.log("dd");
+  };
+
   return (
-    <Dialog open={isOpen} onClose={handleEditDialogClose} fullWidth={true} maxWidth={"xl"}>
-      <DialogTitle>행 수정</DialogTitle>
+    <Dialog open={isOpen} onClose={onClose} fullWidth={true} maxWidth={"xl"}>
+      <DialogTitle>상품 등록</DialogTitle>
       <DialogContent>
         <Card>
           <MDBox
@@ -159,28 +158,14 @@ export const ProductTable = ({
         </Card>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleEditDialogClose}>취소</Button>
-        <Button onClick={handleEditDialogSubmit}>저장</Button>
+        <Button onClick={onClose}>취소</Button>
+        <Button onClick={handleDialogSubmit}>저장</Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-ProductTable.propTypes = {
-  rowData: PropTypes.arrayOf(
-    PropTypes.shape({
-      productId: PropTypes.number.isRequired,
-      productName: PropTypes.string.isRequired,
-      regularPrice: PropTypes.number.isRequired,
-      salePrice: PropTypes.number.isRequired,
-      description: PropTypes.string.isRequired,
-      stockQuantity: PropTypes.number.isRequired,
-      recommended: PropTypes.number.isRequired,
-      maxQuantityPerDelivery: PropTypes.number.isRequired,
-    })
-  ),
-  setRowData: PropTypes.func.isRequired,
+ProductAdd.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  handleEditDialogClose: PropTypes.func.isRequired,
-  handleEditDialogSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
