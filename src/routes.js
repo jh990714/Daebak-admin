@@ -46,8 +46,13 @@ import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 
+import TestC from "components/TestC";
+
 // @mui icons
 import Icon from "@mui/material/Icon";
+import CategoryTable from "layouts/tables/data/CategoryTable";
+import { ProductAdd } from "layouts/tables/update/productAdd";
+import { CategoryAdd } from "layouts/tables/update/categoryAdd";
 
 const routes = [
   {
@@ -59,20 +64,18 @@ const routes = [
     component: <Dashboard />,
   },
   {
+    type: "divider",
+  },
+  {
     type: "collapse",
-    name: "데이터베이스 현황",
+    name: "데이터베이스",
     key: "tables",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/tables",
     component: <Tables />,
   },
   {
-    type: "collapse",
-    name: "상품 현황",
-    key: "products",
-    icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/products",
-    component: <Products />,
+    type: "divider",
   },
   {
     type: "collapse",
@@ -81,6 +84,21 @@ const routes = [
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/billing",
     component: <Billing />,
+  },
+  {
+    type: "divider",
+  },
+  {
+    icon: <Icon fontSize="small">add</Icon>,
+    type: "dialog",
+    name: "상품 등록",
+    DialogComponent: ProductAdd,
+  },
+  {
+    icon: <Icon fontSize="small">add</Icon>,
+    type: "dialog",
+    name: "카테고리 등록",
+    DialogComponent: CategoryAdd,
   },
   // {
   //   type: "collapse",
@@ -91,12 +109,7 @@ const routes = [
   //   component: <RTL />,
   // },
   {
-    type: "collapse",
-    name: "Notifications",
-    key: "notifications",
-    icon: <Icon fontSize="small">notifications</Icon>,
-    route: "/notifications",
-    component: <Notifications />,
+    type: "divider",
   },
   {
     type: "collapse",

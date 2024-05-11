@@ -30,6 +30,8 @@ import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
 
 // Data
+import productsTableData from "layouts/tables/data/productsTableData";
+import productDealsTableData from "layouts/tables/data/productDealsTableData";
 import authorsTableData from "layouts/tables/data/authorsTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 // import parentcategorisTableData from "layouts/tables/data/parentcategoriesTableData";
@@ -39,6 +41,9 @@ import CategoryTable from "./data/CategoryTable";
 
 import MDButton from "components/MDButton";
 import { CategoryUpdate } from "./update/categoryUpdate";
+import { CategoryAdd } from "./update/categoryAdd";
+import { ProductDealsTable } from "./productDealsTable";
+import { ProductTable } from "./productTable";
 
 function Tables() {
   const { columns, rows } = authorsTableData();
@@ -46,16 +51,31 @@ function Tables() {
   const { columns: categoryColumns, rows: categoryRows } = categorisTableData();
   const { columns: reviewColumns, rows: reviewRows } = reviewTableData();
   const { columns: pColumns, rows: pRows } = projectsTableData();
-  const [data, setData] = useState();
   const [showAddCategory, setShowAddCategory] = useState(false);
-  const handleAddCategory = () => {
-    setData("");
-    setShowAddCategory(!showAddCategory);
-    console.log(data);
-  };
-  const handleSaveCategory = () => {
+  const handleCloseCategory = () => {
     setShowAddCategory(!showAddCategory);
   };
+
+  const {
+    columns: productsColumns,
+    rows: productsRows,
+    recommendedRows: recommendedProductsRows,
+  } = productsTableData();
+  const { columns: productDealsColumns, rows: productDealsRows } = productDealsTableData();
+  const [showProductDeal, setShowProductDeal] = useState(false);
+  const [showProduct, setShowProduct] = useState(false);
+  const [rowData, setRowData] = useState();
+  const handleAddProductDeal = () => {
+    setRowData("");
+    setShowProductDeal(!showProductDeal);
+    console.log(rowData);
+  };
+  const handleAddProduct = () => {
+    setRowData("");
+    setShowProduct(!showProduct);
+    console.log(rowData);
+  };
+
   return (
     <>
       <DashboardLayout>
@@ -110,7 +130,7 @@ function Tables() {
                       }}
                     >
                       <span>상품 카테고리 ( 상위 )</span>
-                      <MDButton variant="h2" color="white" onClick={handleAddCategory}>
+                      <MDButton variant="h2" color="white" onClick={() => setShowAddCategory(true)}>
                         추가
                       </MDButton>
                     </div>
@@ -118,33 +138,6 @@ function Tables() {
                 </MDBox>
                 <MDBox p={3}>
                   <CategoryTable />
-                </MDBox>
-              </Card>
-            </Grid>
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="info"
-                  borderRadius="lg"
-                  coloredShadow="info"
-                >
-                  <MDTypography variant="h6" color="white">
-                    상품 카테고리 ( 하위 )
-                  </MDTypography>
-                </MDBox>
-                <MDBox pt={3}>
-                  <DataTable
-                    table={{ columns: categoryColumns, rows: categoryRows }}
-                    isSorted={false}
-                    entriesPerPage={false}
-                    showTotalEntries={false}
-                    noEndBorder
-                  />
                 </MDBox>
               </Card>
             </Grid>
@@ -175,17 +168,132 @@ function Tables() {
                 </MDBox>
               </Card>
             </Grid>
+            <Grid item xs={12}>
+              <Card>
+                <MDBox
+                  mx={2}
+                  mt={-3}
+                  py={3}
+                  px={2}
+                  variant="gradient"
+                  bgColor="error"
+                  borderRadius="lg"
+                  coloredShadow="error"
+                >
+                  <MDTypography variant="h5" color="white">
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span>타임 특가 상품</span>
+                      <MDButton variant="h2" color="white" onClick={handleAddProductDeal}>
+                        추가
+                      </MDButton>
+                    </div>
+                  </MDTypography>
+                </MDBox>
+                <MDBox pt={3}>
+                  <DataTable
+                    table={{ columns: productDealsColumns, rows: productDealsRows }}
+                    isSorted={false}
+                    entriesPerPage={false}
+                    showTotalEntries={false}
+                    noEndBorder
+                  />
+                </MDBox>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <Card>
+                <MDBox
+                  mx={2}
+                  mt={-3}
+                  py={3}
+                  px={2}
+                  variant="gradient"
+                  bgColor="error"
+                  borderRadius="lg"
+                  coloredShadow="error"
+                >
+                  <MDTypography variant="h5" color="white">
+                    추천 상품
+                  </MDTypography>
+                </MDBox>
+                <MDBox pt={3}>
+                  <DataTable
+                    table={{ columns: productsColumns, rows: recommendedProductsRows }}
+                    isSorted={false}
+                    entriesPerPage={false}
+                    showTotalEntries={false}
+                    noEndBorder
+                  />
+                </MDBox>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <Card>
+                <MDBox
+                  mx={2}
+                  mt={-3}
+                  py={3}
+                  px={2}
+                  variant="gradient"
+                  bgColor="info"
+                  borderRadius="lg"
+                  coloredShadow="info"
+                >
+                  <MDTypography variant="h5" color="white">
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span>모든 상품</span>
+                      <MDButton variant="h2" color="white" onClick={handleAddProduct}>
+                        추가
+                      </MDButton>
+                    </div>
+                  </MDTypography>
+                </MDBox>
+                <MDBox pt={3}>
+                  <DataTable
+                    table={{ columns: productsColumns, rows: productsRows }}
+                    isSorted={true}
+                    entriesPerPage={true}
+                    showTotalEntries={true}
+                    canSearch={true}
+                    noEndBorder
+                  />
+                </MDBox>
+              </Card>
+            </Grid>
           </Grid>
         </MDBox>
         <Footer />
       </DashboardLayout>
-      {showAddCategory && (
-        <CategoryUpdate
-          data={data}
-          setData={setData}
+      {showAddCategory && <CategoryAdd isOpen={true} onClose={handleCloseCategory} />}
+      {showProductDeal && (
+        <ProductDealsTable
+          rowData={rowData}
+          setRowData={setRowData}
           isOpen={true}
-          handleClose={handleAddCategory}
-          handleSubmit={handleSaveCategory}
+          handleEditDialogClose={handleAddProductDeal}
+          handleEditDialogSubmit={handleAddProductDeal}
+        />
+      )}
+
+      {showProduct && (
+        <ProductTable
+          rowData={rowData}
+          setRowData={setRowData}
+          isOpen={true}
+          handleEditDialogClose={handleAddProduct}
+          handleEditDialogSubmit={handleAddProduct}
         />
       )}
     </>

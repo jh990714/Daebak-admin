@@ -123,7 +123,7 @@ function Dashboard() {
                   title="일일 판매 수익"
                   description={
                     <>
-                      (<strong>+15%</strong>) 매출이 증.
+                      (<strong>+15%</strong>) 매출이 증가하였습니다.
                     </>
                   }
                   date="updated 4 min ago"
