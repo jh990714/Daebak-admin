@@ -81,7 +81,7 @@ export default function data() {
       </MDBox>
     </MDBox>
   );
-
+  console.log("sss");
   return {
     columns: [
       { Header: "카테고리", accessor: "category" },

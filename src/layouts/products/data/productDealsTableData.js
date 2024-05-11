@@ -17,7 +17,7 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import Icon from "@mui/material/Icon";
-import { Menu, MenuItem, IconButton, Button } from "@mui/material";
+import { Autocomplete, TextField, Menu, MenuItem, IconButton, Button } from "@mui/material";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
 
@@ -40,6 +40,7 @@ import logoSlack from "assets/images/small-logos/logo-slack.svg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import logoInvesion from "assets/images/small-logos/logo-invision.svg";
 import { useEffect, useState } from "react";
+import { ProductDealsTable } from "../productDealsTable";
 
 export default function data() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -54,7 +55,7 @@ export default function data() {
       endDate: "2024-05-03 17:00:00",
     },
     {
-      productName: "국내 ",
+      productName: "구운 뼈 고등어 1팩 (180g) ",
       dealPrice: 100,
       startDate: "2024-04-14 10:00:00",
       endDate: "2024-05-03 17:00:00",
@@ -103,6 +104,7 @@ export default function data() {
   };
 
   const handleEditDialogSubmit = () => {
+    console.log(rowData);
     // 수정 동작을 수행하는 함수 호출
     console.log("Edit submitted:");
     setEditDialogs((prevState) => ({
@@ -121,20 +123,9 @@ export default function data() {
     </MDBox>
   );
 
-  const Progress = ({ color, value }) => (
-    <MDBox display="flex" alignItems="center">
-      <MDTypography variant="caption" color="text" fontWeight="medium">
-        {value}%
-      </MDTypography>
-      <MDBox ml={0.5} width="9rem">
-        <MDProgress variant="gradient" color={color} value={value} />
-      </MDBox>
-    </MDBox>
-  );
-
   const dataColumns = [
-    { Header: "상품", accessor: "product", width: "15%", align: "left" },
-    { Header: "추가 할인", accessor: "dealPrice", align: "right" },
+    { Header: "상품", accessor: "product", align: "left" },
+    { Header: "추가 할인", accessor: "dealPrice", align: "center" },
     { Header: "시작 시간", accessor: "startDate", align: "center" },
     { Header: "종료 시간", accessor: "endDate", align: "center" },
     { Header: "action", accessor: "action", align: "center" },
@@ -162,96 +153,13 @@ export default function data() {
             <MenuItem onClick={handleEdit}>수정</MenuItem>
             <MenuItem onClick={handleDelete}>삭제</MenuItem>
           </Menu>
-          <Dialog
-            open={editDialogs[index]}
-            onClose={handleEditDialogClose}
-            fullWidth={true}
-            maxWidth={"xl"}
-          >
-            <DialogTitle>행 수정</DialogTitle>
-            <DialogContent>
-              {data && (
-                <Card>
-                  <MDBox
-                    mx={2}
-                    mt={-3}
-                    py={3}
-                    px={2}
-                    variant="gradient"
-                    bgColor="error"
-                    borderRadius="lg"
-                    coloredShadow="error"
-                  >
-                    <MDTypography variant="h6" color="white">
-                      타임 특가 상품
-                    </MDTypography>
-                  </MDBox>
-                  <MDBox pt={3}>
-                    <DataTable
-                      table={{
-                        columns: dataColumns,
-                        rows: [
-                          {
-                            product: (
-                              <MDInput
-                                type="text"
-                                label="상품명"
-                                value={rowData.productName}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, productName: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                            dealPrice: (
-                              <MDInput
-                                type="number"
-                                label="추가할인"
-                                value={rowData.dealPrice}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, dealPrice: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                            startDate: (
-                              <MDInput
-                                type="datetime"
-                                label="시작 시간"
-                                value={rowData.startDate}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, startDate: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                            endDate: (
-                              <MDInput
-                                type="datetime"
-                                label="종료 시간"
-                                value={rowData.endDate}
-                                onChange={(e) => {
-                                  const newData = { ...rowData, endDate: e.target.value };
-                                  setRowData(newData);
-                                }}
-                              />
-                            ),
-                          },
-                        ],
-                      }}
-                      isSorted={false}
-                      entriesPerPage={false}
-                      showTotalEntries={false}
-                    />
-                  </MDBox>
-                </Card>
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleEditDialogClose}>취소</Button>
-              <Button onClick={handleEditDialogSubmit}>저장</Button>
-            </DialogActions>
-          </Dialog>
+          <ProductDealsTable
+            rowData={rowData}
+            setRowData={setRowData}
+            isOpen={editDialogs[index]}
+            handleEditDialogClose={handleEditDialogClose}
+            handleEditDialogSubmit={handleEditDialogSubmit}
+          />
         </>
       ),
     })),
