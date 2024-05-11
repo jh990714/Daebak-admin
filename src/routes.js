@@ -46,13 +46,10 @@ import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 
-import TestC from "components/TestC";
-
 // @mui icons
 import Icon from "@mui/material/Icon";
-import CategoryTable from "layouts/tables/data/CategoryTable";
-import { ProductAdd } from "layouts/tables/update/productAdd";
-import { CategoryAdd } from "layouts/tables/update/categoryAdd";
+import { ProductAdd } from "layouts/productAdd";
+import { CategoryAdd } from "layouts/categoryAdd";
 
 const routes = [
   {

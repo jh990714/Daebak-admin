@@ -1,0 +1,155 @@
+import { useState } from "react";
+
+import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
+
+// Material Dashboard 2 React components
+import MDBox from "components/MDBox";
+import MDTypography from "components/MDTypography";
+import MDButton from "components/MDButton";
+
+import DataTable from "examples/Tables/DataTable";
+
+import productsTableData from "layouts/tables/products/data/productsTableData";
+import productDealsTableData from "layouts/tables/products/data/productDealsTableData";
+import { ProductAdd } from "layouts/productAdd";
+
+function ProductTable() {
+  const [showProductDeal, setShowProductDeal] = useState(false);
+  const [showProduct, setShowProduct] = useState(false);
+
+  const {
+    columns: productsColumns,
+    rows: productsRows,
+    recommendedRows: recommendedProductsRows,
+  } = productsTableData();
+  const { columns: productDealsColumns, rows: productDealsRows } = productDealsTableData();
+
+  const handleAddProductDeal = () => {
+    setShowProductDeal(!showProductDeal);
+  };
+
+  const handleAddProduct = () => {
+    setShowProduct(!showProduct);
+  };
+  return (
+    <>
+      <Grid item xs={12}>
+        <Card>
+          <MDBox
+            mx={2}
+            mt={-3}
+            py={3}
+            px={2}
+            variant="gradient"
+            bgColor="error"
+            borderRadius="lg"
+            coloredShadow="error"
+          >
+            <MDTypography variant="h5" color="white">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span>타임 특가 상품</span>
+                <MDButton variant="h2" color="white" onClick={handleAddProductDeal}>
+                  추가
+                </MDButton>
+              </div>
+            </MDTypography>
+          </MDBox>
+          <MDBox pt={3}>
+            <DataTable
+              table={{ columns: productDealsColumns, rows: productDealsRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
+            />
+          </MDBox>
+        </Card>
+      </Grid>
+      <Grid item xs={12}>
+        <Card>
+          <MDBox
+            mx={2}
+            mt={-3}
+            py={3}
+            px={2}
+            variant="gradient"
+            bgColor="error"
+            borderRadius="lg"
+            coloredShadow="error"
+          >
+            <MDTypography variant="h5" color="white">
+              추천 상품
+            </MDTypography>
+          </MDBox>
+          <MDBox pt={3}>
+            <DataTable
+              table={{ columns: productsColumns, rows: recommendedProductsRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
+            />
+          </MDBox>
+        </Card>
+      </Grid>
+      <Grid item xs={12}>
+        <Card>
+          <MDBox
+            mx={2}
+            mt={-3}
+            py={3}
+            px={2}
+            variant="gradient"
+            bgColor="info"
+            borderRadius="lg"
+            coloredShadow="info"
+          >
+            <MDTypography variant="h5" color="white">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span>모든 상품</span>
+                <MDButton variant="h2" color="white" onClick={handleAddProduct}>
+                  추가
+                </MDButton>
+              </div>
+            </MDTypography>
+          </MDBox>
+          <MDBox pt={3}>
+            <DataTable
+              table={{ columns: productsColumns, rows: productsRows }}
+              isSorted={true}
+              entriesPerPage={true}
+              showTotalEntries={true}
+              canSearch={true}
+              noEndBorder
+            />
+          </MDBox>
+        </Card>
+      </Grid>
+      {/* {showProductDeal && (
+        <ProductDealsDialog
+          rowData={rowData}
+          setRowData={setRowData}
+          isOpen={true}
+          handleEditDialogClose={handleAddProductDeal}
+          handleEditDialogSubmit={handleAddProductDeal}
+        />
+      )} */}
+
+      {showProduct && <ProductAdd isOpen={true} onClose={handleAddProduct} />}
+    </>
+  );
+}
+export default ProductTable;

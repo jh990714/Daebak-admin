@@ -40,7 +40,7 @@ import logoSlack from "assets/images/small-logos/logo-slack.svg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import logoInvesion from "assets/images/small-logos/logo-invision.svg";
 import { useEffect, useState } from "react";
-import { ProductDealsTable } from "../productDealsTable";
+import { ProductDealsEditDialog } from "../dialog/productDealsEditDialog";
 
 export default function data() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -153,7 +153,7 @@ export default function data() {
             <MenuItem onClick={handleEdit}>수정</MenuItem>
             <MenuItem onClick={handleDelete}>삭제</MenuItem>
           </Menu>
-          <ProductDealsTable
+          <ProductDealsEditDialog
             rowData={rowData}
             setRowData={setRowData}
             isOpen={editDialogs[index]}

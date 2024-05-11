@@ -9,7 +9,7 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-export const CategoryUpdate = ({ data, setData, isOpen, handleClose, handleSubmit }) => {
+export const CategoryEditDialog = ({ data, setData, isOpen, handleClose, handleSubmit }) => {
   const handleAddSubcategory = () => {
     const newSubcategories = [...(data.subcategories || []), { id: null, name: "" }];
     const newData = { ...data, subcategories: newSubcategories };
@@ -87,7 +87,7 @@ export const CategoryUpdate = ({ data, setData, isOpen, handleClose, handleSubmi
   );
 };
 
-CategoryUpdate.propTypes = {
+CategoryEditDialog.propTypes = {
   data: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
