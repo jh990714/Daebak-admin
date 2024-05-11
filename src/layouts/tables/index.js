@@ -15,9 +15,7 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import { useState } from "react";
-
 import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -27,275 +25,79 @@ import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import DataTable from "examples/Tables/DataTable";
 
 // Data
-import productsTableData from "layouts/tables/data/productsTableData";
-import productDealsTableData from "layouts/tables/data/productDealsTableData";
-import authorsTableData from "layouts/tables/data/authorsTableData";
-import projectsTableData from "layouts/tables/data/projectsTableData";
-// import parentcategorisTableData from "layouts/tables/data/parentcategoriesTableData";
-import categorisTableData from "layouts/tables/data/categoriesTableData";
-import reviewTableData from "layouts/tables/data/reviewTableData";
-import CategoryTable from "./data/CategoryTable";
+import AuthorsTable from "./users";
+import ProductTable from "./products";
+import ReviewTable from "./reviews";
+import CategoryTable from "./categories";
 
-import MDButton from "components/MDButton";
-import { CategoryUpdate } from "./update/categoryUpdate";
-import { CategoryAdd } from "./update/categoryAdd";
-import { ProductDealsTable } from "./productDealsTable";
-import { ProductTable } from "./productTable";
+// CheckBox
+import Checkbox from "@mui/material/Checkbox";
+import { FormControlLabel, FormGroup } from "@mui/material";
+
+const items = [
+  { key: "users", label: "사용자", component: <AuthorsTable /> },
+  { key: "categories", label: "카테고리", component: <CategoryTable /> },
+  { key: "products", label: "상품", component: <ProductTable /> },
+  { key: "reviews", label: "상품 리뷰", component: <ReviewTable /> },
+];
 
 function Tables() {
-  const { columns, rows } = authorsTableData();
-  // const { columns: parentcategoryColumns, rows: parentcategoryRows } = parentcategorisTableData();
-  const { columns: categoryColumns, rows: categoryRows } = categorisTableData();
-  const { columns: reviewColumns, rows: reviewRows } = reviewTableData();
-  const { columns: pColumns, rows: pRows } = projectsTableData();
-  const [showAddCategory, setShowAddCategory] = useState(false);
-  const handleCloseCategory = () => {
-    setShowAddCategory(!showAddCategory);
+  const [selectedItems, setSelectedItems] = useState(items.map((item) => item.key));
+
+  const handleCheckboxClick = (item) => {
+    if (selectedItems.includes(item)) {
+      setSelectedItems(selectedItems.filter((selectedItem) => selectedItem !== item));
+    } else {
+      setSelectedItems([...selectedItems, item]);
+    }
   };
 
-  const {
-    columns: productsColumns,
-    rows: productsRows,
-    recommendedRows: recommendedProductsRows,
-  } = productsTableData();
-  const { columns: productDealsColumns, rows: productDealsRows } = productDealsTableData();
-  const [showProductDeal, setShowProductDeal] = useState(false);
-  const [showProduct, setShowProduct] = useState(false);
-  const [rowData, setRowData] = useState();
-  const handleAddProductDeal = () => {
-    setRowData("");
-    setShowProductDeal(!showProductDeal);
-    console.log(rowData);
-  };
-  const handleAddProduct = () => {
-    setRowData("");
-    setShowProduct(!showProduct);
-    console.log(rowData);
+  const handleSelectAll = () => {
+    if (selectedItems.length === items.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(items.map((item) => item.key));
+    }
   };
 
   return (
     <>
       <DashboardLayout>
         <DashboardNavbar />
+        <FormGroup row>
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                checked={selectedItems.length === items.length}
+                onChange={handleSelectAll}
+              />
+            }
+            label="모두 선택"
+          />
+          {items.map((item) => (
+            <FormControlLabel
+              key={item.key}
+              control={
+                <Checkbox
+                  color="primary"
+                  checked={selectedItems.includes(item.key)}
+                  onChange={() => handleCheckboxClick(item.key)}
+                />
+              }
+              label={item.label}
+            />
+          ))}
+        </FormGroup>
         <MDBox pt={6} pb={3}>
           <Grid container spacing={6}>
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="success"
-                  borderRadius="lg"
-                  coloredShadow="success"
-                >
-                  <MDTypography variant="h6" color="white">
-                    사용자
-                  </MDTypography>
-                </MDBox>
-                <MDBox pt={3}>
-                  <DataTable
-                    table={{ columns, rows }}
-                    isSorted={false}
-                    entriesPerPage={false}
-                    showTotalEntries={false}
-                    noEndBorder
-                  />
-                </MDBox>
-              </Card>
-            </Grid>
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="info"
-                  borderRadius="lg"
-                  coloredShadow="info"
-                >
-                  <MDTypography variant="h6" color="white">
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span>상품 카테고리 ( 상위 )</span>
-                      <MDButton variant="h2" color="white" onClick={() => setShowAddCategory(true)}>
-                        추가
-                      </MDButton>
-                    </div>
-                  </MDTypography>
-                </MDBox>
-                <MDBox p={3}>
-                  <CategoryTable />
-                </MDBox>
-              </Card>
-            </Grid>
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="info"
-                  borderRadius="lg"
-                  coloredShadow="info"
-                >
-                  <MDTypography variant="h6" color="white">
-                    상품 후기
-                  </MDTypography>
-                </MDBox>
-                <MDBox pt={3}>
-                  <DataTable
-                    table={{ columns: reviewColumns, rows: reviewRows }}
-                    isSorted={false}
-                    entriesPerPage={false}
-                    showTotalEntries={false}
-                    noEndBorder
-                  />
-                </MDBox>
-              </Card>
-            </Grid>
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="error"
-                  borderRadius="lg"
-                  coloredShadow="error"
-                >
-                  <MDTypography variant="h5" color="white">
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span>타임 특가 상품</span>
-                      <MDButton variant="h2" color="white" onClick={handleAddProductDeal}>
-                        추가
-                      </MDButton>
-                    </div>
-                  </MDTypography>
-                </MDBox>
-                <MDBox pt={3}>
-                  <DataTable
-                    table={{ columns: productDealsColumns, rows: productDealsRows }}
-                    isSorted={false}
-                    entriesPerPage={false}
-                    showTotalEntries={false}
-                    noEndBorder
-                  />
-                </MDBox>
-              </Card>
-            </Grid>
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="error"
-                  borderRadius="lg"
-                  coloredShadow="error"
-                >
-                  <MDTypography variant="h5" color="white">
-                    추천 상품
-                  </MDTypography>
-                </MDBox>
-                <MDBox pt={3}>
-                  <DataTable
-                    table={{ columns: productsColumns, rows: recommendedProductsRows }}
-                    isSorted={false}
-                    entriesPerPage={false}
-                    showTotalEntries={false}
-                    noEndBorder
-                  />
-                </MDBox>
-              </Card>
-            </Grid>
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={2}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  variant="gradient"
-                  bgColor="info"
-                  borderRadius="lg"
-                  coloredShadow="info"
-                >
-                  <MDTypography variant="h5" color="white">
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span>모든 상품</span>
-                      <MDButton variant="h2" color="white" onClick={handleAddProduct}>
-                        추가
-                      </MDButton>
-                    </div>
-                  </MDTypography>
-                </MDBox>
-                <MDBox pt={3}>
-                  <DataTable
-                    table={{ columns: productsColumns, rows: productsRows }}
-                    isSorted={true}
-                    entriesPerPage={true}
-                    showTotalEntries={true}
-                    canSearch={true}
-                    noEndBorder
-                  />
-                </MDBox>
-              </Card>
-            </Grid>
+            {items.map((item) => selectedItems.includes(item.key) && item.component)}
           </Grid>
         </MDBox>
         <Footer />
       </DashboardLayout>
-      {showAddCategory && <CategoryAdd isOpen={true} onClose={handleCloseCategory} />}
-      {showProductDeal && (
-        <ProductDealsTable
-          rowData={rowData}
-          setRowData={setRowData}
-          isOpen={true}
-          handleEditDialogClose={handleAddProductDeal}
-          handleEditDialogSubmit={handleAddProductDeal}
-        />
-      )}
-
-      {showProduct && (
-        <ProductTable
-          rowData={rowData}
-          setRowData={setRowData}
-          isOpen={true}
-          handleEditDialogClose={handleAddProduct}
-          handleEditDialogSubmit={handleAddProduct}
-        />
-      )}
     </>
   );
 }

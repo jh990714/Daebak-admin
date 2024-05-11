@@ -18,7 +18,6 @@ Coded by www.creative-tim.com
 // @mui material components
 import Icon from "@mui/material/Icon";
 import { Menu, MenuItem, IconButton, Button } from "@mui/material";
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
 
 import Card from "@mui/material/Card";
@@ -41,7 +40,7 @@ import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import logoInvesion from "assets/images/small-logos/logo-invision.svg";
 
 import { useEffect, useState } from "react";
-import { ProductTable } from "../productTable";
+import { ProductEditDialog } from "../dialog/productEditDialog";
 
 export default function data() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -461,7 +460,7 @@ export default function data() {
             </MenuItem>
             <MenuItem onClick={handleDelete}>삭제</MenuItem>
           </Menu>
-          <ProductTable
+          <ProductEditDialog
             rowData={rowData}
             setRowData={setRowData}
             isOpen={editDialogs[index]}

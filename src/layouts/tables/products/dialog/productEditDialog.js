@@ -9,7 +9,7 @@ import MDTypography from "components/MDTypography";
 import MDProgress from "components/MDProgress";
 
 import DataTable from "examples/Tables/DataTable";
-export const ProductTable = ({
+export const ProductEditDialog = ({
   rowData,
   setRowData,
   isOpen,
@@ -27,7 +27,6 @@ export const ProductTable = ({
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
   ];
 
-  console.log(rowData.image);
   return (
     <Dialog open={isOpen} onClose={handleEditDialogClose} fullWidth={true} maxWidth={"xl"}>
       <DialogTitle>행 수정</DialogTitle>
@@ -166,7 +165,7 @@ export const ProductTable = ({
   );
 };
 
-ProductTable.propTypes = {
+ProductEditDialog.propTypes = {
   rowData: PropTypes.arrayOf(
     PropTypes.shape({
       productId: PropTypes.number.isRequired,

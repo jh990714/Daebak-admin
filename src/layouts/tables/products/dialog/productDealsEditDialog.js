@@ -9,7 +9,7 @@ import MDTypography from "components/MDTypography";
 
 import DataTable from "examples/Tables/DataTable";
 
-export const ProductDealsTable = ({
+export const ProductDealsEditDialog = ({
   rowData,
   setRowData,
   isOpen,
@@ -393,7 +393,7 @@ export const ProductDealsTable = ({
   );
 };
 
-ProductDealsTable.propTypes = {
+ProductDealsEditDialog.propTypes = {
   rowData: PropTypes.arrayOf(
     PropTypes.shape({
       productName: PropTypes.string.isRequired,
