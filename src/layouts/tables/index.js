@@ -14,8 +14,8 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
+import { useState } from "react";
 import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -25,139 +25,80 @@ import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import DataTable from "examples/Tables/DataTable";
 
 // Data
-import authorsTableData from "layouts/tables/data/authorsTableData";
-import projectsTableData from "layouts/tables/data/projectsTableData";
-import parentcategorisTableData from "layouts/tables/data/parentcategoriesTableData";
-import categorisTableData from "layouts/tables/data/categoriesTableData";
-import reviewTableData from "layouts/tables/data/reviewTableData";
+import AuthorsTable from "./users";
+import ProductTable from "./products";
+import ReviewTable from "./reviews";
+import CategoryTable from "./categories";
+
+// CheckBox
+import Checkbox from "@mui/material/Checkbox";
+import { FormControlLabel, FormGroup } from "@mui/material";
+
+const items = [
+  { key: "users", label: "사용자", component: <AuthorsTable /> },
+  { key: "categories", label: "카테고리", component: <CategoryTable /> },
+  { key: "products", label: "상품", component: <ProductTable /> },
+  { key: "reviews", label: "상품 리뷰", component: <ReviewTable /> },
+];
 
 function Tables() {
-  const { columns, rows } = authorsTableData();
-  const { columns: parentcategoryColumns, rows: parentcategoryRows } = parentcategorisTableData();
-  const { columns: categoryColumns, rows: categoryRows } = categorisTableData();
-  const { columns: reviewColumns, rows: reviewRows } = reviewTableData();
-  const { columns: pColumns, rows: pRows } = projectsTableData();
+  const [selectedItems, setSelectedItems] = useState(items.map((item) => item.key));
+
+  const handleCheckboxClick = (item) => {
+    if (selectedItems.includes(item)) {
+      setSelectedItems(selectedItems.filter((selectedItem) => selectedItem !== item));
+    } else {
+      setSelectedItems([...selectedItems, item]);
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectedItems.length === items.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(items.map((item) => item.key));
+    }
+  };
 
   return (
-    <DashboardLayout>
-      <DashboardNavbar />
-      <MDBox pt={6} pb={3}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="success"
-                borderRadius="lg"
-                coloredShadow="success"
-              >
-                <MDTypography variant="h6" color="white">
-                  사용자
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <DataTable
-                  table={{ columns, rows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
+    <>
+      <DashboardLayout>
+        <DashboardNavbar />
+        <FormGroup row>
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                checked={selectedItems.length === items.length}
+                onChange={handleSelectAll}
+              />
+            }
+            label="모두 선택"
+          />
+          {items.map((item) => (
+            <FormControlLabel
+              key={item.key}
+              control={
+                <Checkbox
+                  color="primary"
+                  checked={selectedItems.includes(item.key)}
+                  onChange={() => handleCheckboxClick(item.key)}
                 />
-              </MDBox>
-            </Card>
+              }
+              label={item.label}
+            />
+          ))}
+        </FormGroup>
+        <MDBox pt={6} pb={3}>
+          <Grid container spacing={6}>
+            {items.map((item) => selectedItems.includes(item.key) && item.component)}
           </Grid>
-          <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography variant="h6" color="white">
-                  상품 카테고리 ( 상위 )
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <DataTable
-                  table={{ columns: parentcategoryColumns, rows: parentcategoryRows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
-              </MDBox>
-            </Card>
-          </Grid>
-          <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography variant="h6" color="white">
-                  상품 카테고리 ( 하위 )
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <DataTable
-                  table={{ columns: categoryColumns, rows: categoryRows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
-              </MDBox>
-            </Card>
-          </Grid>
-          <Grid item xs={12}>
-            <Card>
-              <MDBox
-                mx={2}
-                mt={-3}
-                py={3}
-                px={2}
-                variant="gradient"
-                bgColor="info"
-                borderRadius="lg"
-                coloredShadow="info"
-              >
-                <MDTypography variant="h6" color="white">
-                  상품 후기
-                </MDTypography>
-              </MDBox>
-              <MDBox pt={3}>
-                <DataTable
-                  table={{ columns: reviewColumns, rows: reviewRows }}
-                  isSorted={false}
-                  entriesPerPage={false}
-                  showTotalEntries={false}
-                  noEndBorder
-                />
-              </MDBox>
-            </Card>
-          </Grid>
-        </Grid>
-      </MDBox>
-      <Footer />
-    </DashboardLayout>
+        </MDBox>
+        <Footer />
+      </DashboardLayout>
+    </>
   );
 }
 
