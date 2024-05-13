@@ -5,16 +5,16 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-import reviewTableData from "layouts/tables/reviewTable/data/reviewTableData";
-import { ReviewCustomTable } from "./reviewCustomTable";
+import qnaTableData from "./data/qnaTableData";
+import { QnaCustomTable } from "./qnaTable/qnaCustomTable";
 
-function ReviewTable() {
+function QnaTable() {
   const {
-    columns: completedReviewColumns,
-    rows: completedReviewRows,
-    missingColumns: missingReviewColumns,
-    missingRows: missingReviewRows,
-  } = reviewTableData();
+    columns: completedQnaColumns,
+    rows: completedQnawRows,
+    missingColumns: missingQnawColumns,
+    missingRows: missingQnawRows,
+  } = qnaTableData();
 
   return (
     <>
@@ -31,11 +31,11 @@ function ReviewTable() {
             coloredShadow="warning"
           >
             <MDTypography variant="h6" color="white">
-              상품 후기 (답변 미등록)
+              Q&A (답변 미등록)
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <ReviewCustomTable columns={missingReviewColumns} rows={missingReviewRows} />
+            <QnaCustomTable columns={missingQnawColumns} rows={missingQnawRows} />
           </MDBox>
         </Card>
       </Grid>
@@ -52,15 +52,15 @@ function ReviewTable() {
             coloredShadow="info"
           >
             <MDTypography variant="h6" color="white">
-              상품 후기 (답변 등록 완료)
+              Q&A (답변 등록 완료)
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <ReviewCustomTable columns={completedReviewColumns} rows={completedReviewRows} />
+            <QnaCustomTable columns={completedQnaColumns} rows={completedQnawRows} />
           </MDBox>
         </Card>
       </Grid>
     </>
   );
 }
-export default ReviewTable;
+export default QnaTable;
