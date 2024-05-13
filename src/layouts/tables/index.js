@@ -27,10 +27,10 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 // Data
-import AuthorsTable from "./users";
-import ProductTable from "./products";
-import ReviewTable from "./reviews";
-import CategoryTable from "./categories";
+import AuthorsTable from "./authorsTable";
+import ProductTable from "./productTable";
+import ReviewTable from "./reviewTable";
+import CategoryTable from "./categoryTable";
 
 // CheckBox
 import Checkbox from "@mui/material/Checkbox";

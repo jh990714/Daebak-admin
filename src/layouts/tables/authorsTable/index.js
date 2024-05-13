@@ -1,16 +1,13 @@
-import { useState } from "react";
-
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
 
 import DataTable from "examples/Tables/DataTable";
 
-import authorsTableData from "layouts/tables/users/data/authorsTableData";
+import authorsTableData from "layouts/tables/authorsTable/data/authorsTableData";
 
 function AuthorsTable() {
   const { columns, rows } = authorsTableData();

@@ -6,9 +6,8 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 import DataTable from "examples/Tables/DataTable";
-import CustomDataTable from "examples/CustomTable/CustomDataTable";
-import reviewTableData from "./data/reviewTableData";
-import { ReviewCustomTable } from "./reviewTable/reviewCustomTable";
+
+import reviewTableData from "layouts/tables/reviewTable/data/reviewTableData";
 
 function ReviewTable() {
   const {
@@ -37,7 +36,13 @@ function ReviewTable() {
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <ReviewCustomTable columns={missingReviewColumns} rows={missingReviewRows} />
+            <DataTable
+              table={{ columns: missingReviewColumns, rows: missingReviewRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
+            />
           </MDBox>
         </Card>
       </Grid>
@@ -58,7 +63,13 @@ function ReviewTable() {
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <ReviewCustomTable columns={completedReviewColumns} rows={completedReviewRows} />
+            <DataTable
+              table={{ columns: completedReviewColumns, rows: completedReviewRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
+            />
           </MDBox>
         </Card>
       </Grid>
