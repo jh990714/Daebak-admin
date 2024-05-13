@@ -17,7 +17,7 @@ Coded by www.creative-tim.com
 import ProductsTableData from "./productsTableData";
 import datas from "./datas";
 
-export default function data() {
+export default function data(category = null) {
   // const { customDatas } = datas.reduce(
   //   (acc, data) => {
   //     acc.customDatas.push(data);
@@ -25,7 +25,13 @@ export default function data() {
   //   },
   //   { customDatas: [] }
   // );
-  const customDatas = datas;
+  let customDatas;
+  console.log(category);
+  if (category !== null) {
+    customDatas = datas.filter((data) => data.category === category.id);
+  } else {
+    customDatas = datas;
+  }
 
   const { columns, rows } = ProductsTableData({ customDatas });
 

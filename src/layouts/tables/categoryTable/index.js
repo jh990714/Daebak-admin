@@ -9,11 +9,15 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 
+import DataTable from "examples/Tables/DataTable";
+
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { CategoryAdd } from "layouts/categoryAdd";
 import { CategoryEditDialog } from "./dialog/categoryEditDialog";
+
+import { ProductByCategoryTable } from "./ProductByCategoryTable";
 
 function CategoryTable() {
   const [showPopup, setShowPopup] = useState(false);
@@ -88,6 +92,7 @@ function CategoryTable() {
   //   const response = await axios.get(`http://localhost:8080/categories`);
   //   setCategories(response.data);
   // }, []);
+  const [clickedCategories, setClickedCategories] = useState([]);
   const [showAddCategory, setShowAddCategory] = useState(false);
   const handleCloseCategory = () => {
     setShowAddCategory(!showAddCategory);
@@ -103,7 +108,7 @@ function CategoryTable() {
     setCategories(updatedCategories);
     setShowPopup(false);
   };
-  const handleCategoryShow = (category) => {
+  const handleShowCategory = (category) => {
     setData(category);
     setShowPopup(true);
   };
@@ -116,6 +121,21 @@ function CategoryTable() {
     }
   };
 
+  const handleShowProduct = (subCategory) => {
+    const isAlreadyClicked = clickedCategories.some(
+      (clickedCategory) => clickedCategory.id === subCategory.id
+    );
+    console.log(isAlreadyClicked, subCategory);
+    if (isAlreadyClicked) {
+      const updatedClickedCategories = clickedCategories.filter(
+        (clickedCategory) => clickedCategory.id !== subCategory.id
+      );
+      setClickedCategories(updatedClickedCategories);
+    } else {
+      setClickedCategories((prevClickedCategories) => [...prevClickedCategories, subCategory]);
+    }
+    console.log(clickedCategories);
+  };
   return (
     <>
       <Grid item xs={12}>
@@ -152,7 +172,7 @@ function CategoryTable() {
                   <div key={index} className="flex gap-5 items-center border-b-4">
                     <span className="font-semibold text-xl">{category.name}</span>
                     <div>
-                      <IconButton onClick={() => handleCategoryShow(category)} size="medium">
+                      <IconButton onClick={() => handleShowCategory(category)} size="medium">
                         <EditIcon />
                       </IconButton>
                       <IconButton
@@ -166,14 +186,23 @@ function CategoryTable() {
                   </div>
                   <ul className="mt-4 space-y-4">
                     {category.subcategories.map((subCategory, subIndex) => (
-                      <li key={subIndex} className="text-sm border-b-[1px]">
+                      <li
+                        key={subIndex}
+                        className={`cursor-pointer text-sm border-b-[1px]${
+                          clickedCategories.some(
+                            (clickedCategory) => clickedCategory.id === subCategory.id
+                          )
+                            ? " text-blue-500 font-bold"
+                            : ""
+                        }`}
+                        onClick={() => handleShowProduct(subCategory)}
+                      >
                         {subCategory.name}
                       </li>
                     ))}
                   </ul>
                 </div>
               ))}
-
               {showPopup && (
                 <CategoryEditDialog
                   data={data}
@@ -187,6 +216,11 @@ function CategoryTable() {
           </MDBox>
         </Card>
       </Grid>
+      {clickedCategories.map((clickedCategory) => (
+        <Grid key={clickedCategory.id} item xs={12}>
+          <ProductByCategoryTable category={clickedCategory} />
+        </Grid>
+      ))}
       {showAddCategory && <CategoryAdd isOpen={true} onClose={handleCloseCategory} />}
     </>
   );
