@@ -14,7 +14,6 @@ import DataTable from "examples/Tables/DataTable";
 import productByCategoryTableData from "layouts/tables/productTable/data/productByCategoryTableData";
 
 export const ProductByCategoryTable = ({ category }) => {
-  console.log(category);
   const { columns: productsColumns, rows: productsRows } = productByCategoryTableData(category);
 
   return (

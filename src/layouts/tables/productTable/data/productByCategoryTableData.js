@@ -25,14 +25,8 @@ export default function data(category = null) {
   //   },
   //   { customDatas: [] }
   // );
-  let customDatas;
-  console.log(category);
-  if (category !== null) {
-    customDatas = datas.filter((data) => data.category === category.id);
-  } else {
-    customDatas = datas;
-  }
-
+  console.log("product", datas);
+  const customDatas = category ? datas.filter((data) => data.category === category.id) : datas;
   const { columns, rows } = ProductsTableData({ customDatas });
 
   return {
