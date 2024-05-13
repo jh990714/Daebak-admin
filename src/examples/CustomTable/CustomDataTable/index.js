@@ -32,6 +32,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import IconButton from "@mui/material/IconButton";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -51,7 +52,10 @@ function CustomDataTable({
   pagination,
   isSorted,
   noEndBorder,
+  handleDataChange,
+  handleSubmit,
 }) {
+  console.log(table);
   const defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : 10;
   const entries = entriesPerPage.entries
     ? entriesPerPage.entries.map((el) => el.toString())
@@ -232,26 +236,53 @@ function CustomDataTable({
                   ))}
                 </TableRow>
                 <tr className="border-y">
-                  <td className="p-2" colSpan={row.cells.length}>
+                  <td colSpan={row.cells.length}>
                     {expandedRows[key] && (
-                      <ul className="mb-4 overflow-y-auto max-h-60 gap-y-2">
-                        {row.original.response.map((res, index) => (
-                          <li key={index} className="flex mb-4 gap-4">
-                            ⤷
-                            <MDInput
-                              value={res.responseText}
-                              multiline
-                              rows={4}
-                              fullWidth={true}
-                              maxWidth={"xl"}
-                              readOnly
-                            />
-                          </li>
-                        ))}
-                      </ul>
+                      <>
+                        <ul className="mb-4 p-2 overflow-y-auto max-h-60 gap-y-2">
+                          {row.original.response.map((res, index) => (
+                            <li key={index} className="flex mb-4 gap-4">
+                              ⤷
+                              <MDTypography width={"100%"} display="flex" flexDirection="column">
+                                <span className="text-sm">
+                                  {new Date(res.responseDate).toLocaleString()}
+                                </span>
+                                <MDInput
+                                  value={res.responseText}
+                                  multiline
+                                  rows={3}
+                                  fullWidth
+                                  maxWidth={"xl"}
+                                  readOnly
+                                />
+                              </MDTypography>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="flex gap-4 p-2 border">
+                          ⤷
+                          <MDInput
+                            label={"답변작성"}
+                            multiline
+                            rows={3}
+                            fullWidth={true}
+                            maxWidth={"xl"}
+                            onChange={handleDataChange}
+                          />
+                          <IconButton aria-label="send response" onClick={handleSubmit}>
+                            <EditNoteIcon />
+                          </IconButton>
+                        </div>
+                      </>
                     )}
 
-                    <MDBox width="100%" display="flex" justifyContent="center">
+                    <MDBox
+                      mb={1}
+                      width="100%"
+                      display="flex"
+                      justifyContent="center"
+                      sx={{ bgcolor: "#f0f0f0" }} // 배경색을 여기에 지정하세요
+                    >
                       <IconButton
                         onClick={() => toggleResponseForRow(key)}
                         aria-label="toggle responses"
@@ -259,17 +290,6 @@ function CustomDataTable({
                         {!expandedRows[key] ? <ExpandMoreIcon /> : <ExpandLessIcon />}
                       </IconButton>
                     </MDBox>
-
-                    <div className="flex gap-4">
-                      ⤷
-                      <MDInput
-                        label={"답변작성"}
-                        multiline
-                        rows={4}
-                        fullWidth={true}
-                        maxWidth={"xl"}
-                      />
-                    </div>
                   </td>
                 </tr>
               </>
@@ -333,6 +353,8 @@ CustomDataTable.defaultProps = {
   pagination: { variant: "gradient", color: "info" },
   isSorted: true,
   noEndBorder: false,
+  handleDataChange: () => {},
+  handleSubmit: () => {},
 };
 // Typechecking props for the DataTable
 CustomDataTable.propTypes = {
@@ -364,6 +386,8 @@ CustomDataTable.propTypes = {
   }),
   isSorted: PropTypes.bool,
   noEndBorder: PropTypes.bool,
+  handleDataChange: PropTypes.func,
+  handleSubmit: PropTypes.func,
 };
 
 export default CustomDataTable;
