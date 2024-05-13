@@ -2,6 +2,7 @@ const datas = [
   {
     productId: 1,
     productName: "상품 1",
+    category: 8,
     regularPrice: 100,
     salePrice: 0,
     description: "NULL",
@@ -12,6 +13,7 @@ const datas = [
   {
     productId: 2,
     productName: "상품 2",
+    category: 15,
     regularPrice: 200,
     salePrice: 0,
     description: "NULL",
@@ -22,6 +24,7 @@ const datas = [
   {
     productId: 3,
     productName: "상품 3",
+    category: 12,
     regularPrice: 300,
     salePrice: 0,
     description: "NULL",
@@ -32,6 +35,7 @@ const datas = [
   {
     productId: 4,
     productName: "상품 4",
+    category: 10,
     regularPrice: 400,
     salePrice: 0,
     description: "NULL",
@@ -42,6 +46,7 @@ const datas = [
   {
     productId: 5,
     productName: "상품 5",
+    category: 15,
     regularPrice: 500,
     salePrice: 0,
     description: "NULL",
@@ -52,6 +57,7 @@ const datas = [
   {
     productId: 6,
     productName: "상품 6",
+    category: 17,
     regularPrice: 600,
     salePrice: 0,
     description: "NULL",
@@ -62,6 +68,7 @@ const datas = [
   {
     productId: 7,
     productName: "상품 7",
+    category: 11,
     regularPrice: 700,
     salePrice: 0,
     description: "NULL",
@@ -72,6 +79,7 @@ const datas = [
   {
     productId: 8,
     productName: "상품 8",
+    category: 12,
     regularPrice: 800,
     salePrice: 0,
     description: "NULL",
@@ -82,6 +90,7 @@ const datas = [
   {
     productId: 9,
     productName: "상품 9",
+    category: 10,
     regularPrice: 900,
     salePrice: 0,
     description: "NULL",
@@ -92,6 +101,7 @@ const datas = [
   {
     productId: 10,
     productName: "상품 10",
+    category: 14,
     regularPrice: 1000,
     salePrice: 0,
     description: "NULL",
@@ -102,6 +112,7 @@ const datas = [
   {
     productId: 11,
     productName: "상품 11",
+    category: 13,
     regularPrice: 1100,
     salePrice: 0,
     description: "NULL",
@@ -112,6 +123,7 @@ const datas = [
   {
     productId: 12,
     productName: "상품 12",
+    category: 19,
     regularPrice: 1200,
     salePrice: 0,
     description: "NULL",
@@ -122,6 +134,7 @@ const datas = [
   {
     productId: 13,
     productName: "상품 13",
+    category: 8,
     regularPrice: 1300,
     salePrice: 0,
     description: "NULL",
@@ -132,6 +145,7 @@ const datas = [
   {
     productId: 14,
     productName: "상품 14",
+    category: 17,
     regularPrice: 1400,
     salePrice: 0,
     description: "NULL",
@@ -142,6 +156,7 @@ const datas = [
   {
     productId: 15,
     productName: "상품 15",
+    category: 9,
     regularPrice: 1500,
     salePrice: 0,
     description: "NULL",
@@ -152,6 +167,7 @@ const datas = [
   {
     productId: 16,
     productName: "상품 16",
+    category: 14,
     regularPrice: 1600,
     salePrice: 0,
     description: "NULL",
@@ -162,6 +178,7 @@ const datas = [
   {
     productId: 17,
     productName: "상품 17",
+    category: 9,
     regularPrice: 1700,
     salePrice: 0,
     description: "NULL",
@@ -172,6 +189,7 @@ const datas = [
   {
     productId: 18,
     productName: "상품 18",
+    category: 15,
     regularPrice: 1800,
     salePrice: 0,
     description: "NULL",
@@ -182,6 +200,7 @@ const datas = [
   {
     productId: 19,
     productName: "상품 19",
+    category: 16,
     regularPrice: 1900,
     salePrice: 0,
     description: "NULL",
@@ -192,6 +211,7 @@ const datas = [
   {
     productId: 20,
     productName: "상품 20",
+    category: 14,
     regularPrice: 2000,
     salePrice: 0,
     description: "NULL",

@@ -6,7 +6,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 import qnaTableData from "./data/qnaTableData";
-import { QnaCustomTable } from "./qnaTable/qnaCustomTable";
+import { QnaCustomTable } from "./qnaCustomTable";
 
 function QnaTable() {
   const {

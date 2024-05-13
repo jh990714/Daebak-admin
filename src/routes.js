@@ -50,6 +50,7 @@ import SignUp from "layouts/authentication/sign-up";
 import Icon from "@mui/material/Icon";
 import { ProductAdd } from "layouts/productAdd";
 import { CategoryAdd } from "layouts/categoryAdd";
+import { CouponDialog } from "layouts/couponAdd";
 
 const routes = [
   {
@@ -96,6 +97,12 @@ const routes = [
     type: "dialog",
     name: "카테고리 등록",
     DialogComponent: CategoryAdd,
+  },
+  {
+    icon: <Icon fontSize="small">add</Icon>,
+    type: "dialog",
+    name: "쿠폰 등록",
+    DialogComponent: CouponDialog,
   },
   // {
   //   type: "collapse",

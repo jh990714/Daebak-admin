@@ -12,6 +12,7 @@ import LogoAsana from "assets/images/small-logos/logo-asana.svg";
 
 import { useEffect, useState } from "react";
 import { ProductEditDialog } from "../dialog/productEditDialog";
+import { ProductAdd } from "layouts/productAdd";
 
 const ProductsTableData = ({ customDatas }) => {
   const dataColumns = [
@@ -31,7 +32,9 @@ const ProductsTableData = ({ customDatas }) => {
 
   const [rowData, setRowData] = useState(customDatas[0]); // 수정할 행의 데이터
   const [editDialogs, setEditDialogs] = useState(Array(customDatas.length).fill(false));
-
+  const [editCategoryDialogs, setEditCategoryDialogs] = useState(
+    Array(customDatas.length).fill(false)
+  );
   const handleClick = (event, index) => {
     const newAnchorEls = [...anchorEls];
     newAnchorEls[index] = event.currentTarget;
@@ -47,6 +50,14 @@ const ProductsTableData = ({ customDatas }) => {
 
   const handleEdit = () => {
     setEditDialogs((prevState) => ({
+      ...prevState,
+      [dialogAnchorEl]: true,
+    }));
+    handleClose();
+  };
+
+  const handleCategoryEdit = () => {
+    setEditCategoryDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: true,
     }));
@@ -76,6 +87,24 @@ const ProductsTableData = ({ customDatas }) => {
     // 수정 동작을 수행하는 함수 호출
     console.log("Edit submitted:");
     setEditDialogs((prevState) => ({
+      ...prevState,
+      [dialogAnchorEl]: false,
+    }));
+    setDialogAnchorEl(null);
+  };
+
+  const handleCategoryEditDialogClose = () => {
+    setEditCategoryDialogs((prevState) => ({
+      ...prevState,
+      [dialogAnchorEl]: false,
+    }));
+    setDialogAnchorEl(null);
+  };
+
+  const handleCategoryEditDialogSubmit = () => {
+    // 수정 동작을 수행하는 함수 호출
+    console.log("Edit submitted:");
+    setEditCategoryDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: false,
     }));
@@ -146,6 +175,7 @@ const ProductsTableData = ({ customDatas }) => {
           </IconButton>
           <Menu anchorEl={anchorEls[index]} open={Boolean(anchorEls[index])} onClose={handleClose}>
             <MenuItem onClick={handleEdit}>수정</MenuItem>
+            <MenuItem onClick={handleCategoryEdit}>카테고리 수정</MenuItem>
             <MenuItem onClick={handleRecommendedToggle}>
               {rowData.recommended ? "추천 상품 해제" : "추천 상품 등록"}
             </MenuItem>
@@ -158,6 +188,7 @@ const ProductsTableData = ({ customDatas }) => {
             handleEditDialogClose={handleEditDialogClose}
             handleEditDialogSubmit={handleEditDialogSubmit}
           />
+          <ProductAdd isOpen={editCategoryDialogs[index]} onClose={handleCategoryEditDialogClose} />
         </>
       ),
     }));

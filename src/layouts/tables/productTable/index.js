@@ -10,7 +10,7 @@ import MDButton from "components/MDButton";
 
 import DataTable from "examples/Tables/DataTable";
 
-import allProductsTableData from "layouts/tables/productTable/data/allProductsTableData";
+import productByCategoryTableData from "layouts/tables/productTable/data/productByCategoryTableData";
 import recommendedProductsTableData from "layouts/tables/productTable/data/recommendedProductsTableData";
 import productDealsTableData from "layouts/tables/productTable/data/productDealsTableData";
 import { ProductAdd } from "layouts/productAdd";
@@ -19,7 +19,7 @@ function ProductTable() {
   const [showProductDeal, setShowProductDeal] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
 
-  const { columns: productsColumns, rows: productsRows } = allProductsTableData();
+  const { columns: productsColumns, rows: productsRows } = productByCategoryTableData();
   const { columns: recommendedProductsColumns, rows: recommendedProductsRows } =
     recommendedProductsTableData();
   const { columns: productDealsColumns, rows: productDealsRows } = productDealsTableData();

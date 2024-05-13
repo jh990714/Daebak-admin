@@ -35,7 +35,8 @@ import CategoryTable from "./categoryTable";
 // CheckBox
 import Checkbox from "@mui/material/Checkbox";
 import { FormControlLabel, FormGroup } from "@mui/material";
-import QnaTable from "./qnas";
+import QnaTable from "./qnaTable";
+import { CouponTable } from "./couponTable";
 
 const items = [
   { key: "users", label: "사용자", component: <AuthorsTable /> },
@@ -43,6 +44,7 @@ const items = [
   { key: "products", label: "상품", component: <ProductTable /> },
   { key: "reviews", label: "상품 리뷰", component: <ReviewTable /> },
   { key: "qnas", label: "Q&A", component: <QnaTable /> },
+  { key: "coupons", label: "쿠폰", component: <CouponTable /> },
 ];
 
 function Tables() {
