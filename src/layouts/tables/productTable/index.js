@@ -10,19 +10,18 @@ import MDButton from "components/MDButton";
 
 import DataTable from "examples/Tables/DataTable";
 
-import productsTableData from "layouts/tables/products/data/productsTableData";
-import productDealsTableData from "layouts/tables/products/data/productDealsTableData";
+import allProductsTableData from "layouts/tables/productTable/data/allProductsTableData";
+import recommendedProductsTableData from "layouts/tables/productTable/data/recommendedProductsTableData";
+import productDealsTableData from "layouts/tables/productTable/data/productDealsTableData";
 import { ProductAdd } from "layouts/productAdd";
 
 function ProductTable() {
   const [showProductDeal, setShowProductDeal] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
 
-  const {
-    columns: productsColumns,
-    rows: productsRows,
-    recommendedRows: recommendedProductsRows,
-  } = productsTableData();
+  const { columns: productsColumns, rows: productsRows } = allProductsTableData();
+  const { columns: recommendedProductsColumns, rows: recommendedProductsRows } =
+    recommendedProductsTableData();
   const { columns: productDealsColumns, rows: productDealsRows } = productDealsTableData();
 
   const handleAddProductDeal = () => {
@@ -90,7 +89,7 @@ function ProductTable() {
           </MDBox>
           <MDBox pt={3}>
             <DataTable
-              table={{ columns: productsColumns, rows: recommendedProductsRows }}
+              table={{ columns: recommendedProductsColumns, rows: recommendedProductsRows }}
               isSorted={false}
               entriesPerPage={false}
               showTotalEntries={false}
@@ -131,6 +130,7 @@ function ProductTable() {
               table={{ columns: productsColumns, rows: productsRows }}
               isSorted={true}
               entriesPerPage={true}
+              pagination={{ variant: "gradient", color: "info" }}
               showTotalEntries={true}
               canSearch={true}
               noEndBorder

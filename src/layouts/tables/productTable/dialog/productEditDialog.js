@@ -29,11 +29,11 @@ export const ProductEditDialog = ({
 
   return (
     <Dialog open={isOpen} onClose={handleEditDialogClose} fullWidth={true} maxWidth={"xl"}>
-      <DialogTitle>행 수정</DialogTitle>
       <DialogContent>
         <Card>
           <MDBox
             mx={2}
+            mt={-3}
             py={3}
             px={2}
             variant="gradient"
