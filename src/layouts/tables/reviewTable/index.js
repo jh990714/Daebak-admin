@@ -5,9 +5,8 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-import DataTable from "examples/Tables/DataTable";
-
 import reviewTableData from "layouts/tables/reviewTable/data/reviewTableData";
+import { ReviewCustomTable } from "./reviewCustomTable";
 
 function ReviewTable() {
   const {
@@ -36,13 +35,7 @@ function ReviewTable() {
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <DataTable
-              table={{ columns: missingReviewColumns, rows: missingReviewRows }}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
-              noEndBorder
-            />
+            <ReviewCustomTable columns={missingReviewColumns} rows={missingReviewRows} />
           </MDBox>
         </Card>
       </Grid>
@@ -63,13 +56,7 @@ function ReviewTable() {
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <DataTable
-              table={{ columns: completedReviewColumns, rows: completedReviewRows }}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
-              noEndBorder
-            />
+            <ReviewCustomTable columns={completedReviewColumns} rows={completedReviewRows} />
           </MDBox>
         </Card>
       </Grid>
