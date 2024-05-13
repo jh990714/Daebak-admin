@@ -6,15 +6,13 @@ import Card from "@mui/material/Card";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import MDButton from "components/MDButton";
 
 import DataTable from "examples/Tables/DataTable";
 
-import reviewTableData from "layouts/tables/reviews/data/reviewTableData";
+import authorsTableData from "layouts/tables/authorsTable/data/authorsTableData";
 
-function ReviewTable() {
-  const { columns: reviewColumns, rows: reviewRows } = reviewTableData();
-
+function AuthorsTable() {
+  const { columns, rows } = authorsTableData();
   return (
     <Grid item xs={12}>
       <Card>
@@ -24,17 +22,17 @@ function ReviewTable() {
           py={3}
           px={2}
           variant="gradient"
-          bgColor="info"
+          bgColor="success"
           borderRadius="lg"
-          coloredShadow="info"
+          coloredShadow="success"
         >
           <MDTypography variant="h6" color="white">
-            상품 후기
+            사용자
           </MDTypography>
         </MDBox>
         <MDBox pt={3}>
           <DataTable
-            table={{ columns: reviewColumns, rows: reviewRows }}
+            table={{ columns, rows }}
             isSorted={false}
             entriesPerPage={false}
             showTotalEntries={false}
@@ -45,4 +43,4 @@ function ReviewTable() {
     </Grid>
   );
 }
-export default ReviewTable;
+export default AuthorsTable;
