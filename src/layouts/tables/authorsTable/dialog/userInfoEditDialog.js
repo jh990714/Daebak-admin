@@ -11,7 +11,8 @@ import MDTypography from "components/MDTypography";
 
 export const UserInfoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
   const [editedData, setEditedData] = useState({
-    id: rowData.author.id,
+    id: rowData.id,
+    memberId: rowData.author.id,
     name: rowData.author.name,
     email: rowData.email,
     phone: rowData.phone,
@@ -23,7 +24,8 @@ export const UserInfoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => 
 
   useEffect(() => {
     setEditedData({
-      id: rowData.author.id,
+      id: rowData.id,
+      memberId: rowData.author.id,
       name: rowData.author.name,
       email: rowData.email,
       phone: rowData.phone,
@@ -35,7 +37,7 @@ export const UserInfoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => 
   }, [rowData]);
 
   const columns = [
-    { field: "id", headerName: "ID", width: 150, editable: false },
+    { field: "memberId", headerName: "ID", width: 150, editable: false },
     { field: "name", headerName: "이름", width: 150, editable: true },
     { field: "email", headerName: "이메일", width: 200, editable: true },
     { field: "phone", headerName: "휴대폰 번호", width: 150, editable: true },
@@ -55,16 +57,12 @@ export const UserInfoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => 
   };
 
   const handleSaveChanges = () => {
-    setRowData((prevData) => {
-      if (Array.isArray(prevData)) {
-        return prevData.map((row) =>
-          row.id === editedData.id
-            ? { ...row, author: { id: editedData.id, name: editedData.name }, ...editedData }
-            : row
-        );
-      }
-      return prevData;
-    });
+    console.log(editedData);
+    setRowData((row) =>
+      row.id === editedData.id
+        ? { ...row, author: { id: editedData.memberId, name: editedData.name }, ...editedData }
+        : row
+    );
     onClose();
   };
 
