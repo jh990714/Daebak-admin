@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import { DataGrid } from "@mui/x-data-grid";
@@ -30,6 +30,7 @@ function AuthorsTable() {
   const handleShowAddCouponDialog = () => {
     setAddCouponSelectRows(!addCouponSelectRows);
   };
+
   return (
     <Grid item xs={12}>
       <Card>
@@ -63,7 +64,7 @@ function AuthorsTable() {
             </div>
           </MDTypography>
         </MDBox>
-        <MDBox pt={3}>
+        <MDBox p={3}>
           <DataGrid
             rows={rows}
             columns={columns}

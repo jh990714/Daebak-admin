@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Menu, MenuItem, IconButton } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
@@ -10,6 +10,7 @@ import MDAvatar from "components/MDAvatar";
 import team2 from "assets/images/team-2.jpg";
 import authorsDatas from "./authorsData";
 import { UserInfoEditDialog } from "../dialog/userInfoEditDialog";
+import { UserCouponDialog } from "../dialog/userCouponDialog";
 
 export default function authorsTableData() {
   const Author = ({ image, name, id }) => (
@@ -33,6 +34,7 @@ export default function authorsTableData() {
   const [anchorEls, setAnchorEls] = useState({});
   const [editDialogOpen, setEditDialogOpen] = useState({});
   const [rowData, setRowData] = useState(authorsDatas[0]);
+  const [couponDialogOpen, setCouponDialogOpen] = useState({});
 
   const handleOpenEditDialog = (id) => {
     setEditDialogOpen((prevState) => ({ ...prevState, [id]: true }));
@@ -42,8 +44,17 @@ export default function authorsTableData() {
     setEditDialogOpen((prevState) => ({ ...prevState, [id]: false }));
   };
 
-  const handleMenuClick = (event, id) => {
-    setAnchorEls((prevState) => ({ ...prevState, [id]: event.currentTarget }));
+  const handleOpenCouponDialog = (id) => {
+    setCouponDialogOpen((prevState) => ({ ...prevState, [id]: true }));
+  };
+
+  const handleCloseCouponDialog = (id) => {
+    setCouponDialogOpen((prevState) => ({ ...prevState, [id]: false }));
+  };
+
+  const handleMenuClick = (event, row) => {
+    setRowData(row);
+    setAnchorEls((prevState) => ({ ...prevState, [row.id]: event.currentTarget }));
   };
 
   const handleMenuClose = (id) => {
@@ -51,9 +62,13 @@ export default function authorsTableData() {
   };
 
   const handleEdit = (row) => {
-    setRowData(row);
     handleMenuClose(row.id);
     handleOpenEditDialog(row.id);
+  };
+
+  const handleShowCoupons = (row) => {
+    handleMenuClose(row.id);
+    handleOpenCouponDialog(row.id);
   };
 
   const handleDelete = (row) => {
@@ -65,7 +80,7 @@ export default function authorsTableData() {
     {
       headerName: "사용자",
       field: "author",
-      width: 250,
+      width: 300,
       renderCell: (params) => (
         <Author image={team2} name={params.row.author.name} id={params.row.author.id} />
       ),
@@ -73,7 +88,7 @@ export default function authorsTableData() {
     {
       headerName: "이메일",
       field: "email",
-      width: 200,
+      width: 250,
       renderCell: (params) => (
         <MDTypography variant="caption" color="text" fontWeight="medium">
           {params.value}
@@ -93,7 +108,7 @@ export default function authorsTableData() {
     {
       headerName: "기본 배송지",
       field: "address",
-      width: 300,
+      width: 350,
       renderCell: (params) => (
         <MDTypography variant="caption" color="text" fontWeight="medium">
           {params.value}
@@ -113,7 +128,7 @@ export default function authorsTableData() {
     {
       headerName: "쿠폰",
       field: "coupons",
-      width: 100,
+      width: 80,
       renderCell: (params) => (
         <MDTypography variant="caption" color="text" fontWeight="medium">
           {params.value}
@@ -133,14 +148,14 @@ export default function authorsTableData() {
     {
       headerName: "Action",
       field: "action",
-      width: 150,
+      width: 100,
       renderCell: (params) => (
         <>
           <IconButton
             aria-label="more"
             aria-controls={`menu-${params.row.id}`}
             aria-haspopup="true"
-            onClick={(event) => handleMenuClick(event, params.row.id)}
+            onClick={(event) => handleMenuClick(event, params.row)}
           >
             <MoreVert />
           </IconButton>
@@ -152,6 +167,7 @@ export default function authorsTableData() {
             onClose={() => handleMenuClose(params.row.id)}
           >
             <MenuItem onClick={() => handleEdit(params.row)}>수정</MenuItem>
+            <MenuItem onClick={() => handleShowCoupons(params)}>보유 쿠폰</MenuItem>
             <MenuItem onClick={() => handleDelete(params.row)}>삭제</MenuItem>
           </Menu>
           <UserInfoEditDialog
@@ -159,6 +175,12 @@ export default function authorsTableData() {
             setRowData={setRowData}
             isOpen={editDialogOpen[params.row.id]}
             onClose={() => handleCloseEditDialog(params.row.id)}
+          />
+          <UserCouponDialog
+            rowData={rowData}
+            setRowData={setRowData}
+            isOpen={couponDialogOpen[params.row.id]}
+            onClose={() => handleCloseCouponDialog(params.row.id)}
           />
         </>
       ),
