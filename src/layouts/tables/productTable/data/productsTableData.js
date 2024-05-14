@@ -12,7 +12,7 @@ import LogoAsana from "assets/images/small-logos/logo-asana.svg";
 
 import { useEffect, useState } from "react";
 import { ProductEditDialog } from "../dialog/productEditDialog";
-import { ProductAdd } from "layouts/productAdd";
+import { ProductByCategoryEditDialog } from "../dialog/productByCategoryEditDialog";
 
 const ProductsTableData = ({ customDatas }) => {
   const dataColumns = [
@@ -27,21 +27,23 @@ const ProductsTableData = ({ customDatas }) => {
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
     { Header: "action", accessor: "action", align: "center" },
   ];
+
   const [anchorEls, setAnchorEls] = useState(Array(customDatas.length).fill(null));
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
-
   const [rowData, setRowData] = useState(customDatas[0]); // 수정할 행의 데이터
   const [editDialogs, setEditDialogs] = useState(Array(customDatas.length).fill(false));
   const [editCategoryDialogs, setEditCategoryDialogs] = useState(
     Array(customDatas.length).fill(false)
   );
+
   const handleClick = (event, index) => {
+    console.log(anchorEls, index);
+
     const newAnchorEls = [...anchorEls];
     newAnchorEls[index] = event.currentTarget;
     setAnchorEls(newAnchorEls);
-    setDialogAnchorEl(index);
-
-    setRowData(customDatas[index]);
+    // setDialogAnchorEl(index);
+    // setRowData(customDatas[index]);
   };
 
   const handleClose = () => {
@@ -61,7 +63,7 @@ const ProductsTableData = ({ customDatas }) => {
       ...prevState,
       [dialogAnchorEl]: true,
     }));
-    handleClose();
+    handleClose(dialogAnchorEl);
   };
 
   const handleRecommendedToggle = () => {
@@ -94,16 +96,6 @@ const ProductsTableData = ({ customDatas }) => {
   };
 
   const handleCategoryEditDialogClose = () => {
-    setEditCategoryDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: false,
-    }));
-    setDialogAnchorEl(null);
-  };
-
-  const handleCategoryEditDialogSubmit = () => {
-    // 수정 동작을 수행하는 함수 호출
-    console.log("Edit submitted:");
     setEditCategoryDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: false,
@@ -173,7 +165,12 @@ const ProductsTableData = ({ customDatas }) => {
           >
             <MoreVert />
           </IconButton>
-          <Menu anchorEl={anchorEls[index]} open={Boolean(anchorEls[index])} onClose={handleClose}>
+          <Menu
+            // adsf
+            anchorEl={anchorEls[index]}
+            open={Boolean(anchorEls[index])}
+            onClose={handleClose}
+          >
             <MenuItem onClick={handleEdit}>수정</MenuItem>
             <MenuItem onClick={handleCategoryEdit}>카테고리 수정</MenuItem>
             <MenuItem onClick={handleRecommendedToggle}>
@@ -188,7 +185,11 @@ const ProductsTableData = ({ customDatas }) => {
             handleEditDialogClose={handleEditDialogClose}
             handleEditDialogSubmit={handleEditDialogSubmit}
           />
-          <ProductAdd isOpen={editCategoryDialogs[index]} onClose={handleCategoryEditDialogClose} />
+          {/* <ProductByCategoryEditDialog
+            rowData={rowData}
+            isOpen={editCategoryDialogs[index]}
+            onClose={handleCategoryEditDialogClose}
+          /> */}
         </>
       ),
     }));

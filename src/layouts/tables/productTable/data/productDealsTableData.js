@@ -49,19 +49,19 @@ export default function data() {
 
   const datas = [
     {
-      productName: "국내산 고등어(중대)10팩(120~140gx10팩) ",
+      productName: "상품 1",
       dealPrice: 50,
       startDate: "2024-04-14 10:00:00",
       endDate: "2024-05-03 17:00:00",
     },
     {
-      productName: "구운 뼈 고등어 1팩 (180g) ",
+      productName: "상품 2",
       dealPrice: 100,
       startDate: "2024-04-14 10:00:00",
       endDate: "2024-05-03 17:00:00",
     },
     {
-      productName: "국내 ",
+      productName: "상품 5",
       dealPrice: 100,
       startDate: "2024-04-14 10:00:00",
       endDate: "2024-05-03 17:00:00",
