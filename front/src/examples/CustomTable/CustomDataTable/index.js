@@ -63,12 +63,10 @@ function CustomDataTable({
   const columns = useMemo(() => table.columns, [table]);
   const data = useMemo(() => table.rows, [table]);
 
-  const [expandedRows, setExpandedRows] = useState(new Array(table.rows.length).fill(false));
+  const [expandedRows, setExpandedRows] = useState(false);
 
   const toggleResponseForRow = (rowIndex) => {
-    const newExpandedRows = [...expandedRows];
-    newExpandedRows[rowIndex] = !newExpandedRows[rowIndex];
-    setExpandedRows(newExpandedRows);
+    setExpandedRows(!expandedRows);
   };
 
   const tableInstance = useTable(
@@ -161,6 +159,14 @@ function CustomDataTable({
     entriesEnd = pageSize * (pageIndex + 1);
   }
 
+  const renderToggleButtons = () => {
+    return (
+      <IconButton aria-label="toggle response" onClick={toggleResponseForRow}>
+        {expandedRows ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+      </IconButton>
+    );
+  };
+
   return (
     <TableContainer sx={{ boxShadow: "none" }}>
       {entriesPerPage || canSearch ? (
@@ -203,6 +209,7 @@ function CustomDataTable({
         <MDBox component="thead">
           {headerGroups.map((headerGroup, key) => (
             <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
+              <DataTableBodyCell>{renderToggleButtons()}</DataTableBodyCell>
               {headerGroup.headers.map((column, idx) => (
                 <DataTableHeadCell
                   key={idx}
@@ -224,6 +231,7 @@ function CustomDataTable({
             return (
               <>
                 <TableRow key={key} {...row.getRowProps()}>
+                  <DataTableBodyCell></DataTableBodyCell>
                   {row.cells.map((cell, idx) => (
                     <DataTableBodyCell
                       key={idx}
@@ -235,63 +243,46 @@ function CustomDataTable({
                     </DataTableBodyCell>
                   ))}
                 </TableRow>
-                <tr className="border-y">
-                  <td colSpan={row.cells.length}>
-                    {expandedRows[key] && (
-                      <>
-                        <ul className="mb-4 p-2 overflow-y-auto max-h-60 gap-y-2">
-                          {row.original.response.map((res, index) => (
-                            <li key={index} className="flex mb-4 gap-4">
-                              ⤷
-                              <MDTypography width={"100%"} display="flex" flexDirection="column">
-                                <span className="text-sm">
-                                  {new Date(res.responseDate).toLocaleString()}
-                                </span>
-                                <MDInput
-                                  value={res.responseText}
-                                  multiline
-                                  rows={3}
-                                  fullWidth
-                                  maxWidth={"xl"}
-                                  readOnly
-                                />
-                              </MDTypography>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="flex gap-4 p-2 border">
-                          ⤷
-                          <MDInput
-                            label={"답변작성"}
-                            multiline
-                            rows={3}
-                            fullWidth={true}
-                            maxWidth={"xl"}
-                            onChange={handleDataChange}
-                          />
-                          <IconButton aria-label="send response" onClick={handleSubmit}>
-                            <EditNoteIcon />
-                          </IconButton>
-                        </div>
-                      </>
-                    )}
-
-                    <MDBox
-                      mb={1}
-                      width="100%"
-                      display="flex"
-                      justifyContent="center"
-                      sx={{ bgcolor: "#f0f0f0" }} // 배경색을 여기에 지정하세요
-                    >
-                      <IconButton
-                        onClick={() => toggleResponseForRow(key)}
-                        aria-label="toggle responses"
-                      >
-                        {!expandedRows[key] ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-                      </IconButton>
-                    </MDBox>
-                  </td>
-                </tr>
+                {expandedRows && (
+                  <tr className="border-y">
+                    <td colSpan={row.cells.length + 1}>
+                      <ul className="mb-4 p-2 overflow-y-auto max-h-60 gap-y-2">
+                        {row.original.response.map((res, index) => (
+                          <li key={index} className="flex mb-4 gap-4">
+                            ⤷
+                            <MDTypography width={"100%"} display="flex" flexDirection="column">
+                              <span className="text-sm">
+                                {new Date(res.responseDate).toLocaleString()}
+                              </span>
+                              <MDInput
+                                value={res.responseText}
+                                multiline
+                                rows={3}
+                                fullWidth
+                                maxWidth={"xl"}
+                                readOnly
+                              />
+                            </MDTypography>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="flex gap-4 p-2 border">
+                        ⤷
+                        <MDInput
+                          label={"답변작성"}
+                          multiline
+                          rows={3}
+                          fullWidth={true}
+                          maxWidth={"xl"}
+                          onChange={handleDataChange}
+                        />
+                        <IconButton aria-label="send response" onClick={handleSubmit}>
+                          <EditNoteIcon />
+                        </IconButton>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </>
             );
           })}
