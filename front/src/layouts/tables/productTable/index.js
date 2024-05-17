@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -13,15 +13,14 @@ import DataTable from "examples/Tables/DataTable";
 import productByCategoryTableData from "layouts/tables/productTable/data/productByCategoryTableData";
 import recommendedProductsTableData from "layouts/tables/productTable/data/recommendedProductsTableData";
 import productDealsTableData from "layouts/tables/productTable/data/productDealsTableData";
-import { ProductAdd } from "layouts/productAdd";
 
 function ProductTable() {
   const [showProductDeal, setShowProductDeal] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
 
   const { columns: productsColumns, rows: productsRows } = productByCategoryTableData();
-  const { columns: recommendedProductsColumns, rows: recommendedProductsRows } =
-    recommendedProductsTableData();
+  // const { columns: recommendedProductsColumns, rows: recommendedProductsRows } =
+  //   recommendedProductsTableData();
   const { columns: productDealsColumns, rows: productDealsRows } = productDealsTableData();
 
   const handleAddProductDeal = () => {
@@ -31,6 +30,11 @@ function ProductTable() {
   const handleAddProduct = () => {
     setShowProduct(!showProduct);
   };
+
+  useEffect(() => {
+    console.log("index");
+  }, []);
+
   return (
     <>
       <Grid item xs={12}>
@@ -89,7 +93,7 @@ function ProductTable() {
           </MDBox>
           <MDBox pt={3}>
             <DataTable
-              table={{ columns: recommendedProductsColumns, rows: recommendedProductsRows }}
+              table={{ columns: [], rows: [] }}
               isSorted={false}
               entriesPerPage={false}
               showTotalEntries={false}
@@ -148,7 +152,7 @@ function ProductTable() {
         />
       )} */}
 
-      {showProduct && <ProductAdd isOpen={true} onClose={handleAddProduct} />}
+      {/* {showProduct && <ProductAdd isOpen={true} onClose={handleAddProduct} />} */}
     </>
   );
 }

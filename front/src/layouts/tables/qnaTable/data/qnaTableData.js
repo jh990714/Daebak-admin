@@ -42,8 +42,10 @@ import logoSlack from "assets/images/small-logos/logo-slack.svg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import logoInvesion from "assets/images/small-logos/logo-invision.svg";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function data() {
+  // const products = useSelector((state) => state.products.products);
   const [anchorEl, setAnchorEl] = useState(null);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
 

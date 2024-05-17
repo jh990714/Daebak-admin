@@ -15,12 +15,13 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 import ProductsTableData from "./productsTableData";
-import datas from "./datas";
+import { useSelector } from "react-redux";
 
 export default function data() {
-  const { customDatas } = datas.reduce(
+  const products = useSelector((state) => state.products.products);
+  const { customDatas } = products.reduce(
     (acc, data) => {
-      if (data.recommended === 1) {
+      if (data.recommended === true) {
         acc.customDatas.push(data);
       }
       return acc;

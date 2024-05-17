@@ -19,8 +19,10 @@ import { CategoryEditDialog } from "./dialog/categoryEditDialog";
 
 import { ProductByCategoryTable } from "./ProductByCategoryTable";
 import datas from "./data/categoryDatas";
+import { useSelector } from "react-redux";
 
 function CategoryTable() {
+  const products = useSelector((state) => state.products.products);
   const [showPopup, setShowPopup] = useState(false);
   const [data, setData] = useState();
   const [categories, setCategories] = useState(datas);

@@ -1,12 +1,15 @@
+import { useEffect, useState } from "react";
+
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
+import { DataGrid } from "@mui/x-data-grid";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 import qnaTableData from "./data/qnaTableData";
-import { QnaCustomTable } from "./qnaCustomTable";
+import { qnaTableDataGrid } from "./data/qnaTableDataGrid";
 
 function QnaTable() {
   const {
@@ -14,7 +17,14 @@ function QnaTable() {
     rows: completedQnawRows,
     missingColumns: missingQnawColumns,
     missingRows: missingQnawRows,
-  } = qnaTableData();
+  } = qnaTableDataGrid();
+
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+
+  const handleRowSelectionModel = (newRowSelectionModel) => {
+    console.log(newRowSelectionModel);
+    setRowSelectionModel(newRowSelectionModel);
+  };
 
   return (
     <>
@@ -34,8 +44,19 @@ function QnaTable() {
               Q&A (답변 미등록)
             </MDTypography>
           </MDBox>
-          <MDBox pt={3}>
-            <QnaCustomTable columns={missingQnawColumns} rows={missingQnawRows} />
+          <MDBox p={3}>
+            <DataGrid
+              rows={missingQnawRows}
+              columns={missingQnawColumns}
+              autoHeight
+              initialState={{
+                pagination: { paginationModel: { pageSize: 5 } },
+              }}
+              pageSizeOptions={[5, 10, 25]}
+              disableRowSelectionOnClick
+              onRowSelectionModelChange={handleRowSelectionModel}
+              rowSelectionModel={rowSelectionModel}
+            />
           </MDBox>
         </Card>
       </Grid>
@@ -55,8 +76,19 @@ function QnaTable() {
               Q&A (답변 등록 완료)
             </MDTypography>
           </MDBox>
-          <MDBox pt={3}>
-            <QnaCustomTable columns={completedQnaColumns} rows={completedQnawRows} />
+          <MDBox p={3}>
+            <DataGrid
+              rows={completedQnawRows}
+              columns={completedQnaColumns}
+              rowHeight={100}
+              initialState={{
+                pagination: { paginationModel: { pageSize: 5 } },
+              }}
+              pageSizeOptions={[5, 10, 25]}
+              disableRowSelectionOnClick
+              onRowSelectionModelChange={handleRowSelectionModel}
+              rowSelectionModel={rowSelectionModel}
+            />
           </MDBox>
         </Card>
       </Grid>

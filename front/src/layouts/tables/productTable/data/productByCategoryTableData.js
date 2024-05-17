@@ -1,37 +1,33 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/function-component-definition */
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
 import ProductsTableData from "./productsTableData";
+import { fetchProducts } from "reducers/slices/productSlice";
 import datas from "./datas";
 
 export default function data(category = null) {
-  // const { customDatas } = datas.reduce(
-  //   (acc, data) => {
-  //     acc.customDatas.push(data);
-  //     return acc;
-  //   },
-  //   { customDatas: [] }
-  // );
-  console.log("product", datas);
-  const customDatas = category ? datas.filter((data) => data.category === category.id) : datas;
+  const dataColumns = [
+    { Header: "상품", accessor: "product", align: "left" },
+    { Header: "정상가", accessor: "regularPrice", align: "center" },
+    { Header: "할인", accessor: "salePrice", align: "center" },
+    { Header: "최종가", accessor: "finalPrice", align: "center" },
+    { Header: "설명", accessor: "description", align: "center" },
+    { Header: "재고", accessor: "stockQuantity", align: "center" },
+    { Header: "재고 위험도", accessor: "risk", align: "center" },
+    { Header: "추천 상품 여부", accessor: "recommended", align: "center" },
+    { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
+    { Header: "action", accessor: "action", align: "center" },
+  ];
+
+  const products = datas;
+  const customDatas = category
+    ? products.filter((data) => data.category === category.id)
+    : products;
+
   const { columns, rows } = ProductsTableData({ customDatas });
 
   return {
     columns: columns,
-
     rows: rows,
   };
 }

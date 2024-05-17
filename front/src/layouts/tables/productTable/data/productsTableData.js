@@ -15,6 +15,7 @@ import { ProductEditDialog } from "../dialog/productEditDialog";
 import { ProductByCategoryEditDialog } from "../dialog/productByCategoryEditDialog";
 
 const ProductsTableData = ({ customDatas }) => {
+  console.log("ProductsTableData");
   const dataColumns = [
     { Header: "상품", accessor: "product", align: "left" },
     { Header: "정상가", accessor: "regularPrice", align: "center" },
@@ -32,9 +33,9 @@ const ProductsTableData = ({ customDatas }) => {
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
   const [rowData, setRowData] = useState(customDatas[0]); // 수정할 행의 데이터
   const [editDialogs, setEditDialogs] = useState(Array(customDatas.length).fill(false));
-  const [editCategoryDialogs, setEditCategoryDialogs] = useState(
-    Array(customDatas.length).fill(false)
-  );
+  // const [editCategoryDialogs, setEditCategoryDialogs] = useState(
+  //   Array(customDatas.length).fill(false)
+  // );
 
   const handleClick = (event, index) => {
     console.log(anchorEls, index);
@@ -58,13 +59,13 @@ const ProductsTableData = ({ customDatas }) => {
     handleClose();
   };
 
-  const handleCategoryEdit = () => {
-    setEditCategoryDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: true,
-    }));
-    handleClose(dialogAnchorEl);
-  };
+  // const handleCategoryEdit = () => {
+  //   setEditCategoryDialogs((prevState) => ({
+  //     ...prevState,
+  //     [dialogAnchorEl]: true,
+  //   }));
+  //   handleClose(dialogAnchorEl);
+  // };
 
   const handleRecommendedToggle = () => {
     // datas[dialogAnchorEl].recommended = !datas[dialogAnchorEl].recommended;
@@ -95,13 +96,13 @@ const ProductsTableData = ({ customDatas }) => {
     setDialogAnchorEl(null);
   };
 
-  const handleCategoryEditDialogClose = () => {
-    setEditCategoryDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: false,
-    }));
-    setDialogAnchorEl(null);
-  };
+  // const handleCategoryEditDialogClose = () => {
+  //   setEditCategoryDialogs((prevState) => ({
+  //     ...prevState,
+  //     [dialogAnchorEl]: false,
+  //   }));
+  //   setDialogAnchorEl(null);
+  // };
 
   const Product = ({ image, name }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
@@ -146,7 +147,7 @@ const ProductsTableData = ({ customDatas }) => {
 
   const transformDataForProduct = (customDatas) => {
     return customDatas.map((data, index) => ({
-      product: <Product image={LogoAsana} name={data.productName} />,
+      product: <Product image={LogoAsana} name={data.name} />,
       regularPrice: data.regularPrice,
       salePrice: data.salePrice,
       finalPrice: data.regularPrice - data.salePrice,
@@ -172,9 +173,9 @@ const ProductsTableData = ({ customDatas }) => {
             onClose={handleClose}
           >
             <MenuItem onClick={handleEdit}>수정</MenuItem>
-            <MenuItem onClick={handleCategoryEdit}>카테고리 수정</MenuItem>
+            {/* <MenuItem onClick={handleCategoryEdit}>카테고리 수정</MenuItem> */}
             <MenuItem onClick={handleRecommendedToggle}>
-              {rowData.recommended ? "추천 상품 해제" : "추천 상품 등록"}
+              {rowData?.recommended ? "추천 상품 해제" : "추천 상품 등록"}
             </MenuItem>
             <MenuItem onClick={handleDelete}>삭제</MenuItem>
           </Menu>
@@ -186,7 +187,7 @@ const ProductsTableData = ({ customDatas }) => {
             handleEditDialogSubmit={handleEditDialogSubmit}
           />
           {/* <ProductByCategoryEditDialog
-            rowData={rowData}
+            rowData={rowData?}
             isOpen={editCategoryDialogs[index]}
             onClose={handleCategoryEditDialogClose}
           /> */}

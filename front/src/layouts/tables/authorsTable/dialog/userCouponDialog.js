@@ -17,9 +17,7 @@ import TimePicker from "@mui/lab/TimePicker";
 import TextField from "@mui/material/TextField";
 
 export const UserCouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
-  console.log(rowData);
   const [myCoupons, setMyCoupons] = useState(userCouponData);
-  console.log(myCoupons);
 
   const handleDateChange = (e, id, field) => {
     console.log(e.target.value);
@@ -28,7 +26,7 @@ export const UserCouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
     );
     setMyCoupons(updatedCoupons);
   };
-
+  console.log("userCouponDialog", rowData);
   const columns = [
     { field: "couponName", headerName: "쿠폰명", width: 150, editable: false },
     { field: "discount", headerName: "할인가격", width: 150, editable: false },

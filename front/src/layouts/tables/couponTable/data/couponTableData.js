@@ -5,10 +5,10 @@ import { MoreVert } from "@mui/icons-material";
 import { Menu, MenuItem } from "@mui/material";
 import { CouponDialog } from "../../../couponAdd";
 import couponDatas from "./couponDatas";
+import { useSelector } from "react-redux";
 
 export const couponTableData = () => {
   const datas = couponDatas;
-
   const [rowData, setRowData] = useState(datas[0]);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
   const [anchorEls, setAnchorEls] = useState(Array(datas.length).fill(null));
