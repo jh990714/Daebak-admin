@@ -29,24 +29,47 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
-import MDAvatar from "components/MDAvatar";
-import MDProgress from "components/MDProgress";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 
-import DataTable from "examples/Tables/DataTable";
+import { useState } from "react";
+import { ReviewResponseDialog } from "../dialog/reviewResponseDialog";
 
-// Images
-import LogoAsana from "assets/images/small-logos/logo-asana.svg";
-import logoGithub from "assets/images/small-logos/github.svg";
-import logoAtlassian from "assets/images/small-logos/logo-atlassian.svg";
-import logoSlack from "assets/images/small-logos/logo-slack.svg";
-import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-import logoInvesion from "assets/images/small-logos/logo-invision.svg";
-import { useEffect, useState } from "react";
+const expandedContent = (rowData) => {
+  const handleEditNoteIconClick = () => {
+    console.log("ggg");
+  };
+  return (
+    <>
+      <ul className="mb-4 p-2 overflow-y-auto max-h-60 gap-y-2">
+        {rowData.response.map((res, index) => (
+          <li key={index} className="flex mb-4 gap-4">
+            ⤷
+            <MDTypography width={"100%"} display="flex" flexDirection="column">
+              <span className="text-sm">{new Date(res.responseDate).toLocaleString()} </span>
+              <MDInput
+                value={res.responseText}
+                multiline
+                rows={3}
+                fullWidth
+                maxWidth={"xl"}
+                readOnly
+              />
+            </MDTypography>
+          </li>
+        ))}
+      </ul>
+      <div className="flex gap-4 p-2 border-y">
+        ⤷
+        <MDInput label={"답변작성"} multiline rows={3} fullWidth={true} maxWidth={"xl"} />
+        <IconButton aria-label="send response" onClick={handleEditNoteIconClick}>
+          <EditNoteIcon />
+        </IconButton>
+      </div>
+    </>
+  );
+};
 
 export default function data() {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
-
   const datas = [
     {
       reviewId: 1,
@@ -125,103 +148,41 @@ export default function data() {
       ],
     },
   ];
+  const [rowData, setRowData] = useState(datas[0]);
+  const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
+  const [anchorEls, setAnchorEls] = useState(Array(datas.length).fill(null));
+  const [dialogs, setDialogs] = useState(Array(datas.length).fill(false));
+  const [dialogType, setDialogType] = useState(null);
 
-  const [rowData, setRowData] = useState(datas[0]); // 수정할 행의 데이터
-  const [editDialogs, setEditDialogs] = useState(Array(datas.length).fill(false));
-  const [responseDialogs, setResponseDialogs] = useState(Array(datas.length).fill(false));
+  const handleClick = (event, index) => {
+    const newAnchorEls = [...anchorEls];
+    newAnchorEls[index] = event.currentTarget;
+    setAnchorEls(newAnchorEls);
+    setDialogAnchorEl(index);
 
-  const handleClick = (event, index, reviewId = null) => {
-    setAnchorEl(event.currentTarget);
-
-    if (reviewId) {
-      console.log("reviewId", reviewId);
-      const foundIndex = datas.findIndex((data) => data.reviewId === reviewId);
-      if (foundIndex !== -1) {
-        setDialogAnchorEl(foundIndex);
-        setRowData(datas[foundIndex]);
-      } else {
-        console.error("해당 상품을 찾는 것에 실패하였습니다.");
-      }
-    } else {
-      setDialogAnchorEl(index);
-      setRowData(datas[index]);
-    }
+    setRowData(datas[index]);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorEls(Array(datas.length).fill(null));
   };
 
-  const handleEdit = () => {
-    setEditDialogs((prevState) => ({
+  const handleDialog = (type) => {
+    setDialogType(type);
+    setDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: true,
     }));
     handleClose();
   };
 
-  const handleResponse = () => {
-    setResponseDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: true,
-    }));
-    handleClose();
-  };
-
-  const handleBestToggle = () => {
-    // datas[dialogAnchorEl].isBest = !datas[dialogAnchorEl].isBest;
-    handleClose();
-  };
-
-  const handleDelete = () => {
-    handleClose();
-    // 삭제 동작을 수행하는 함수 호출
-    console.log("Delete clicked", dialogAnchorEl);
-  };
-
-  const handleEditDialogClose = () => {
-    setEditDialogs((prevState) => ({
+  const handleDialogClose = () => {
+    setDialogType(null);
+    setDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: false,
     }));
     setDialogAnchorEl(null);
-  };
-
-  const handleEditDialogSubmit = () => {
-    // 수정 동작을 수행하는 함수 호출
-    console.log("Edit submitted:");
-    setEditDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: false,
-    }));
-    setDialogAnchorEl(null);
-  };
-
-  const handleResponseDialogClose = () => {
-    setResponseDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: false,
-    }));
-    setDialogAnchorEl(null);
-  };
-
-  const handleResponseDialogSubmit = () => {
-    // 답변 등록 동작을 수행하는 함수 호출
-    console.log("Edit submitted:");
-    setResponseDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: false,
-    }));
-    setDialogAnchorEl(null);
-  };
-
-  const formatText = (text) => {
-    return text.split("\n").map((line, index) => (
-      <React.Fragment key={index}>
-        {line}
-        <br />
-      </React.Fragment>
-    ));
   };
 
   const ExpandableText = ({ text, maxLength }) => {
@@ -252,22 +213,10 @@ export default function data() {
     },
     { Header: "별점", accessor: "score", align: "center" },
     { Header: "작성일", accessor: "reviewDate", align: "center" },
-    { Header: "Best 리뷰 여부", accessor: "isBest", align: "center" },
+    { Header: "Best", accessor: "isBest", align: "center" },
     { Header: "orderNumber", accessor: "orderNumber", align: "center" },
     { Header: "action", accessor: "action", align: "center" },
   ];
-
-  const { completedReview, missingReview } = datas.reduce(
-    (acc, data) => {
-      if (data.response.length > 0) {
-        acc.completedReview.push(data);
-      } else {
-        acc.missingReview.push(data);
-      }
-      return acc;
-    },
-    { completedReview: [], missingReview: [] }
-  );
 
   const transformDataForReview = (datas) => {
     return datas.map((data, index) => ({
@@ -285,73 +234,58 @@ export default function data() {
           <IconButton
             aria-label="more"
             onClick={(e) => {
-              handleClick(e, index, data.reviewId);
+              handleClick(e, index);
             }}
           >
             <MoreVert />
           </IconButton>
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-            <MenuItem onClick={handleResponse}>답변 달기</MenuItem>
-            <MenuItem onClick={handleBestToggle}>
+          <Menu anchorEl={anchorEls[index]} open={Boolean(anchorEls[index])} onClose={handleClose}>
+            <MenuItem
+              onClick={() => {
+                handleDialog("response");
+              }}
+            >
+              답변 달기
+            </MenuItem>
+            <MenuItem onClick={handleClose}>상세 정보</MenuItem>
+            <MenuItem onClick={handleClose}>
               {rowData.isBest ? "Best 리뷰 해제" : "Best 리뷰 등록"}
             </MenuItem>
-            <MenuItem onClick={handleDelete}>삭제</MenuItem>
           </Menu>
-          <Dialog
-            open={responseDialogs[dialogAnchorEl]}
-            onClose={handleResponseDialogClose}
-            fullWidth={true}
-            maxWidth={"xl"}
-          >
-            <DialogContent>
-              {rowData && (
-                <Card>
-                  <MDBox
-                    mx={2}
-                    mt={-3}
-                    py={3}
-                    px={2}
-                    variant="gradient"
-                    bgColor="info"
-                    borderRadius="lg"
-                    coloredShadow="info"
-                  >
-                    <MDTypography variant="h6" color="white">
-                      관리자 답변 등록
-                    </MDTypography>
-                  </MDBox>
-                  <MDBox pt={3}>
-                    <MDTypography variant="h6" m={2}>
-                      {rowData.contents}
-                    </MDTypography>
-                    <MDInput
-                      label="관리자 답변"
-                      multiline
-                      rows={5}
-                      fullWidth={true}
-                      maxWidth={"xl"}
-                    />
-                  </MDBox>
-                </Card>
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleResponseDialogClose}>취소</Button>
-              <Button onClick={handleResponseDialogSubmit}>등록</Button>
-            </DialogActions>
-          </Dialog>
+          <ReviewResponseDialog
+            rowData={rowData}
+            setRowData={setRowData}
+            isOpen={dialogs[index] && dialogType === "response"}
+            onClose={handleDialogClose}
+          />
         </>
       ),
     }));
   };
 
+  const transformedData = transformDataForReview(datas);
+
+  const { completedReview, missingReview } = transformedData.reduce(
+    (acc, data) => {
+      if (data.response.length > 0) {
+        acc.completedReview.push(data);
+      } else {
+        acc.missingReview.push(data);
+      }
+      return acc;
+    },
+    { completedReview: [], missingReview: [] }
+  );
+
   return {
     columns: dataColumns,
 
-    rows: transformDataForReview(completedReview),
+    rows: completedReview,
 
     missingColumns: dataColumns,
 
-    missingRows: transformDataForReview(missingReview),
+    missingRows: missingReview,
+
+    expanded: expandedContent,
   };
 }

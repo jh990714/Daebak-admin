@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
@@ -6,7 +8,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 import reviewTableData from "layouts/tables/reviewTable/data/reviewTableData";
-import { ReviewCustomTable } from "./reviewCustomTable";
+import DataTable from "examples/Tables/DataTable";
 
 function ReviewTable() {
   const {
@@ -14,7 +16,13 @@ function ReviewTable() {
     rows: completedReviewRows,
     missingColumns: missingReviewColumns,
     missingRows: missingReviewRows,
+    expanded: expanded,
   } = reviewTableData();
+
+  const [pageIndex, setPageIndex] = useState(0);
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
+  };
 
   return (
     <>
@@ -35,7 +43,17 @@ function ReviewTable() {
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <ReviewCustomTable columns={missingReviewColumns} rows={missingReviewRows} />
+            <DataTable
+              canSearch={true}
+              table={{ columns: missingReviewColumns, rows: missingReviewRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
+              defaultPage={pageIndex}
+              onPageChange={handlePageChange}
+              expanded={expanded}
+            />
           </MDBox>
         </Card>
       </Grid>
@@ -56,7 +74,17 @@ function ReviewTable() {
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <ReviewCustomTable columns={completedReviewColumns} rows={completedReviewRows} />
+            <DataTable
+              canSearch={true}
+              table={{ columns: completedReviewColumns, rows: completedReviewRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
+              defaultPage={pageIndex}
+              onPageChange={handlePageChange}
+              expanded={expanded}
+            />
           </MDBox>
         </Card>
       </Grid>

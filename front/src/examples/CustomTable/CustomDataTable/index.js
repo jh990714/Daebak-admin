@@ -32,7 +32,6 @@ import Autocomplete from "@mui/material/Autocomplete";
 import IconButton from "@mui/material/IconButton";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import EditNoteIcon from "@mui/icons-material/EditNote";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -52,8 +51,7 @@ function CustomDataTable({
   pagination,
   isSorted,
   noEndBorder,
-  handleDataChange,
-  handleSubmit,
+  expanded,
 }) {
   console.log(table);
   const defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : 10;
@@ -65,7 +63,7 @@ function CustomDataTable({
 
   const [expandedRows, setExpandedRows] = useState(false);
 
-  const toggleResponseForRow = (rowIndex) => {
+  const toggleResponseForRow = () => {
     setExpandedRows(!expandedRows);
   };
 
@@ -209,7 +207,7 @@ function CustomDataTable({
         <MDBox component="thead">
           {headerGroups.map((headerGroup, key) => (
             <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
-              <DataTableBodyCell>{renderToggleButtons()}</DataTableBodyCell>
+              {expanded && <DataTableBodyCell>{renderToggleButtons()}</DataTableBodyCell>}
               {headerGroup.headers.map((column, idx) => (
                 <DataTableHeadCell
                   key={idx}
@@ -231,7 +229,7 @@ function CustomDataTable({
             return (
               <>
                 <TableRow key={key} {...row.getRowProps()}>
-                  <DataTableBodyCell></DataTableBodyCell>
+                  {expanded && <DataTableBodyCell></DataTableBodyCell>}
                   {row.cells.map((cell, idx) => (
                     <DataTableBodyCell
                       key={idx}
@@ -243,44 +241,9 @@ function CustomDataTable({
                     </DataTableBodyCell>
                   ))}
                 </TableRow>
-                {expandedRows && (
+                {expanded && expandedRows && (
                   <tr className="border-y">
-                    <td colSpan={row.cells.length + 1}>
-                      <ul className="mb-4 p-2 overflow-y-auto max-h-60 gap-y-2">
-                        {row.original.response.map((res, index) => (
-                          <li key={index} className="flex mb-4 gap-4">
-                            ⤷
-                            <MDTypography width={"100%"} display="flex" flexDirection="column">
-                              <span className="text-sm">
-                                {new Date(res.responseDate).toLocaleString()}
-                              </span>
-                              <MDInput
-                                value={res.responseText}
-                                multiline
-                                rows={3}
-                                fullWidth
-                                maxWidth={"xl"}
-                                readOnly
-                              />
-                            </MDTypography>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="flex gap-4 p-2 border">
-                        ⤷
-                        <MDInput
-                          label={"답변작성"}
-                          multiline
-                          rows={3}
-                          fullWidth={true}
-                          maxWidth={"xl"}
-                          onChange={handleDataChange}
-                        />
-                        <IconButton aria-label="send response" onClick={handleSubmit}>
-                          <EditNoteIcon />
-                        </IconButton>
-                      </div>
-                    </td>
+                    <td colSpan={row.cells.length + 1}>{expanded(row.original)}</td>
                   </tr>
                 )}
               </>
@@ -346,6 +309,7 @@ CustomDataTable.defaultProps = {
   noEndBorder: false,
   handleDataChange: () => {},
   handleSubmit: () => {},
+  expanded: null,
 };
 // Typechecking props for the DataTable
 CustomDataTable.propTypes = {
@@ -379,6 +343,7 @@ CustomDataTable.propTypes = {
   noEndBorder: PropTypes.bool,
   handleDataChange: PropTypes.func,
   handleSubmit: PropTypes.func,
+  expanded: PropTypes.element,
 };
 
 export default CustomDataTable;

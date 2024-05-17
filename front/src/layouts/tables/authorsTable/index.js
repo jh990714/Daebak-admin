@@ -11,16 +11,18 @@ import MDButton from "components/MDButton";
 import authorsTableData from "layouts/tables/authorsTable/data/authorsTableData";
 import { AddCouponDialog } from "./dialog/addCouponDialog";
 import { AddPointsDialog } from "./dialog/addPointsDialog";
+import DataTable from "examples/Tables/DataTable";
+import { useSelector } from "react-redux";
 
 function AuthorsTable() {
-  const { columns, rows } = authorsTableData();
-  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const { dataColumns: columns, dataRows: rows } = authorsTableData();
   const [addPointsSelectRows, setAddPointsSelectRows] = useState(false);
   const [addCouponSelectRows, setAddCouponSelectRows] = useState(false);
+  const [pageIndex, setPageIndex] = useState(0);
+  const { status } = useSelector((state) => state.members);
 
-  const handleRowSelectionModel = (newRowSelectionModel) => {
-    console.log(newRowSelectionModel);
-    setRowSelectionModel(newRowSelectionModel);
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
   };
 
   const handleShowAddPointsDialog = () => {
@@ -30,6 +32,10 @@ function AuthorsTable() {
   const handleShowAddCouponDialog = () => {
     setAddCouponSelectRows(!addCouponSelectRows);
   };
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Grid item xs={12}>
@@ -65,21 +71,20 @@ function AuthorsTable() {
           </MDTypography>
         </MDBox>
         <MDBox p={3}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 5 } },
-            }}
-            pageSizeOptions={[5, 10, 25]}
-            checkboxSelection
-            disableRowSelectionOnClick
-            onRowSelectionModelChange={handleRowSelectionModel}
-            rowSelectionModel={rowSelectionModel}
+          <DataTable
+            table={{ columns: columns, rows: rows }}
+            isSorted={true}
+            entriesPerPage={true}
+            pagination={{ variant: "gradient", color: "info" }}
+            showTotalEntries={true}
+            canSearch={true}
+            noEndBorder
+            defaultPage={pageIndex}
+            onPageChange={handlePageChange}
           />
         </MDBox>
       </Card>
-      <AddCouponDialog
+      {/* <AddCouponDialog
         selectRows={rowSelectionModel}
         isOpen={addCouponSelectRows}
         onClose={() => setAddCouponSelectRows(!addCouponSelectRows)}
@@ -88,7 +93,7 @@ function AuthorsTable() {
         selectRows={rowSelectionModel}
         isOpen={addPointsSelectRows}
         onClose={() => setAddPointsSelectRows(!addPointsSelectRows)}
-      />
+      /> */}
     </Grid>
   );
 }

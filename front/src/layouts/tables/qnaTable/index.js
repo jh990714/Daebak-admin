@@ -10,6 +10,7 @@ import MDTypography from "components/MDTypography";
 
 import qnaTableData from "./data/qnaTableData";
 import { qnaTableDataGrid } from "./data/qnaTableDataGrid";
+import DataTable from "examples/Tables/DataTable";
 
 function QnaTable() {
   const {
@@ -17,13 +18,12 @@ function QnaTable() {
     rows: completedQnawRows,
     missingColumns: missingQnawColumns,
     missingRows: missingQnawRows,
-  } = qnaTableDataGrid();
+    expanded: expanded,
+  } = qnaTableData();
 
-  const [rowSelectionModel, setRowSelectionModel] = useState([]);
-
-  const handleRowSelectionModel = (newRowSelectionModel) => {
-    console.log(newRowSelectionModel);
-    setRowSelectionModel(newRowSelectionModel);
+  const [pageIndex, setPageIndex] = useState(0);
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
   };
 
   return (
@@ -44,18 +44,17 @@ function QnaTable() {
               Q&A (답변 미등록)
             </MDTypography>
           </MDBox>
-          <MDBox p={3}>
-            <DataGrid
-              rows={missingQnawRows}
-              columns={missingQnawColumns}
-              autoHeight
-              initialState={{
-                pagination: { paginationModel: { pageSize: 5 } },
-              }}
-              pageSizeOptions={[5, 10, 25]}
-              disableRowSelectionOnClick
-              onRowSelectionModelChange={handleRowSelectionModel}
-              rowSelectionModel={rowSelectionModel}
+          <MDBox pt={3}>
+            <DataTable
+              canSearch={true}
+              table={{ columns: missingQnawColumns, rows: missingQnawRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
+              defaultPage={pageIndex}
+              onPageChange={handlePageChange}
+              expanded={expanded}
             />
           </MDBox>
         </Card>
@@ -76,18 +75,17 @@ function QnaTable() {
               Q&A (답변 등록 완료)
             </MDTypography>
           </MDBox>
-          <MDBox p={3}>
-            <DataGrid
-              rows={completedQnawRows}
-              columns={completedQnaColumns}
-              rowHeight={100}
-              initialState={{
-                pagination: { paginationModel: { pageSize: 5 } },
-              }}
-              pageSizeOptions={[5, 10, 25]}
-              disableRowSelectionOnClick
-              onRowSelectionModelChange={handleRowSelectionModel}
-              rowSelectionModel={rowSelectionModel}
+          <MDBox pt={3}>
+            <DataTable
+              canSearch={true}
+              table={{ columns: completedQnaColumns, rows: completedQnawRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
+              defaultPage={pageIndex}
+              onPageChange={handlePageChange}
+              expanded={expanded}
             />
           </MDBox>
         </Card>

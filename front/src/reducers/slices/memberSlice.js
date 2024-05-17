@@ -3,10 +3,9 @@ import axios from "axios";
 import authorsDatas from "layouts/tables/authorsTable/data/authorsData";
 
 export const fetchMembers = createAsyncThunk("members/fetchMembers", async () => {
-  // const response = await axios.get("http://localhost:8080/member/getMembers");
+  const response = await axios.get("http://localhost:8080/member/getMembers");
 
-  // return response.data;
-  return authorsDatas;
+  return response.data;
 });
 
 const memberSlice = createSlice({

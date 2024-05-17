@@ -14,11 +14,12 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
+import datas from "layouts/tables/categoryTable/data/categoryDatas";
 import ProductsTableData from "./productsTableData";
 import { useSelector } from "react-redux";
 
 export default function data() {
-  const products = useSelector((state) => state.products.products);
+  const products = datas;
   const { customDatas } = products.reduce(
     (acc, data) => {
       if (data.recommended === true) {

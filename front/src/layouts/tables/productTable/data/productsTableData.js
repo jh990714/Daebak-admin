@@ -43,8 +43,8 @@ const ProductsTableData = ({ customDatas }) => {
     const newAnchorEls = [...anchorEls];
     newAnchorEls[index] = event.currentTarget;
     setAnchorEls(newAnchorEls);
-    // setDialogAnchorEl(index);
-    // setRowData(customDatas[index]);
+    setDialogAnchorEl(index);
+    setRowData(customDatas[index]);
   };
 
   const handleClose = () => {

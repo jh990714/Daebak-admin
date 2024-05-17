@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import CustomDataTable from "examples/CustomTable/CustomDataTable";
 
-export const ReviewCustomTable = ({ columns, rows }) => {
+export const ReviewCustomTable = ({ columns, rows, expanded }) => {
   const [data, setData] = useState();
   const handleSubmit = () => {
     console.log(data);
@@ -21,6 +21,7 @@ export const ReviewCustomTable = ({ columns, rows }) => {
       noEndBorder
       handleDataChange={handleDataChange}
       handleSubmit={handleSubmit}
+      expanded={expanded}
     />
   );
 };
@@ -28,4 +29,9 @@ export const ReviewCustomTable = ({ columns, rows }) => {
 ReviewCustomTable.propTypes = {
   columns: PropTypes.array.isRequired,
   rows: PropTypes.array.isRequired,
+  expanded: PropTypes.element,
+};
+
+ReviewCustomTable.defaultType = {
+  expanded: null,
 };

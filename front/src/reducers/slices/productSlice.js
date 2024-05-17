@@ -1,15 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import datas from "layouts/tables/productTable/data/datas";
 
+// fetchProducts 액션 정의
 export const fetchProducts = createAsyncThunk("products/fetchProducts", async () => {
-  const response = await axios.get("http://localhost:8080/product/getProducts");
-  console.log("productResponse");
-
-  return response.data;
-  // return datas;
+  try {
+    const response = await axios.get("http://localhost:8080/product/getProducts");
+    console.log("productResponse");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error; // 에러를 던져서 rejected 상태로 전환
+  }
 });
 
+// productSlice 정의
 const productSlice = createSlice({
   name: "products",
   initialState: {
@@ -26,7 +30,6 @@ const productSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.products = action.payload;
-        console.log("dd", state.products);
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.status = "failed";

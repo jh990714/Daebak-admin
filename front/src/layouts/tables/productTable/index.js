@@ -13,27 +13,34 @@ import DataTable from "examples/Tables/DataTable";
 import productByCategoryTableData from "layouts/tables/productTable/data/productByCategoryTableData";
 import recommendedProductsTableData from "layouts/tables/productTable/data/recommendedProductsTableData";
 import productDealsTableData from "layouts/tables/productTable/data/productDealsTableData";
+import { useSelector } from "react-redux";
 
 function ProductTable() {
   const [showProductDeal, setShowProductDeal] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
-
+  const [pageIndex, setPageIndex] = useState(0);
   const { columns: productsColumns, rows: productsRows } = productByCategoryTableData();
-  // const { columns: recommendedProductsColumns, rows: recommendedProductsRows } =
-  //   recommendedProductsTableData();
+  const { products, status } = useSelector((state) => state.products);
+
+  const handleAddProduct = () => {
+    setShowProduct(!showProduct);
+  };
+
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
+  };
+
+  const { columns: recommendedProductsColumns, rows: recommendedProductsRows } =
+    recommendedProductsTableData();
   const { columns: productDealsColumns, rows: productDealsRows } = productDealsTableData();
 
   const handleAddProductDeal = () => {
     setShowProductDeal(!showProductDeal);
   };
 
-  const handleAddProduct = () => {
-    setShowProduct(!showProduct);
-  };
-
-  useEffect(() => {
-    console.log("index");
-  }, []);
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -93,7 +100,7 @@ function ProductTable() {
           </MDBox>
           <MDBox pt={3}>
             <DataTable
-              table={{ columns: [], rows: [] }}
+              table={{ columns: recommendedProductsColumns, rows: recommendedProductsRows }}
               isSorted={false}
               entriesPerPage={false}
               showTotalEntries={false}
@@ -138,6 +145,8 @@ function ProductTable() {
               showTotalEntries={true}
               canSearch={true}
               noEndBorder
+              defaultPage={pageIndex}
+              onPageChange={handlePageChange}
             />
           </MDBox>
         </Card>

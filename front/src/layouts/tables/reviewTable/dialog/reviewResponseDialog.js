@@ -12,7 +12,7 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import { RenderTextLines } from "util/renderTextLines";
 
-export const ResponseDialog = ({ rowData, setRowData, isOpen, onClose }) => {
+export const ReviewResponseDialog = ({ rowData, setRowData, isOpen, onClose }) => {
   return (
     <Dialog open={isOpen} onClose={onClose} fullWidth={true} maxWidth={"xl"}>
       <DialogContent>
@@ -34,19 +34,19 @@ export const ResponseDialog = ({ rowData, setRowData, isOpen, onClose }) => {
           <MDBox pt={3} gap={3}>
             <MDBox px={1} pb={3} style={{ maxHeight: "200px", overflowY: "auto" }}>
               <MDTypography variant="h6" m={2}>
-                {RenderTextLines(rowData.question.question)}
+                {RenderTextLines(rowData.contents)}
               </MDTypography>
             </MDBox>
             <MDBox px={5} pb={3}>
-              {rowData.answer.map((answer) => (
-                <MDBox display="flex" key={answer.answerId} gap={2}>
+              {rowData.response.map((response) => (
+                <MDBox display="flex" key={response.responseId} gap={2}>
                   <MDTypography>⤷</MDTypography>
                   <MDTypography width={"100%"}>
                     <span className="text-sm">
-                      {new Date(answer.responseDate).toLocaleString()}
+                      {new Date(response.responseDate).toLocaleString()}
                     </span>
                     <MDInput
-                      value={answer.responseText}
+                      value={response.responseText}
                       multiline
                       rows={3}
                       fullWidth
@@ -69,14 +69,14 @@ export const ResponseDialog = ({ rowData, setRowData, isOpen, onClose }) => {
   );
 };
 
-ResponseDialog.propTypes = {
+ReviewResponseDialog.propTypes = {
   rowData: PropTypes.object,
   setRowData: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-ResponseDialog.defaultProps = {
+ReviewResponseDialog.defaultProps = {
   rowData: null,
   setRowData: () => {},
 };
