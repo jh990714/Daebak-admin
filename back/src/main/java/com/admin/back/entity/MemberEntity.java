@@ -3,6 +3,7 @@ package com.admin.back.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 
 import jakarta.persistence.Entity;
@@ -59,18 +60,23 @@ public class MemberEntity {
     @Column(name = "role")
     private String role;
 
-    @OneToMany(mappedBy="member")
+    @OneToMany(mappedBy="member", cascade = CascadeType.REMOVE)
     private Set<MemberCouponEntity> memberCoupons = new HashSet<>();
 
     @OneToOne(mappedBy="member")
     private MemberPointsEntity memberPoints;
+
+    public void updateMemberCoupons(Set<MemberCouponEntity> newMemberCoupons) {
+        this.memberCoupons.clear();
+        newMemberCoupons.forEach(this::addCoupon);
+    }
 
     public void addCoupon(MemberCouponEntity memberCoupon) {
         this.memberCoupons.add(memberCoupon);
         memberCoupon.setMember(this);
     }
 
-    public void removeMemberCoupon(MemberCouponEntity memberCoupon) {
+    public void removeCoupon(MemberCouponEntity memberCoupon) {
         this.memberCoupons.remove(memberCoupon);
         memberCoupon.setMember(null);
     }
