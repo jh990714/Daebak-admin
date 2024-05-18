@@ -34,11 +34,11 @@ export const ResponseDialog = ({ rowData, setRowData, isOpen, onClose }) => {
           <MDBox pt={3} gap={3}>
             <MDBox px={1} pb={3} style={{ maxHeight: "200px", overflowY: "auto" }}>
               <MDTypography variant="h6" m={2}>
-                {RenderTextLines(rowData.question.question)}
+                {RenderTextLines(rowData.question)}
               </MDTypography>
             </MDBox>
             <MDBox px={5} pb={3}>
-              {rowData.answer.map((answer) => (
+              {rowData.answers.map((answer) => (
                 <MDBox display="flex" key={answer.answerId} gap={2}>
                   <MDTypography>⤷</MDTypography>
                   <MDTypography width={"100%"}>
