@@ -7,16 +7,16 @@ import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import DataTable from "examples/Tables/DataTable";
 
-import missingReviewData from "./data/missingReviewData";
+import reviewMissingData from "./data/reviewMissingData";
 
-export const MissingReviewTable = () => {
+export const ReviewMissingTable = () => {
   const [pageIndex, setPageIndex] = useState(0);
 
   const {
     columns: missingReviewColumns,
     rows: missingReviewRows,
     expanded: expanded,
-  } = missingReviewData();
+  } = reviewMissingData();
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);

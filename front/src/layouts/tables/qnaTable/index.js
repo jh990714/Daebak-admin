@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { CompletedQnaTable } from "./completedQnaTable";
-import { MissingQnaTable } from "./missingQnaTable";
+import { QnaCompletedTable } from "./qnaCompletedTable";
+import { QnaMissingTable } from "./qnaMissingTable";
 
 function QnaTable() {
   return (
     <>
-      <MissingQnaTable />
-      <CompletedQnaTable />
+      <QnaMissingTable />
+      <QnaCompletedTable />
     </>
   );
 }

@@ -7,12 +7,12 @@ import MDButton from "components/MDButton";
 
 import DataTable from "examples/Tables/DataTable";
 
-import productDealsTableData from "./data/productDealsTableData";
+import productDealData from "./data/productDealData";
 
-export const DealProductTable = () => {
+export const ProductDealTable = () => {
   const [showProductDeal, setShowProductDeal] = useState(false);
 
-  const { columns: productDealsColumns, rows: productDealsRows } = productDealsTableData();
+  const { columns: productDealsColumns, rows: productDealsRows } = productDealData();
 
   const handleAddProductDeal = () => {
     setShowProductDeal(!showProductDeal);

@@ -9,13 +9,13 @@ import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import DataTable from "examples/Tables/DataTable";
 
-import allProductData from "./data/allProductData";
+import ProductAllData from "./data/ProductAllData";
 
-export const AllProductTable = () => {
+export const ProductAllTable = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [showProduct, setShowProduct] = useState(false);
 
-  const { columns: productsColumns, rows: productsRows } = allProductData();
+  const { columns: productsColumns, rows: productsRows } = ProductAllData();
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);

@@ -1,17 +1,12 @@
 import { useState } from "react";
-import { CompletedReviewTable } from "./completedReviewTable";
-import { MissingReviewTable } from "./missingReviewTable";
+import { ReviewCompletedTable } from "./reviewCompletedTable";
+import { ReviewMissingTable } from "./reviewMissingTable";
 
 function ReviewTable() {
-  const [pageIndex, setPageIndex] = useState(0);
-  const handlePageChange = (newPageIndex) => {
-    setPageIndex(newPageIndex);
-  };
-
   return (
     <>
-      <MissingReviewTable />
-      <CompletedReviewTable />
+      <ReviewMissingTable />
+      <ReviewCompletedTable />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
-import { AllProductTable } from "./allProductTable";
-import { RecommendedProductTable } from "./recommendedProductTable";
-import { DealProductTable } from "./dealProductTable";
+import { ProductAllTable } from "./productAllTable";
+import { ProductRecommendedTable } from "./productRecommendedTable";
+import { ProductDealTable } from "./productDealTable";
 
 function ProductTable() {
   const { status } = useSelector((state) => state.products);
@@ -12,9 +12,9 @@ function ProductTable() {
 
   return (
     <>
-      <DealProductTable />
-      <RecommendedProductTable />
-      <AllProductTable />
+      <ProductDealTable />
+      <ProductRecommendedTable />
+      <ProductAllTable />
     </>
   );
 }

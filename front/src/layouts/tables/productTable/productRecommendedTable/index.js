@@ -7,13 +7,13 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
 
-import recommendedProductsTableData from "./data/recommendedProductsTableData";
+import productRecommendedData from "./data/productRecommendedData";
 
-export const RecommendedProductTable = () => {
+export const ProductRecommendedTable = () => {
   const [pageIndex, setPageIndex] = useState(0);
 
   const { columns: recommendedProductsColumns, rows: recommendedProductsRows } =
-    recommendedProductsTableData();
+    productRecommendedData();
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);

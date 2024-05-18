@@ -5,16 +5,16 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
 
-import completedQnaData from "./data/completedQnaData";
+import qnaCompletedData from "./data/qnaCompletedData";
 
-export const CompletedQnaTable = () => {
+export const QnaCompletedTable = () => {
   const [pageIndex, setPageIndex] = useState(0);
 
   const {
     columns: completedQnaColumns,
     rows: completedQnaRows,
     expanded: expanded,
-  } = completedQnaData();
+  } = qnaCompletedData();
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);

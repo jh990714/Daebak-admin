@@ -1,20 +1,27 @@
 import { React, useState } from "react";
+
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-import MDBox from "components/MDBox";
+
 import MDTypography from "components/MDTypography";
+import MDBox from "components/MDBox";
 import DataTable from "examples/Tables/DataTable";
 
-import missingQnaData from "./data/missingQnaData";
+import reviewCompletedData from "./data/reviewCompletedData";
 
-export const MissingQnaTable = () => {
+export const ReviewCompletedTable = () => {
   const [pageIndex, setPageIndex] = useState(0);
 
-  const { columns: missingQnaColumns, rows: missingQnaRows, expanded: expanded } = missingQnaData();
+  const {
+    columns: completedReviewColumns,
+    rows: completedReviewRows,
+    expanded: expanded,
+  } = reviewCompletedData();
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
   };
+
   return (
     <Grid item xs={12}>
       <Card>
@@ -24,18 +31,18 @@ export const MissingQnaTable = () => {
           py={3}
           px={2}
           variant="gradient"
-          bgColor="warning"
+          bgColor="info"
           borderRadius="lg"
-          coloredShadow="warning"
+          coloredShadow="info"
         >
           <MDTypography variant="h6" color="white">
-            Q&A (답변 미등록)
+            상품 후기 (답변 등록 완료)
           </MDTypography>
         </MDBox>
         <MDBox pt={3}>
           <DataTable
             canSearch={true}
-            table={{ columns: missingQnaColumns, rows: missingQnaRows }}
+            table={{ columns: completedReviewColumns, rows: completedReviewRows }}
             isSorted={true}
             entriesPerPage={true}
             showTotalEntries={true}
