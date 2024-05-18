@@ -46,9 +46,9 @@ function ReviewTable() {
             <DataTable
               canSearch={true}
               table={{ columns: missingReviewColumns, rows: missingReviewRows }}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
+              isSorted={true}
+              entriesPerPage={true}
+              showTotalEntries={true}
               noEndBorder
               defaultPage={pageIndex}
               onPageChange={handlePageChange}
@@ -77,9 +77,9 @@ function ReviewTable() {
             <DataTable
               canSearch={true}
               table={{ columns: completedReviewColumns, rows: completedReviewRows }}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
+              isSorted={true}
+              entriesPerPage={true}
+              showTotalEntries={true}
               noEndBorder
               defaultPage={pageIndex}
               onPageChange={handlePageChange}
