@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { DataGrid } from "@mui/x-data-grid";
 
 export default function authorsTableData() {
-  const { members } = useSelector((state) => state.members);
+  const { members, status } = useSelector((state) => state.members);
 
   const Author = ({ image, name, id }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>

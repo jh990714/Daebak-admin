@@ -70,8 +70,7 @@ public class MemberServiceImpl implements MemberService{
             MemberEntity memberEntity = optionalMemberEntity.get();
     
             memberCouponRepository.deleteByMember(memberEntity);
-    
-            // Map and save new member coupons
+
             Set<MemberCouponEntity> memberCoupons = memberDto.getMemberCoupons().stream()
                     .map(memberCouponDto -> memberMapper.toEntity(memberCouponDto))
                     .collect(Collectors.toSet());
@@ -79,10 +78,8 @@ public class MemberServiceImpl implements MemberService{
             memberCoupons.forEach(memberCoupon -> memberCoupon.setMember(memberEntity));
             memberCouponRepository.saveAll(memberCoupons);
     
-            // Map the updated memberEntity back to MemberDto
             return memberDto;
         } else {
-            // 해당 memberId를 가진 멤버를 찾을 수 없을 경우 예외 처리
             throw new IllegalArgumentException("Member with id " + memberDto.getMemberId() + " not found");
         }
     }

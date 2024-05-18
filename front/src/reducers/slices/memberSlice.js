@@ -9,6 +9,11 @@ export const fetchMembers = createAsyncThunk("members/fetchMembers", async () =>
 });
 
 export const saveMember = createAsyncThunk("members/saveMember", async (memberData) => {
+  const response = await axios.put(`http://localhost:8080/member/update`, memberData);
+  return response.data;
+});
+
+export const saveMemberCoupon = createAsyncThunk("members/saveMemberCoupon", async (memberData) => {
   const response = await axios.put(`http://localhost:8080/member/updateCoupon`, memberData);
   return response.data;
 });
@@ -45,6 +50,19 @@ const memberSlice = createSlice({
         );
       })
       .addCase(saveMember.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(saveMemberCoupon.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(saveMemberCoupon.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.members = state.members.map((member) =>
+          member.id === action.payload.id ? action.payload : member
+        );
+      })
+      .addCase(saveMemberCoupon.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });
