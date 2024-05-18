@@ -132,10 +132,10 @@ export default function data({ customDatas }) {
 
   const transformDataForQna = (customDatas) => {
     return customDatas.map((data, index) => ({
-      memberName: data.question.name,
-      question: data.question.question,
-      qnaDate: new Date(data.question.createdAt).toLocaleString(),
-      answer: data.answer,
+      memberName: data.name,
+      question: data.question,
+      qnaDate: new Date(data.createdAt).toLocaleString(),
+      answer: data.answers,
       action: (
         <>
           <IconButton
@@ -166,18 +166,6 @@ export default function data({ customDatas }) {
       ),
     }));
   };
-
-  // const { completedQna, missingQna } = transformedData.reduce(
-  //   (acc, data) => {
-  //     if (data.answer.length > 0) {
-  //       acc.completedQna.push(data);
-  //     } else {
-  //       acc.missingQna.push(data);
-  //     }
-  //     return acc;
-  //   },
-  //   { completedQna: [], missingQna: [] }
-  // );
 
   return {
     columns: dataColumns,
