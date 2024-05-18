@@ -1,9 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import ProductsTableData from "./productsTableData";
-import { fetchProducts } from "reducers/slices/productSlice";
-import datas from "./datas";
+import ProductsTableData from "../../data/productsTableData";
 
 export default function data(category = null) {
   const { products } = useSelector((state) => state.products);

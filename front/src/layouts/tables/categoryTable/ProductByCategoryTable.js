@@ -11,7 +11,7 @@ import MDTypography from "components/MDTypography";
 
 import DataTable from "examples/Tables/DataTable";
 
-import productByCategoryTableData from "layouts/tables/productTable/data/productByCategoryTableData";
+import productByCategoryTableData from "layouts/tables/productTable/productAllTable/data/ProductAllData";
 
 export const ProductByCategoryTable = ({ category }) => {
   const { columns: productsColumns, rows: productsRows } = productByCategoryTableData(category);

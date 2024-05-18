@@ -639,7 +639,7 @@ const authorsDatas = [
     coupons: "1",
     employed: "2023/12/30",
   },
-    {
+  {
     id: 1,
     author: { name: "홍길동", id: "naver_hong123" },
     email: "hong123@gmail.com",

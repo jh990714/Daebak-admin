@@ -81,9 +81,9 @@ export const ProductEditDialog = ({
                       <MDInput
                         type="text"
                         label="상품명"
-                        value={rowData?.productName}
+                        value={rowData?.name}
                         onChange={(e) => {
-                          const newData = { ...rowData, productName: e.target.value };
+                          const newData = { ...rowData, name: e.target.value };
                           setRowData(newData);
                         }}
                       />
@@ -169,7 +169,7 @@ ProductEditDialog.propTypes = {
   rowData: PropTypes.arrayOf(
     PropTypes.shape({
       productId: PropTypes.number.isRequired,
-      productName: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
       regularPrice: PropTypes.number.isRequired,
       salePrice: PropTypes.number.isRequired,
       description: PropTypes.string.isRequired,
