@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.admin.back.dto.MemberDto;
 import com.admin.back.entity.MemberCouponEntity;
 import com.admin.back.entity.MemberEntity;
-import com.admin.back.mapper.MemberMapper;
+import com.admin.back.mapper.Mapper;
 import com.admin.back.repository.MemberRepository;
 import com.admin.back.service.service.MemberService;
 
@@ -20,12 +20,12 @@ import lombok.RequiredArgsConstructor;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
-    private final MemberMapper memberMapper;
+    private final Mapper mapper;
 
     public List<MemberDto> getMembers() {
        List<MemberEntity> memberEntities = memberRepository.findAll();
        return memberEntities.stream()
-                .map(memberMapper::toDto)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -33,7 +33,7 @@ public class MemberServiceImpl implements MemberService{
     public MemberDto updateMember(MemberDto memberDto) {
         Optional<MemberEntity> optionalMemberEntity = memberRepository.findById(memberDto.getMemberId());
 
-        MemberEntity updateMember = memberMapper.toEntity(memberDto);
+        MemberEntity updateMember = mapper.toEntity(memberDto);
         System.out.println(updateMember.toString());
         
         if (optionalMemberEntity.isPresent()) {
@@ -46,12 +46,12 @@ public class MemberServiceImpl implements MemberService{
 
             memberEntity.getMemberCoupons().clear();
             memberDto.getMemberCoupons().forEach(couponDto -> {
-                MemberCouponEntity memberCouponEntity = memberMapper.toEntity(couponDto);
+                MemberCouponEntity memberCouponEntity = mapper.toEntity(couponDto);
                 memberEntity.addCoupon(memberCouponEntity);
             });
 
             MemberEntity updatedMemberEntity = memberRepository.save(memberEntity);
-            return memberMapper.toDto(updatedMemberEntity);
+            return mapper.toDto(updatedMemberEntity);
         } else {
             // 해당 memberId를 가진 멤버를 찾을 수 없을 경우 예외 처리
             throw new IllegalArgumentException("Member with id " + memberDto.getMemberId() + " not found");

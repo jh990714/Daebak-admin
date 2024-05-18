@@ -273,7 +273,7 @@ function DataTable({
             color={pagination.color ? pagination.color : "info"}
           >
             {canPreviousPage && (
-              <MDPagination item onClick={() => previousPage()}>
+              <MDPagination item onClick={() => onPageChange(pageIndex - 1)}>
                 <Icon sx={{ fontWeight: "bold" }}>chevron_left</Icon>
               </MDPagination>
             )}
@@ -289,7 +289,7 @@ function DataTable({
               renderPagination
             )}
             {canNextPage && (
-              <MDPagination item onClick={() => nextPage()}>
+              <MDPagination item onClick={() => onPageChange(pageIndex + 1)}>
                 <Icon sx={{ fontWeight: "bold" }}>chevron_right</Icon>
               </MDPagination>
             )}
