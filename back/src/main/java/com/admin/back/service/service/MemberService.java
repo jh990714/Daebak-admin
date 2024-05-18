@@ -10,5 +10,5 @@ public interface MemberService {
 
     MemberDto updateMember(MemberDto member);
 
-    MemberDto deleteMemberCoupon(MemberDto member);
+    MemberDto updateMemberCoupon(MemberDto member);
 }

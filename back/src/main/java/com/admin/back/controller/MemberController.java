@@ -38,9 +38,9 @@ public class MemberController {
         return new ResponseEntity<>(updatedMember, HttpStatus.OK);
     }
 
-    @PutMapping("/deleteCoupon")
-    public ResponseEntity<MemberDto> deleteMemberCoupon(@RequestBody MemberDto member) {
-        MemberDto updatedMember = memberService.deleteMemberCoupon(member);
+    @PutMapping("/updateCoupon")
+    public ResponseEntity<MemberDto> updateMemberCoupon(@RequestBody MemberDto member) {
+        MemberDto updatedMember = memberService.updateMemberCoupon(member);
         return new ResponseEntity<>(updatedMember, HttpStatus.OK);
     }
 }

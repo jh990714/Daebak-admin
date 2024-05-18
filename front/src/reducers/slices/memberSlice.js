@@ -9,7 +9,7 @@ export const fetchMembers = createAsyncThunk("members/fetchMembers", async () =>
 });
 
 export const saveMember = createAsyncThunk("members/saveMember", async (memberData) => {
-  const response = await axios.put(`http://localhost:8080/member/update`, memberData);
+  const response = await axios.put(`http://localhost:8080/member/updateCoupon`, memberData);
   return response.data;
 });
 
