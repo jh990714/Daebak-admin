@@ -20,14 +20,24 @@ import App from "App";
 
 // Material Dashboard 2 React Context Provider
 import { MaterialUIControllerProvider } from "context";
+import CustomizedTables from "layouts/tables/reviewTable/basicTable";
+import store from "reducers/store";
+import { fetchProducts } from "reducers/slices/productSlice";
+import { fetchMembers } from "reducers/slices/memberSlice";
+import { Provider } from "react-redux";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
 
+store.dispatch(fetchProducts());
+store.dispatch(fetchMembers());
+
 root.render(
   <BrowserRouter>
-    <MaterialUIControllerProvider>
-      <App />
-    </MaterialUIControllerProvider>
+    <Provider store={store}>
+      <MaterialUIControllerProvider>
+        <App />
+      </MaterialUIControllerProvider>
+    </Provider>
   </BrowserRouter>
 );

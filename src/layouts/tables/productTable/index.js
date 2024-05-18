@@ -18,6 +18,7 @@ import { ProductAdd } from "layouts/productAdd";
 function ProductTable() {
   const [showProductDeal, setShowProductDeal] = useState(false);
   const [showProduct, setShowProduct] = useState(false);
+  const [pageIndex, setPageIndex] = useState(0);
 
   const { columns: productsColumns, rows: productsRows } = productByCategoryTableData();
   const { columns: recommendedProductsColumns, rows: recommendedProductsRows } =
@@ -31,6 +32,11 @@ function ProductTable() {
   const handleAddProduct = () => {
     setShowProduct(!showProduct);
   };
+
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
+  };
+
   return (
     <>
       <Grid item xs={12}>
@@ -134,6 +140,8 @@ function ProductTable() {
               showTotalEntries={true}
               canSearch={true}
               noEndBorder
+              defaultPage={pageIndex}
+              onPageChange={handlePageChange}
             />
           </MDBox>
         </Card>

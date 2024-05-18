@@ -47,6 +47,8 @@ function DataTable({
   pagination,
   isSorted,
   noEndBorder,
+  defaultPage,
+  onPageChange,
 }) {
   const defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : 10;
   const entries = entriesPerPage.entries
@@ -56,7 +58,7 @@ function DataTable({
   const data = useMemo(() => table.rows, [table]);
 
   const tableInstance = useTable(
-    { columns, data, initialState: { pageIndex: 0 } },
+    { columns, data, initialState: { pageIndex: defaultPage } },
     useGlobalFilter,
     useSortBy,
     usePagination
@@ -72,7 +74,7 @@ function DataTable({
     pageOptions,
     canPreviousPage,
     canNextPage,
-    gotoPage,
+    // gotoPage,
     nextPage,
     previousPage,
     setPageSize,
@@ -91,7 +93,7 @@ function DataTable({
     <MDPagination
       item
       key={option}
-      onClick={() => gotoPage(Number(option))}
+      onClick={() => onPageChange(Number(option))}
       active={pageIndex === option}
     >
       {option + 1}
@@ -100,13 +102,13 @@ function DataTable({
 
   // Handler for the input to set the pagination index
   const handleInputPagination = ({ target: { value } }) =>
-    value > pageOptions.length || value < 0 ? gotoPage(0) : gotoPage(Number(value));
+    value > pageOptions.length || value < 0 ? onPageChange(0) : onPageChange(Number(value));
 
   // Customized page options starting from 1
   const customizedPageOptions = pageOptions.map((option) => option + 1);
 
   // Setting value for the pagination input
-  const handleInputPaginationValue = ({ target: value }) => gotoPage(Number(value.value - 1));
+  const handleInputPaginationValue = ({ target: value }) => onPageChange(Number(value.value - 1));
 
   // Search input value state
   const [search, setSearch] = useState(globalFilter);
@@ -277,6 +279,7 @@ DataTable.defaultProps = {
   pagination: { variant: "gradient", color: "info" },
   isSorted: true,
   noEndBorder: false,
+  defaultPage: 0,
 };
 
 // Typechecking props for the DataTable
@@ -306,6 +309,8 @@ DataTable.propTypes = {
   }),
   isSorted: PropTypes.bool,
   noEndBorder: PropTypes.bool,
+  defaultPage: PropTypes.number,
+  onPageChange: PropTypes.func.isRequired,
 };
 
 export default DataTable;

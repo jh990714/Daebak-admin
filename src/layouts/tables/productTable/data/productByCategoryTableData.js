@@ -16,6 +16,7 @@ Coded by www.creative-tim.com
 */
 import ProductsTableData from "./productsTableData";
 import datas from "./datas";
+import { useSelector } from "react-redux";
 
 export default function data(category = null) {
   // const { customDatas } = datas.reduce(
@@ -25,8 +26,11 @@ export default function data(category = null) {
   //   },
   //   { customDatas: [] }
   // );
-  console.log("product", datas);
-  const customDatas = category ? datas.filter((data) => data.category === category.id) : datas;
+  const products = useSelector((state) => state.products.products);
+  console.log("product", products);
+  const customDatas = category
+    ? products.filter((data) => data.category === category.id)
+    : products;
   const { columns, rows } = ProductsTableData({ customDatas });
 
   return {

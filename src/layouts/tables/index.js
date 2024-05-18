@@ -37,6 +37,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { FormControlLabel, FormGroup } from "@mui/material";
 import QnaTable from "./qnaTable";
 import { CouponTable } from "./couponTable";
+import CustomizedTables from "./reviewTable/basicTable";
 
 const items = [
   { key: "users", label: "사용자", component: <AuthorsTable /> },
