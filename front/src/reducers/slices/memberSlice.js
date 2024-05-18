@@ -8,6 +8,11 @@ export const fetchMembers = createAsyncThunk("members/fetchMembers", async () =>
   return response.data;
 });
 
+export const saveMember = createAsyncThunk("members/saveMember", async (memberData) => {
+  const response = await axios.put(`http://localhost:8080/member/update`, memberData);
+  return response.data;
+});
+
 const memberSlice = createSlice({
   name: "members",
   initialState: {
@@ -27,6 +32,19 @@ const memberSlice = createSlice({
         console.log(state.members);
       })
       .addCase(fetchMembers.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(saveMember.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(saveMember.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.members = state.members.map((member) =>
+          member.id === action.payload.id ? action.payload : member
+        );
+      })
+      .addCase(saveMember.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

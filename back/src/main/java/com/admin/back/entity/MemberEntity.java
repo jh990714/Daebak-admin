@@ -1,24 +1,28 @@
 package com.admin.back.entity;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.stream.Collectors;
 
+@Entity
 @Table(name="members")
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@Entity
+@Getter @Setter
 public class MemberEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,4 +58,41 @@ public class MemberEntity {
 
     @Column(name = "role")
     private String role;
+
+    @OneToMany(mappedBy="member")
+    private Set<MemberCouponEntity> memberCoupons = new HashSet<>();
+
+    @OneToOne(mappedBy="member")
+    private MemberPointsEntity memberPoints;
+
+    public void addCoupon(MemberCouponEntity memberCoupon) {
+        this.memberCoupons.add(memberCoupon);
+        memberCoupon.setMember(this);
+    }
+
+    public void removeMemberCoupon(MemberCouponEntity memberCoupon) {
+        this.memberCoupons.remove(memberCoupon);
+        memberCoupon.setMember(null);
+    }
+
+    @Override
+    public String toString() {
+        return "MemberEntity{" +
+                "memberId=" + memberId +
+                ", id='" + id + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", postalCode='" + postalCode + '\'' +
+                ", address='" + address + '\'' +
+                ", detailAddress='" + detailAddress + '\'' +
+                ", type='" + type + '\'' +
+                ", role='" + role + '\'' +
+                ", memberCoupons=" + memberCoupons.stream()
+                        .map(MemberCouponEntity::toString)
+                        .collect(Collectors.joining(", ")) +
+                ", memberPoints=" + (memberPoints != null ? memberPoints.toString() : "null") +
+                '}';
+    }
 }

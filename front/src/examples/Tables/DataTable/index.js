@@ -73,7 +73,6 @@ function DataTable({
     useSortBy,
     usePagination
   );
-  console.log("dataTable:", columns, data);
   const {
     getTableProps,
     getTableBodyProps,
@@ -228,7 +227,6 @@ function DataTable({
           <MDBox component="tbody">
             {page.map((row, key) => {
               prepareRow(row);
-              console.log(row);
               return (
                 <>
                   <TableRow key={key} {...row.getRowProps()}>

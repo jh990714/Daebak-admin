@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { DataGrid } from "@mui/x-data-grid";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
@@ -8,73 +7,62 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
-import userCouponData from "../data/userCouponData";
-import MDInput from "components/MDInput";
+import DataTable from "examples/Tables/DataTable";
+
+import { IconButton } from "@mui/material";
+import { RemoveCircle } from "@mui/icons-material";
+
 import { format, parseISO } from "date-fns";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import DatePicker from "@mui/lab/DatePicker";
-import TimePicker from "@mui/lab/TimePicker";
-import TextField from "@mui/material/TextField";
+import { AddCouponDialog } from "./addCouponDialog";
+
+import { useDispatch } from "react-redux";
+import { saveMember } from "reducers/slices/memberSlice";
 
 export const UserCouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
-  const [myCoupons, setMyCoupons] = useState(userCouponData);
+  const dispatch = useDispatch();
+  const [data, setData] = useState({ memberCoupons: [] });
+  const [addCouponOpen, setAddCouponOpen] = useState(false);
 
-  const handleDateChange = (e, id, field) => {
-    console.log(e.target.value);
-    const updatedCoupons = myCoupons.map((coupon) =>
-      coupon.id === id ? { ...coupon, [field]: e.target.value } : coupon
-    );
-    setMyCoupons(updatedCoupons);
+  const handleDeleteRow = (index) => {
+    const updatedCoupons = rowData.memberCoupons.filter((_, i) => i !== index);
+    setRowData({ ...rowData, memberCoupons: updatedCoupons });
   };
-  console.log("userCouponDialog", rowData);
-  const columns = [
-    { field: "couponName", headerName: "쿠폰명", width: 150, editable: false },
-    { field: "discount", headerName: "할인가격", width: 150, editable: false },
-    {
-      field: "issueDate",
-      headerName: "시작날짜",
-      width: 300,
-      editable: true,
-      renderCell: (params) => (
-        <TextField
-          type="datetime-local"
-          value={params.value}
-          onChange={(e) => handleDateChange(e, params.row.id, "issueDate")}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-      ),
-    },
-    {
-      field: "validUntil",
-      headerName: "종료날짜",
-      width: 300,
-      editable: true,
-      renderCell: (params) => (
-        <TextField
-          type="datetime-local"
-          value={params.value}
-          onChange={(e) => handleDateChange(e, params.row.id, "validUntil")}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-      ),
-    },
-    { field: "minimumOrderAmount", headerName: "최소주문금액", width: 150, editable: false },
+
+  useEffect(() => {
+    setData(rowData);
+  }, [rowData]);
+
+  const dataColumns = [
+    { Header: "쿠폰명", accessor: "couponName", align: "left" },
+    { Header: "할인가격", accessor: "discount", align: "left" },
+    { Header: "시작날짜", accessor: "issueDate", align: "center" },
+    { Header: "종료날짜", accessor: "validUntil", align: "center" },
+    { Header: "최소주문금액", accessor: "minimumOrderAmount", align: "center" },
+    { Header: "", accessor: "action", align: "center" },
   ];
 
-  const handleCellEditCommit = (params) => {
-    console.log(params);
-    const { id, field, value } = params;
-    setMyCoupons((prevData) =>
-      prevData.map((item) => (item.id === id ? { ...item, [field]: value } : item))
-    );
-  };
+  const dataRows = data.memberCoupons.map((myCoupon, index) => ({
+    couponName: myCoupon.coupon.couponName,
+    discount: myCoupon.coupon.discount,
+    issueDate: format(new Date(myCoupon.issueDate), "yyyy-MM-dd"),
+    validUntil: format(new Date(myCoupon.validUntil), "yyyy-MM-dd"),
+    minimumOrderAmount: myCoupon.coupon.minimumOrderAmount,
+    action: (
+      <IconButton color="error" onClick={() => handleDeleteRow(index)}>
+        <RemoveCircle />
+      </IconButton>
+    ),
+  }));
 
   const handleSaveChanges = () => {
-    console.log(rowData, myCoupons);
+    dispatch(saveMember(data))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
+    console.log(data);
     onClose();
   };
 
@@ -96,54 +84,38 @@ export const UserCouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <DataGrid
-              rows={myCoupons}
-              columns={columns}
-              pagination={false}
-              pageSizeOptions={[]}
-              processRowUpdate={handleCellEditCommit}
-              disableRowSelectionOnClick
+            <DataTable
+              table={{ columns: dataColumns, rows: dataRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
             />
           </MDBox>
         </Card>
       </DialogContent>
+      <Button onClick={() => setAddCouponOpen(true)}>쿠폰 추가</Button>
       <DialogActions>
         <Button onClick={onClose}>취소</Button>
         <Button onClick={handleSaveChanges}>저장</Button>
       </DialogActions>
+      <AddCouponDialog
+        selectRows={[rowData.memberId]}
+        isOpen={addCouponOpen}
+        onClose={() => setAddCouponOpen(false)}
+      />
     </Dialog>
   );
 };
 
 UserCouponDialog.propTypes = {
-  rowData: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    author: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired,
-    }).isRequired,
-    email: PropTypes.string.isRequired,
-    phone: PropTypes.string.isRequired,
-    address: PropTypes.string.isRequired,
-    points: PropTypes.string.isRequired,
-    coupons: PropTypes.string.isRequired,
-    employed: PropTypes.string.isRequired,
-  }),
-  setRowData: PropTypes.func.isRequired,
+  rowData: PropTypes.object,
+  setRowData: PropTypes.func,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
 UserCouponDialog.defaultProps = {
-  rowData: {
-    id: null,
-    author: { name: "", id: "" },
-    email: "",
-    phone: "",
-    address: "",
-    points: "",
-    coupons: "",
-    employed: "",
-  },
+  rowData: {},
   setRowData: () => {},
 };

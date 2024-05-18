@@ -9,8 +9,11 @@ import com.admin.back.service.service.MemberService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -28,5 +31,16 @@ public class MemberController {
 
         return ResponseEntity.ok().body(memberEntities);
     }
-    
+
+    @PutMapping("/update")
+    public ResponseEntity<MemberDto> updateMember(@RequestBody MemberDto member) {
+        MemberDto updatedMember = memberService.updateMember(member);
+        return new ResponseEntity<>(updatedMember, HttpStatus.OK);
+    }
+
+    @PutMapping("/deleteCoupon")
+    public ResponseEntity<MemberDto> deleteMemberCoupon(@RequestBody MemberDto member) {
+        MemberDto updatedMember = memberService.deleteMemberCoupon(member);
+        return new ResponseEntity<>(updatedMember, HttpStatus.OK);
+    }
 }
