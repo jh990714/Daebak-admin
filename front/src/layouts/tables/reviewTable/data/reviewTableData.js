@@ -141,6 +141,7 @@ export default function data({ customDatas }) {
   ];
 
   const transformDataForReview = (customDatas) => {
+    console.log("isb", customDatas[0].isBest);
     return customDatas.map((data, index) => ({
       memberName: data.memberName,
       productName: data.productName,
@@ -148,7 +149,7 @@ export default function data({ customDatas }) {
       contents: data.contents,
       score: data.score,
       reviewDate: new Date(data.reviewDate).toLocaleString(),
-      isBest: data.isBest,
+      isBest: Number(data.isBest),
       orderNumber: data.orderNumber,
       response: data.response,
       action: (

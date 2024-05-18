@@ -8,22 +8,24 @@ import couponDatas from "./couponDatas";
 import { useSelector } from "react-redux";
 
 export const couponTableData = () => {
-  const datas = couponDatas;
-  const [rowData, setRowData] = useState(datas[0]);
+  const { coupons } = useSelector((state) => state.coupons);
+  console.log("쿠폰 응답: ", coupons);
+  // const datas = couponDatas;
+  const [rowData, setRowData] = useState(coupons[0]);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
-  const [anchorEls, setAnchorEls] = useState(Array(datas.length).fill(null));
-  const [editDialogs, setEditDialogs] = useState(Array(datas.length).fill(false));
+  const [anchorEls, setAnchorEls] = useState(Array(coupons.length).fill(null));
+  const [editDialogs, setEditDialogs] = useState(Array(coupons.length).fill(false));
   const handleClick = (event, index) => {
     const newAnchorEls = [...anchorEls];
     newAnchorEls[index] = event.currentTarget;
     setAnchorEls(newAnchorEls);
     setDialogAnchorEl(index);
 
-    setRowData(datas[index]);
+    setRowData(coupons[index]);
   };
 
   const handleClose = (index) => {
-    setAnchorEls(Array(datas.length).fill(null));
+    setAnchorEls(Array(coupons.length).fill(null));
   };
 
   const handleEdit = () => {
@@ -58,18 +60,18 @@ export const couponTableData = () => {
     { Header: "할인가격", accessor: "discount", align: "left" },
     { Header: "시작날짜", accessor: "validFrom", align: "center" },
     { Header: "종료날짜", accessor: "validUntil", align: "center" },
-    { Header: "최소주문금액", accessor: "minPurchaseAmount", align: "center" },
+    { Header: "최소주문금액", accessor: "minimumOrderAmount", align: "center" },
     { Header: "사용기간", accessor: "expirationPeriod", align: "center" },
     { Header: "action", accessor: "action", align: "center" },
   ];
 
-  const dataRows = datas.map((data, index) => ({
+  const dataRows = coupons.map((data, index) => ({
     couponCode: data.couponCode,
     couponName: data.couponName,
     discount: `${data.discount.toLocaleString()}원`,
     validFrom: data.validFrom,
     validUntil: data.validUntil,
-    minPurchaseAmount: `${data.minPurchaseAmount.toLocaleString()}원`,
+    minimumOrderAmount: `${data.minimumOrderAmount.toLocaleString()}원`,
     expirationPeriod: data.expirationPeriod,
     action: (
       <>

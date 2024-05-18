@@ -18,7 +18,7 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
     { Header: "할인가격", accessor: "discount", align: "left" },
     { Header: "시작날짜", accessor: "validFrom", align: "center" },
     { Header: "종료날짜", accessor: "validUntil", align: "center" },
-    { Header: "최소주문금액", accessor: "minPurchaseAmount", align: "center" },
+    { Header: "최소주문금액", accessor: "minimumOrderAmount", align: "center" },
     { Header: "사용기간", accessor: "expirationPeriod", align: "center" },
   ];
 
@@ -124,15 +124,15 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                         }}
                       />
                     ),
-                    minPurchaseAmount: (
+                    minimumOrderAmount: (
                       <MDInput
                         type="number"
                         label="최소주문금액"
-                        value={data.minPurchaseAmount}
+                        value={data.minimumOrderAmount}
                         onChange={(e) => {
                           setData((prevData) => ({
                             ...prevData,
-                            minPurchaseAmount: e.target.value,
+                            minimumOrderAmount: e.target.value,
                           }));
                         }}
                       />
@@ -175,7 +175,7 @@ CouponDialog.propTypes = {
     discount: PropTypes.number.isRequired,
     validFrom: PropTypes.string.isRequired,
     validUntil: PropTypes.string.isRequired,
-    minPurchaseAmount: PropTypes.number.isRequired,
+    minimumOrderAmount: PropTypes.number.isRequired,
     expirationPeriod: PropTypes.number.isRequired,
   }),
   setRowData: PropTypes.func,
@@ -190,7 +190,7 @@ CouponDialog.defaultProps = {
     discount: 0,
     validFrom: " ",
     validUntil: " ",
-    minPurchaseAmount: 0,
+    minimumOrderAmount: 0,
     expirationPeriod: 0,
   },
   setRowData: () => {},
