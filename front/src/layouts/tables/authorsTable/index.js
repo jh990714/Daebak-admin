@@ -84,16 +84,14 @@ function AuthorsTable() {
           />
         </MDBox>
       </Card>
-      {/* <AddCouponDialog
-        selectRows={rowSelectionModel}
+      <AddCouponDialog
         isOpen={addCouponSelectRows}
         onClose={() => setAddCouponSelectRows(!addCouponSelectRows)}
       />
       <AddPointsDialog
-        selectRows={rowSelectionModel}
         isOpen={addPointsSelectRows}
         onClose={() => setAddPointsSelectRows(!addPointsSelectRows)}
-      /> */}
+      />
     </Grid>
   );
 }

@@ -34,152 +34,6 @@ export default function authorsTableData() {
     id: PropTypes.string.isRequired,
   };
 
-  // const [anchorEl, setAnchorEl] = useState(null);
-  // const [currentRow, setCurrentRow] = useState(null);
-  // const [dialogType, setDialogType] = useState(null);
-
-  // const handleMenuClick = (event, row) => {
-  //   setCurrentRow(row);
-  //   setAnchorEl(event.currentTarget);
-  // };
-
-  // const handleMenuClose = () => {
-  //   setDialogType(null);
-  //   setAnchorEl(null);
-  //   setCurrentRow(null);
-  // };
-
-  // const handleEdit = () => {
-  //   setDialogType("edit");
-  // };
-
-  // const handleShowCoupons = () => {
-  //   setDialogType("coupon");
-  // };
-
-  // const handleDelete = () => {
-  //   console.log(`Delete ${currentRow.id}`);
-  // };
-
-  // const closeDialog = () => {
-  //   handleMenuClose();
-  // };
-
-  // const columns = [
-  //   {
-  //     headerName: "사용자",
-  //     field: "author",
-  //     width: 300,
-  //     renderCell: (params) => (
-  //       <Author image={team2} name={params.row.author.name} id={params.row.author.id} />
-  //     ),
-  //   },
-  //   {
-  //     headerName: "이메일",
-  //     field: "email",
-  //     width: 250,
-  //     renderCell: (params) => (
-  //       <MDTypography variant="caption" color="text" fontWeight="medium">
-  //         {params.value}
-  //       </MDTypography>
-  //     ),
-  //   },
-  //   {
-  //     headerName: "휴대폰 번호",
-  //     field: "phone",
-  //     width: 150,
-  //     renderCell: (params) => (
-  //       <MDTypography variant="caption" color="text" fontWeight="medium">
-  //         {params.value}
-  //       </MDTypography>
-  //     ),
-  //   },
-  //   {
-  //     headerName: "기본 배송지",
-  //     field: "address",
-  //     width: 350,
-  //     renderCell: (params) => (
-  //       <MDTypography variant="caption" color="text" fontWeight="medium">
-  //         {params.value}
-  //       </MDTypography>
-  //     ),
-  //   },
-  //   {
-  //     headerName: "적립금",
-  //     field: "points",
-  //     width: 100,
-  //     renderCell: (params) => (
-  //       <MDTypography variant="caption" color="text" fontWeight="medium">
-  //         {params.value}
-  //       </MDTypography>
-  //     ),
-  //   },
-  //   {
-  //     headerName: "쿠폰",
-  //     field: "coupons",
-  //     width: 80,
-  //     renderCell: (params) => (
-  //       <MDTypography variant="caption" color="text" fontWeight="medium">
-  //         {params.value}
-  //       </MDTypography>
-  //     ),
-  //   },
-  //   {
-  //     headerName: "가입 일자",
-  //     field: "employed",
-  //     width: 150,
-  //     renderCell: (params) => (
-  //       <MDTypography variant="caption" color="text" fontWeight="medium">
-  //         {params.value}
-  //       </MDTypography>
-  //     ),
-  //   },
-  //   {
-  //     headerName: "Action",
-  //     field: "action",
-  //     width: 100,
-  //     renderCell: (params) => (
-  //       <>
-  //         <IconButton
-  //           aria-label="more"
-  //           aria-controls={`menu-${params.row.id}`}
-  //           aria-haspopup="true"
-  //           onClick={(event) => handleMenuClick(event, params.row)}
-  //         >
-  //           <MoreVert />
-  //         </IconButton>
-  //         <Menu
-  //           id={`menu-${params.row.id}`}
-  //           anchorEl={anchorEl}
-  //           keepMounted
-  //           open={Boolean(anchorEl && currentRow?.id === params.row.id)}
-  //           onClose={handleMenuClose}
-  //         >
-  //           <MenuItem onClick={handleEdit()}>수정</MenuItem>
-  //           <MenuItem onClick={handleShowCoupons}>보유 쿠폰</MenuItem>
-  //           <MenuItem onClick={handleDelete}>삭제</MenuItem>
-  //         </Menu>
-
-  //         {dialogType === "edit" && currentRow?.id === params.row.id && (
-  //           <UserInfoEditDialog
-  //             rowData={currentRow}
-  //             setRowData={setCurrentRow}
-  //             isOpen={Boolean(dialogType === "edit")}
-  //             onClose={closeDialog}
-  //           />
-  //         )}
-  //         {dialogType === "coupon" && currentRow?.id === params.row.id && (
-  //           <UserCouponDialog
-  //             rowData={currentRow}
-  //             setRowData={setCurrentRow}
-  //             isOpen={Boolean(dialogType === "coupon")}
-  //             onClose={closeDialog}
-  //           />
-  //         )}
-  //       </>
-  //     ),
-  //   },
-  // ];
   const [rowData, setRowData] = useState(members[0]);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
   const [anchorEls, setAnchorEls] = useState(Array(members.length).fill(null));
@@ -228,13 +82,14 @@ export default function authorsTableData() {
     { Header: "Action", accessor: "action", align: "left" },
   ];
 
+  console.log(rowData);
   const dataRows = members.map((data, index) => ({
-    author: <Author image={team2} name={data.author.name} id={data.author.id} />,
+    author: <Author image={team2} name={data.name} id={data.id} />,
     email: data.email,
     phone: data.phone,
     address: data.address,
     points: data.points,
-    coupons: data.coupons,
+    coupons: data.memberCoupons.length,
     employed: data.employed,
     action: (
       <>
@@ -251,18 +106,22 @@ export default function authorsTableData() {
           <MenuItem onClick={() => handleDialog("coupon")}>보유 쿠폰</MenuItem>
           <MenuItem onClick={() => handleDialog("delete")}>삭제</MenuItem>
         </Menu>
-        <UserCouponDialog
-          rowData={rowData}
-          setRowData={setRowData}
-          isOpen={dialogType === "coupon" && dialogs[index]}
-          onClose={handleDialogClose}
-        />
-        <UserInfoEditDialog
-          rowData={rowData}
-          setRowData={setRowData}
-          isOpen={dialogType === "edit" && dialogs[index]}
-          onClose={handleDialogClose}
-        />
+        {dialogType === "coupon" && dialogs[index] && rowData && (
+          <UserCouponDialog
+            rowData={rowData}
+            setRowData={setRowData}
+            isOpen={dialogType === "coupon" && dialogs[index]}
+            onClose={handleDialogClose}
+          />
+        )}
+        {dialogType === "edit" && dialogs[index] && rowData && (
+          <UserInfoEditDialog
+            rowData={rowData}
+            setRowData={setRowData}
+            isOpen={dialogType === "edit" && dialogs[index]}
+            onClose={handleDialogClose}
+          />
+        )}
       </>
     ),
   }));
