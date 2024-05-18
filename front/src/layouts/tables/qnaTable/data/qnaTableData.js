@@ -17,21 +17,15 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import React, { useState } from "react";
-import Icon from "@mui/material/Icon";
 
 import { Menu, MenuItem, IconButton, Button } from "@mui/material";
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
 
-import Card from "@mui/material/Card";
-
-// Material Dashboard 2 React components
-import MDBox from "components/MDBox";
 import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
 
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import { ResponseDialog } from "./dialog/responseDialog";
+import { ResponseDialog } from "../dialog/responseDialog";
 
 const expandedContent = (rowData) => {
   const handleEditNoteIconClick = () => {
@@ -69,43 +63,11 @@ const expandedContent = (rowData) => {
   );
 };
 
-export default function data() {
-  const datas = [
-    {
-      question: {
-        questionId: 11,
-        question: "질문할게요",
-        createdAt: "2024-05-05T16:21:36.000+00:00",
-        name: "테*트",
-      },
-      answer: [
-        {
-          answerId: 4,
-          responseText: "답변입니다.1",
-          responseDate: "2024-05-05T16:22:00.000+00:00",
-        },
-        {
-          answerId: 5,
-          responseText: "답변입니다.2",
-          responseDate: "2024-05-05T16:22:00.000+00:00",
-        },
-      ],
-    },
-    {
-      question: {
-        questionId: 12,
-        question: "새로운 질문입니다.",
-        createdAt: "2024-05-06T10:30:00.000+00:00",
-        name: "또*다",
-      },
-      answer: [],
-    },
-  ];
-
-  const [rowData, setRowData] = useState(datas[0]);
+export default function data({ customDatas }) {
+  const [rowData, setRowData] = useState(customDatas[0]);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
-  const [anchorEls, setAnchorEls] = useState(Array(datas.length).fill(null));
-  const [dialogs, setDialogs] = useState(Array(datas.length).fill(false));
+  const [anchorEls, setAnchorEls] = useState(Array(customDatas.length).fill(null));
+  const [dialogs, setDialogs] = useState(Array(customDatas.length).fill(false));
   const [dialogType, setDialogType] = useState(null);
 
   const handleClick = (event, index) => {
@@ -114,11 +76,11 @@ export default function data() {
     setAnchorEls(newAnchorEls);
     setDialogAnchorEl(index);
 
-    setRowData(datas[index]);
+    setRowData(customDatas[index]);
   };
 
   const handleClose = () => {
-    setAnchorEls(Array(datas.length).fill(null));
+    setAnchorEls(Array(customDatas.length).fill(null));
   };
 
   const handleDialog = (type) => {
@@ -168,8 +130,8 @@ export default function data() {
     { Header: "action", accessor: "action", align: "center" },
   ];
 
-  const transformDataForQna = (datas) => {
-    return datas.map((data, index) => ({
+  const transformDataForQna = (customDatas) => {
+    return customDatas.map((data, index) => ({
       memberName: data.question.name,
       question: data.question.question,
       qnaDate: new Date(data.question.createdAt).toLocaleString(),
@@ -205,28 +167,22 @@ export default function data() {
     }));
   };
 
-  const transformedData = transformDataForQna(datas);
-
-  const { completedQna, missingQna } = transformedData.reduce(
-    (acc, data) => {
-      if (data.answer.length > 0) {
-        acc.completedQna.push(data);
-      } else {
-        acc.missingQna.push(data);
-      }
-      return acc;
-    },
-    { completedQna: [], missingQna: [] }
-  );
+  // const { completedQna, missingQna } = transformedData.reduce(
+  //   (acc, data) => {
+  //     if (data.answer.length > 0) {
+  //       acc.completedQna.push(data);
+  //     } else {
+  //       acc.missingQna.push(data);
+  //     }
+  //     return acc;
+  //   },
+  //   { completedQna: [], missingQna: [] }
+  // );
 
   return {
     columns: dataColumns,
 
-    rows: completedQna,
-
-    missingColumns: dataColumns,
-
-    missingRows: missingQna,
+    rows: transformDataForQna(customDatas),
 
     expanded: expandedContent,
   };

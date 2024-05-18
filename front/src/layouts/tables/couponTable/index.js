@@ -11,10 +11,17 @@ import { couponTableData } from "./data/couponTableData";
 import { CouponDialog } from "../../couponAdd";
 
 export const CouponTable = () => {
-  const { columns: couponColumns, rows: couponRows } = couponTableData();
+  const [pageIndex, setPageIndex] = useState(0);
   const [showAddCoupon, setShowAddCoupon] = useState(false);
+
+  const { columns: couponColumns, rows: couponRows } = couponTableData();
+
   const handleCloseDialog = () => {
     setShowAddCoupon(!showAddCoupon);
+  };
+
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
   };
 
   return (
@@ -52,6 +59,8 @@ export const CouponTable = () => {
             entriesPerPage={false}
             showTotalEntries={false}
             noEndBorder
+            defaultPage={pageIndex}
+            onPageChange={handlePageChange}
           />
         </MDBox>
       </Card>

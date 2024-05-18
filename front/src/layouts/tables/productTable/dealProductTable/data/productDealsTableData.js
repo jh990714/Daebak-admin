@@ -40,7 +40,7 @@ import logoSlack from "assets/images/small-logos/logo-slack.svg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import logoInvesion from "assets/images/small-logos/logo-invision.svg";
 import { useEffect, useState } from "react";
-import { ProductDealsEditDialog } from "../dialog/productDealsEditDialog";
+import { ProductDealsEditDialog } from "../../dialog/productDealsEditDialog";
 
 export default function data() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -49,19 +49,19 @@ export default function data() {
 
   const datas = [
     {
-      productName: "상품 1",
+      name: "상품 1",
       dealPrice: 50,
       startDate: "2024-04-14 10:00:00",
       endDate: "2024-05-03 17:00:00",
     },
     {
-      productName: "상품 2",
+      name: "상품 2",
       dealPrice: 100,
       startDate: "2024-04-14 10:00:00",
       endDate: "2024-05-03 17:00:00",
     },
     {
-      productName: "상품 5",
+      name: "상품 5",
       dealPrice: 100,
       startDate: "2024-04-14 10:00:00",
       endDate: "2024-05-03 17:00:00",
@@ -135,7 +135,7 @@ export default function data() {
     columns: dataColumns,
 
     rows: datas.map((data, index) => ({
-      product: <Product image={LogoAsana} name={data.productName} />,
+      product: <Product image={LogoAsana} name={data.name} />,
       dealPrice: [data.dealPrice],
       startDate: [data.startDate],
       endDate: [data.endDate],

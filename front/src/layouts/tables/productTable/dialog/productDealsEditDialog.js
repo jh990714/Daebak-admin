@@ -1,4 +1,6 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import PropTypes from "prop-types";
 import { Autocomplete, TextField, Button } from "@mui/material";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
@@ -8,7 +10,6 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 import DataTable from "examples/Tables/DataTable";
-import datas from "../data/datas";
 
 export const ProductDealsEditDialog = ({
   rowData,
@@ -17,8 +18,6 @@ export const ProductDealsEditDialog = ({
   handleEditDialogClose,
   handleEditDialogSubmit,
 }) => {
-  const allProducts = datas;
-
   const dataColumns = [
     { Header: "상품", accessor: "product", align: "left" },
     { Header: "추가 할인", accessor: "dealPrice", align: "center" },
@@ -51,26 +50,33 @@ export const ProductDealsEditDialog = ({
                 rows: [
                   {
                     product: (
-                      <MDBox>
-                        <Autocomplete
-                          options={allProducts}
-                          sx={{ width: 300 }}
-                          getOptionLabel={(option) => option.productName}
-                          value={
-                            rowData?.productName
-                              ? allProducts.find(
-                                  (product) => product.productName === rowData.productName
-                                )
-                              : null
-                          }
-                          onChange={(event, newValue) => {
-                            if (newValue) {
-                              setRowData({ ...rowData, productName: newValue.productName });
-                            }
-                          }}
-                          renderInput={(params) => <TextField {...params} label="상품명" />}
-                        />
-                      </MDBox>
+                      // <MDBox>
+                      //   <Autocomplete
+                      //     options={products}
+                      //     sx={{ width: 300 }}
+                      //     getOptionLabel={(option) => option.name}
+                      //     value={
+                      //       rowData?.name
+                      //         ? products.find((product) => product.name === rowData.name)
+                      //         : null
+                      //     }
+                      //     onChange={(event, newValue) => {
+                      //       if (newValue) {
+                      //         setRowData({ ...rowData, name: newValue.name });
+                      //       }
+                      //     }}
+                      //     renderInput={(params) => <TextField {...params} label="상품명" />}
+                      //   />
+                      // </MDBox>
+                      <MDTypography
+                        display="block"
+                        variant="button"
+                        fontWeight="medium"
+                        ml={1}
+                        lineHeight={1}
+                      >
+                        {rowData.name}
+                      </MDTypography>
                     ),
                     dealPrice: (
                       <MDInput
@@ -126,7 +132,7 @@ export const ProductDealsEditDialog = ({
 ProductDealsEditDialog.propTypes = {
   rowData: PropTypes.arrayOf(
     PropTypes.shape({
-      productName: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
       dealPrice: PropTypes.number.isRequired,
       startDate: PropTypes.string.isRequired,
       endDate: PropTypes.string.isRequired,
