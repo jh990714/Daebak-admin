@@ -14,7 +14,7 @@ import java.util.Set;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MemberMapper {
+public class Mapper {
 
     public MemberDto toDto(MemberEntity entity) {
         MemberDto dto = new MemberDto();

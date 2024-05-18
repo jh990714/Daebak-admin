@@ -9,12 +9,16 @@ import { Provider } from "react-redux";
 import store from "reducers/store";
 import { fetchProducts } from "reducers/slices/productSlice";
 import { fetchMembers } from "reducers/slices/memberSlice";
+import { fetchCoupons } from "reducers/slices/couponSlice";
+import { fetchReviews } from "reducers/slices/reviewSlice";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
 
 store.dispatch(fetchProducts());
 store.dispatch(fetchMembers());
+store.dispatch(fetchCoupons());
+store.dispatch(fetchReviews());
 
 root.render(
   <BrowserRouter>

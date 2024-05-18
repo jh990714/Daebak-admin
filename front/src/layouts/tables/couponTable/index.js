@@ -9,8 +9,11 @@ import DataTable from "examples/Tables/DataTable";
 
 import { couponTableData } from "./data/couponTableData";
 import { CouponDialog } from "../../couponAdd";
+import { useSelector } from "react-redux";
 
 export const CouponTable = () => {
+  const { status } = useSelector((state) => state.coupons);
+
   const [pageIndex, setPageIndex] = useState(0);
   const [showAddCoupon, setShowAddCoupon] = useState(false);
 
@@ -23,6 +26,10 @@ export const CouponTable = () => {
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
   };
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Grid item xs={12}>

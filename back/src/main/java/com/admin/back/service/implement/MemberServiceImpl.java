@@ -11,7 +11,7 @@ import com.admin.back.dto.MemberCouponDto;
 import com.admin.back.dto.MemberDto;
 import com.admin.back.entity.MemberCouponEntity;
 import com.admin.back.entity.MemberEntity;
-import com.admin.back.mapper.MemberMapper;
+import com.admin.back.mapper.Mapper;
 import com.admin.back.repository.MemberCouponRepository;
 import com.admin.back.repository.MemberRepository;
 import com.admin.back.service.service.MemberService;
@@ -27,7 +27,7 @@ public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
     private final MemberCouponRepository memberCouponRepository;
-    private final MemberMapper memberMapper;
+    private final Mapper mapper;
 
     @PersistenceContext
     private EntityManager entityManager; // EntityManager 주입
@@ -35,7 +35,7 @@ public class MemberServiceImpl implements MemberService{
     public List<MemberDto> getMembers() {
        List<MemberEntity> memberEntities = memberRepository.findAll();
        return memberEntities.stream()
-                .map(memberMapper::toDto)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -54,7 +54,7 @@ public class MemberServiceImpl implements MemberService{
 
             MemberEntity updatedMemberEntity = memberRepository.save(memberEntity);
             System.out.println(updatedMemberEntity.toString());
-            return memberMapper.toDto(updatedMemberEntity);
+            return mapper.toDto(updatedMemberEntity);
         } else {
             // 해당 memberId를 가진 멤버를 찾을 수 없을 경우 예외 처리
             throw new IllegalArgumentException("Member with id " + memberDto.getMemberId() + " not found");
@@ -73,7 +73,7 @@ public class MemberServiceImpl implements MemberService{
     
             // Map and save new member coupons
             Set<MemberCouponEntity> memberCoupons = memberDto.getMemberCoupons().stream()
-                    .map(memberCouponDto -> memberMapper.toEntity(memberCouponDto))
+                    .map(memberCouponDto -> mapper.toEntity(memberCouponDto))
                     .collect(Collectors.toSet());
             
             memberCoupons.forEach(memberCoupon -> memberCoupon.setMember(memberEntity));
