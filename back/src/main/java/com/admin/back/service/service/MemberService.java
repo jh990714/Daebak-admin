@@ -7,4 +7,8 @@ import com.admin.back.entity.MemberEntity;
 
 public interface MemberService {
     List<MemberDto> getMembers();
+
+    MemberDto updateMember(MemberDto member);
+
+    MemberDto deleteMemberCoupon(MemberDto member);
 }

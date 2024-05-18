@@ -8,61 +8,112 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import DataTable from "examples/Tables/DataTable";
+import MDInput from "components/MDInput";
+import { format, parseISO } from "date-fns";
+import { useDispatch } from "react-redux";
+import { saveMember } from "reducers/slices/memberSlice";
 
 export const UserInfoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
-  const [editedData, setEditedData] = useState({
-    id: rowData.id,
-    memberId: rowData.author.id,
-    name: rowData.author.name,
-    email: rowData.email,
-    phone: rowData.phone,
-    address: rowData.address,
-    points: rowData.points,
-    coupons: rowData.coupons,
-    employed: rowData.employed,
-  });
+  const dispatch = useDispatch();
+  const [data, setData] = useState(rowData);
 
   useEffect(() => {
-    setEditedData({
-      id: rowData.id,
-      memberId: rowData.author.id,
-      name: rowData.author.name,
-      email: rowData.email,
-      phone: rowData.phone,
-      address: rowData.address,
-      points: rowData.points,
-      coupons: rowData.coupons,
-      employed: rowData.employed,
-    });
+    setData(rowData);
   }, [rowData]);
 
-  const columns = [
-    { field: "memberId", headerName: "ID", width: 150, editable: false },
-    { field: "name", headerName: "이름", width: 150, editable: true },
-    { field: "email", headerName: "이메일", width: 200, editable: true },
-    { field: "phone", headerName: "휴대폰 번호", width: 150, editable: true },
-    { field: "address", headerName: "기본 배송지", width: 300, editable: true },
-    { field: "points", headerName: "적립금", width: 100, editable: true },
-    { field: "coupons", headerName: "쿠폰", width: 100, editable: true },
-    { field: "employed", headerName: "가입 일자", width: 150, editable: false },
-  ];
-
-  const handleCellEditCommit = (params) => {
-    console.log(params);
-    const { field, value } = params;
-    setEditedData((prevData) => ({
+  const handleInputChange = (e, field) => {
+    const value = e.target.value;
+    setData((prevData) => ({
       ...prevData,
       [field]: value,
     }));
   };
 
+  const dataColumns = [
+    { Header: "ID", accessor: "id", align: "left" },
+    { Header: "이름", accessor: "name", align: "left" },
+    { Header: "이메일", accessor: "email", align: "left" },
+    { Header: "휴대폰 번호", accessor: "phone", align: "left" },
+    { Header: "기본 배송지", accessor: "address", align: "left" },
+    { Header: "적립금", accessor: "points", align: "left" },
+    { Header: "쿠폰", accessor: "coupons", align: "left" },
+    { Header: "가입 일자", accessor: "employed", align: "left" },
+  ];
+
+  const dataRows = [
+    {
+      id: data.id,
+      name: (
+        <MDInput
+          type="text"
+          label="이름"
+          value={data.name}
+          onChange={(e) => handleInputChange(e, "name")}
+        />
+      ),
+      email: (
+        <MDInput
+          type="email"
+          label="이메일"
+          value={data.email}
+          onChange={(e) => handleInputChange(e, "email")}
+        />
+      ),
+      phone: (
+        <MDInput
+          type="text"
+          label="휴대폰 번호"
+          value={data.phone}
+          onChange={(e) => handleInputChange(e, "phone")}
+        />
+      ),
+      address: (
+        <MDInput
+          type="text"
+          label="기본 배송지"
+          value={data.address}
+          onChange={(e) => handleInputChange(e, "address")}
+        />
+      ),
+      points: (
+        <MDInput
+          type="number"
+          label="적립금"
+          value={data.points}
+          onChange={(e) => handleInputChange(e, "points")}
+        />
+      ),
+      coupons: data.memberCoupons.length,
+      employed: (
+        <MDInput
+          type="date"
+          label="가입 일자"
+          value={format(parseISO(data.employed), "yyyy-MM-dd")}
+          readOnly
+        />
+      ),
+    },
+  ];
+
+  // const handleSaveChanges = () => {
+  //   console.log(editedData);
+  //   setRowData((row) =>
+  //     row.id === editedData.id
+  //       ? { ...row, author: { id: editedData.memberId, name: editedData.name }, ...editedData }
+  //       : row
+  //   );
+  //   onClose();
+  // };
   const handleSaveChanges = () => {
-    console.log(editedData);
-    setRowData((row) =>
-      row.id === editedData.id
-        ? { ...row, author: { id: editedData.memberId, name: editedData.name }, ...editedData }
-        : row
-    );
+    dispatch(saveMember(data))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
+    console.log(data);
     onClose();
   };
 
@@ -84,13 +135,12 @@ export const UserInfoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => 
             </MDTypography>
           </MDBox>
           <MDBox pt={3}>
-            <DataGrid
-              rows={[editedData]}
-              columns={columns}
-              pagination={false}
-              pageSizeOptions={[]}
-              processRowUpdate={handleCellEditCommit}
-              disableRowSelectionOnClick
+            <DataTable
+              table={{ columns: dataColumns, rows: dataRows }}
+              isSorted={false}
+              entriesPerPage={false}
+              showTotalEntries={false}
+              noEndBorder
             />
           </MDBox>
         </Card>
@@ -104,34 +154,13 @@ export const UserInfoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => 
 };
 
 UserInfoEditDialog.propTypes = {
-  rowData: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    author: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired,
-    }).isRequired,
-    email: PropTypes.string.isRequired,
-    phone: PropTypes.string.isRequired,
-    address: PropTypes.string.isRequired,
-    points: PropTypes.string.isRequired,
-    coupons: PropTypes.string.isRequired,
-    employed: PropTypes.string.isRequired,
-  }),
+  rowData: PropTypes.object.isRequired,
   setRowData: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
 UserInfoEditDialog.defaultProps = {
-  rowData: {
-    id: null,
-    author: { name: "", id: "" },
-    email: "",
-    phone: "",
-    address: "",
-    points: "",
-    coupons: "",
-    employed: "",
-  },
+  rowData: {},
   setRowData: () => {},
 };
