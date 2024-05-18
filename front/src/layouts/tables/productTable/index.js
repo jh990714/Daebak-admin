@@ -14,6 +14,7 @@ import productByCategoryTableData from "layouts/tables/productTable/data/product
 import recommendedProductsTableData from "layouts/tables/productTable/data/recommendedProductsTableData";
 import productDealsTableData from "layouts/tables/productTable/data/productDealsTableData";
 import { useSelector } from "react-redux";
+import { ProductAdd } from "layouts/productAdd";
 
 function ProductTable() {
   const [showProductDeal, setShowProductDeal] = useState(false);
@@ -161,7 +162,7 @@ function ProductTable() {
         />
       )} */}
 
-      {/* {showProduct && <ProductAdd isOpen={true} onClose={handleAddProduct} />} */}
+      {showProduct && <ProductAdd isOpen={true} onClose={handleAddProduct} />}
     </>
   );
 }

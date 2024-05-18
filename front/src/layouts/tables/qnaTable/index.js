@@ -48,9 +48,9 @@ function QnaTable() {
             <DataTable
               canSearch={true}
               table={{ columns: missingQnawColumns, rows: missingQnawRows }}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
+              isSorted={true}
+              entriesPerPage={true}
+              showTotalEntries={true}
               noEndBorder
               defaultPage={pageIndex}
               onPageChange={handlePageChange}
@@ -79,9 +79,9 @@ function QnaTable() {
             <DataTable
               canSearch={true}
               table={{ columns: completedQnaColumns, rows: completedQnawRows }}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
+              isSorted={true}
+              entriesPerPage={true}
+              showTotalEntries={true}
               noEndBorder
               defaultPage={pageIndex}
               onPageChange={handlePageChange}
