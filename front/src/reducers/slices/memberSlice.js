@@ -18,6 +18,17 @@ export const saveMemberCoupon = createAsyncThunk("members/saveMemberCoupon", asy
   return response.data;
 });
 
+export const addMemberCoupon = createAsyncThunk(
+  "members/addMemberCoupon",
+  async ({ members, coupon }) => {
+    const response = await axios.post("http://localhost:8080/member/addCoupon", {
+      members,
+      coupon,
+    });
+    return response.data;
+  }
+);
+
 const memberSlice = createSlice({
   name: "members",
   initialState: {
@@ -63,6 +74,22 @@ const memberSlice = createSlice({
         );
       })
       .addCase(saveMemberCoupon.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(addMemberCoupon.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addMemberCoupon.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updatedMemberIds = action.payload.map((updatedMember) => updatedMember.id);
+        state.members = state.members.map((member) =>
+          updatedMemberIds.includes(member.id)
+            ? action.payload.find((updatedMember) => updatedMember.id === member.id)
+            : member
+        );
+      })
+      .addCase(addMemberCoupon.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });
