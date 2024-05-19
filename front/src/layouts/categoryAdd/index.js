@@ -13,8 +13,15 @@ import { useDispatch } from "react-redux";
 
 export const CategoryAdd = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({
+    id: null,
+    name: null,
+    subcategories: [],
+  });
   const handleAddSubcategory = () => {
+    if (data === null || data.name === "") {
+      return;
+    }
     const newSubcategories = [...(data.subcategories || []), { id: null, name: "" }];
     const newData = { ...data, subcategories: newSubcategories };
     setData(newData);
@@ -30,6 +37,10 @@ export const CategoryAdd = ({ isOpen, onClose }) => {
 
   const handleSubmit = () => {
     console.log(data);
+    if (data === null || data.name === "") {
+      return;
+    }
+
     dispatch(fetchUpdateCategories(data))
       .then(() => {
         console.log("저장 성공");
