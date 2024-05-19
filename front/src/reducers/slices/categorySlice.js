@@ -4,6 +4,7 @@ import axios from "axios";
 export const fetchCategories = createAsyncThunk("categories/fetchCategories", async () => {
   try {
     const response = await axios.get("http://localhost:8080/category");
+    console.log("category", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching coupons:", error);

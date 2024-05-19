@@ -29,7 +29,10 @@ export const CategoryEditDialog = ({ data, setData, isOpen, handleClose }) => {
   };
 
   const handleSubmit = () => {
-    console.log(data);
+    if (data === null || data.name === "") {
+      return;
+    }
+
     dispatch(fetchUpdateCategories(data))
       .then(() => {
         console.log("저장 성공");
