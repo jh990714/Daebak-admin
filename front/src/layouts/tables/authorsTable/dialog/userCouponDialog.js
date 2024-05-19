@@ -16,7 +16,7 @@ import { format, parseISO } from "date-fns";
 import { AddCouponDialog } from "./addCouponDialog";
 
 import { useDispatch } from "react-redux";
-import { saveMember } from "reducers/slices/memberSlice";
+import { saveMemberCoupon } from "reducers/slices/memberSlice";
 
 export const UserCouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -55,7 +55,7 @@ export const UserCouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
   }));
 
   const handleSaveChanges = () => {
-    dispatch(saveMember(data))
+    dispatch(saveMemberCoupon(data))
       .then(() => {
         console.log("저장 성공");
       })
@@ -63,6 +63,11 @@ export const UserCouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
         console.error("저장 실패:", error);
       });
     console.log(data);
+    onClose();
+  };
+
+  const handleAddCouponClose = () => {
+    setAddCouponOpen(false);
     onClose();
   };
 
@@ -100,9 +105,9 @@ export const UserCouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
         <Button onClick={handleSaveChanges}>저장</Button>
       </DialogActions>
       <AddCouponDialog
-        selectRows={[rowData.memberId]}
+        selectMembers={[rowData]}
         isOpen={addCouponOpen}
-        onClose={() => setAddCouponOpen(false)}
+        onClose={handleAddCouponClose}
       />
     </Dialog>
   );

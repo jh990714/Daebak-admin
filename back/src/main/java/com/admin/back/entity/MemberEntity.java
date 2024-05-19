@@ -59,8 +59,8 @@ public class MemberEntity {
 
     @Column(name = "role")
     private String role;
-
-    @OneToMany(mappedBy="member", cascade = CascadeType.REMOVE)
+    
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MemberCouponEntity> memberCoupons = new HashSet<>();
 
     @OneToOne(mappedBy="member")

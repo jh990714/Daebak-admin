@@ -10,17 +10,30 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-export const AddCouponDialog = ({ selectRows, isOpen, onClose }) => {
+import { useSelector, useDispatch } from "react-redux";
+import { addMemberCoupon } from "reducers/slices/memberSlice";
+
+export const AddCouponDialog = ({ selectMembers, isOpen, onClose }) => {
+  const dispatch = useDispatch();
   const [coupon, setCoupon] = useState();
-  const coupons = couponDatas;
-  const handleSubmit = () => {
-    console.log(selectRows, coupon);
+  const { coupons } = useSelector((state) => state.coupons);
+
+  const handleSubmit = (event, value) => {
+    dispatch(addMemberCoupon({ members: selectMembers, coupon }))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
+    console.log(selectMembers, coupon);
     onClose();
   };
 
   const handleCouponChange = (event, value) => {
     setCoupon(value);
   };
+
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <DialogContent>
@@ -59,7 +72,7 @@ export const AddCouponDialog = ({ selectRows, isOpen, onClose }) => {
 };
 
 AddCouponDialog.propTypes = {
-  selectRows: PropTypes.array.isRequired,
+  selectMembers: PropTypes.array.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };

@@ -1,5 +1,6 @@
 package com.admin.back.service.implement;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -7,13 +8,16 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.admin.back.dto.CouponDto;
 import com.admin.back.dto.MemberCouponDto;
 import com.admin.back.dto.MemberDto;
+import com.admin.back.entity.CouponEntity;
 import com.admin.back.entity.MemberCouponEntity;
 import com.admin.back.entity.MemberEntity;
 import com.admin.back.mapper.Mapper;
 import com.admin.back.repository.MemberCouponRepository;
 import com.admin.back.repository.MemberRepository;
+import com.admin.back.service.service.CouponService;
 import com.admin.back.service.service.MemberService;
 
 import jakarta.persistence.EntityManager;
@@ -23,23 +27,25 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
+
+    private final CouponService couponService;
 
     private final MemberRepository memberRepository;
     private final MemberCouponRepository memberCouponRepository;
     private final Mapper mapper;
 
     @PersistenceContext
-    private EntityManager entityManager; // EntityManager 주입
+    private EntityManager entityManager;
 
     public List<MemberDto> getMembers() {
-       List<MemberEntity> memberEntities = memberRepository.findAll();
-       return memberEntities.stream()
+        List<MemberEntity> memberEntities = memberRepository.findAll();
+        return memberEntities.stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    @Transactional 
+    @Transactional
     @Override
     public MemberDto updateMember(MemberDto memberDto) {
         Optional<MemberEntity> optionalMemberEntity = memberRepository.findById(memberDto.getMemberId());
@@ -53,38 +59,72 @@ public class MemberServiceImpl implements MemberService{
             memberEntity.setAddress(memberDto.getAddress());
 
             MemberEntity updatedMemberEntity = memberRepository.save(memberEntity);
-            System.out.println(updatedMemberEntity.toString());
+
             return mapper.toDto(updatedMemberEntity);
         } else {
             // 해당 memberId를 가진 멤버를 찾을 수 없을 경우 예외 처리
             throw new IllegalArgumentException("Member with id " + memberDto.getMemberId() + " not found");
         }
     }
-
-    @Transactional 
+    @Transactional
     @Override
     public MemberDto updateMemberCoupon(MemberDto memberDto) {
         Optional<MemberEntity> optionalMemberEntity = memberRepository.findById(memberDto.getMemberId());
-    
+
         if (optionalMemberEntity.isPresent()) {
             MemberEntity memberEntity = optionalMemberEntity.get();
-    
-            memberCouponRepository.deleteByMember(memberEntity);
-    
-            // Map and save new member coupons
-            Set<MemberCouponEntity> memberCoupons = memberDto.getMemberCoupons().stream()
-                    .map(memberCouponDto -> mapper.toEntity(memberCouponDto))
+            
+            // MemberDto의 쿠폰 ID를 Set으로 변환
+            Set<Long> dtoCouponIds = memberDto.getMemberCoupons().stream()
+                    .map(memberCouponDto -> memberCouponDto.getId())
                     .collect(Collectors.toSet());
             
-            memberCoupons.forEach(memberCoupon -> memberCoupon.setMember(memberEntity));
-            memberCouponRepository.saveAll(memberCoupons);
-    
-            // Map the updated memberEntity back to MemberDto
-            return memberDto;
+            // MemberEntity에서 삭제할 쿠폰을 찾음
+            Set<MemberCouponEntity> couponsToDelete = memberEntity.getMemberCoupons().stream()
+                    .filter(memberCouponEntity -> !dtoCouponIds.contains(memberCouponEntity.getId()))
+                    .collect(Collectors.toSet());
+
+            System.out.println(couponsToDelete);
+            
+            // 삭제할 쿠폰이 있다면, MemberEntity에서 해당 쿠폰을 제거
+            if (!couponsToDelete.isEmpty()) {
+                memberEntity.getMemberCoupons().removeAll(couponsToDelete);
+                memberRepository.save(memberEntity); // 변경사항 저장
+            }
+            
+            // 변경된 MemberEntity를 기반으로 새로운 MemberDto 생성 및 반환 (변환 로직은 생략)
+            return mapper.toDto(memberEntity); // convertToDto는 MemberEntity를 MemberDto로 변환하는 메소드입니다.
+            
         } else {
-            // 해당 memberId를 가진 멤버를 찾을 수 없을 경우 예외 처리
             throw new IllegalArgumentException("Member with id " + memberDto.getMemberId() + " not found");
         }
+    }
+    
+
+    @Transactional
+    @Override
+    public List<MemberDto> addCouponToMembers(List<MemberDto> memberDtos, CouponDto couponDto) {
+        List<MemberDto> updatedMemberDtos = new ArrayList<>();
+    
+        for (MemberDto memberDto : memberDtos) {
+            Optional<MemberEntity> optionalMemberEntity = memberRepository.findById(memberDto.getMemberId());
+    
+            if (optionalMemberEntity.isPresent()) {
+                MemberEntity memberEntity = optionalMemberEntity.get();
+                
+                // MemberEntity를 인자로 전달합니다.
+                MemberCouponEntity memberCouponEntity = couponService.createMemberCoupon(couponDto, memberEntity);
+                
+                memberEntity.addCoupon(memberCouponEntity);
+    
+                MemberEntity updatedMember = memberRepository.save(memberEntity);
+                updatedMemberDtos.add(mapper.toDto(updatedMember));
+            } else {
+                throw new IllegalArgumentException("Member with id " + memberDto.getMemberId() + " not found");
+            }
+        }
+    
+        return updatedMemberDtos;
     }
     
 

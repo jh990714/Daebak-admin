@@ -9,9 +9,25 @@ export const fetchMembers = createAsyncThunk("members/fetchMembers", async () =>
 });
 
 export const saveMember = createAsyncThunk("members/saveMember", async (memberData) => {
+  const response = await axios.put(`http://localhost:8080/member/update`, memberData);
+  return response.data;
+});
+
+export const saveMemberCoupon = createAsyncThunk("members/saveMemberCoupon", async (memberData) => {
   const response = await axios.put(`http://localhost:8080/member/updateCoupon`, memberData);
   return response.data;
 });
+
+export const addMemberCoupon = createAsyncThunk(
+  "members/addMemberCoupon",
+  async ({ members, coupon }) => {
+    const response = await axios.post("http://localhost:8080/member/addCoupon", {
+      members,
+      coupon,
+    });
+    return response.data;
+  }
+);
 
 const memberSlice = createSlice({
   name: "members",
@@ -45,6 +61,35 @@ const memberSlice = createSlice({
         );
       })
       .addCase(saveMember.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(saveMemberCoupon.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(saveMemberCoupon.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.members = state.members.map((member) =>
+          member.id === action.payload.id ? action.payload : member
+        );
+      })
+      .addCase(saveMemberCoupon.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(addMemberCoupon.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addMemberCoupon.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updatedMemberIds = action.payload.map((updatedMember) => updatedMember.id);
+        state.members = state.members.map((member) =>
+          updatedMemberIds.includes(member.id)
+            ? action.payload.find((updatedMember) => updatedMember.id === member.id)
+            : member
+        );
+      })
+      .addCase(addMemberCoupon.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });
