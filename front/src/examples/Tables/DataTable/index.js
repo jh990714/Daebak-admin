@@ -54,6 +54,8 @@ function DataTable({
   defaultPage,
   onPageChange,
   expanded,
+  isCheckBox,
+  onSelectedRows,
 }) {
   const defaultValue = entriesPerPage.defaultValue ? entriesPerPage.defaultValue : 10;
   const entries = entriesPerPage.entries
@@ -62,9 +64,34 @@ function DataTable({
   const columns = useMemo(() => table.columns, [table]);
   const data = useMemo(() => table.rows, [table]);
   const [expandedRows, setExpandedRows] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const toggleExpandedRow = () => {
     setExpandedRows(!expandedRows);
+  };
+
+  const handleRowSelection = (id) => {
+    let updatedRows;
+    if (selectedRows.includes(id)) {
+      updatedRows = selectedRows.filter((rowId) => rowId !== id);
+    } else {
+      updatedRows = [...selectedRows, id];
+    }
+
+    setSelectedRows(updatedRows);
+    onSelectedRows(updatedRows);
+  };
+
+  const handleAllRowsSelection = () => {
+    let updatedRows;
+    if (selectedRows.length === rows.length) {
+      updatedRows = [];
+    } else {
+      updatedRows = rows.map((row) => row.original.id);
+    }
+
+    setSelectedRows(updatedRows);
+    onSelectedRows(updatedRows);
   };
 
   const tableInstance = useTable(
@@ -210,6 +237,15 @@ function DataTable({
           <MDBox component="thead">
             {headerGroups.map((headerGroup, key) => (
               <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
+                {isCheckBox && (
+                  <DataTableHeadCell width={10} sorted={false}>
+                    <input
+                      type="checkbox"
+                      checked={selectedRows.length === rows.length}
+                      onChange={handleAllRowsSelection}
+                    />
+                  </DataTableHeadCell>
+                )}
                 {headerGroup.headers.map((column, idx) => (
                   <DataTableHeadCell
                     key={idx}
@@ -230,6 +266,15 @@ function DataTable({
               return (
                 <>
                   <TableRow key={key} {...row.getRowProps()}>
+                    {isCheckBox && (
+                      <DataTableBodyCell>
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(row.original.id)}
+                          onChange={() => handleRowSelection(row.original.id)}
+                        />
+                      </DataTableBodyCell>
+                    )}
                     {row.cells.map((cell, idx) => (
                       <DataTableBodyCell
                         key={idx}
@@ -310,6 +355,8 @@ DataTable.defaultProps = {
   noEndBorder: false,
   defaultPage: 0,
   expanded: null,
+  isCheckBox: false,
+  onSelectedRows: () => {},
 };
 
 // Typechecking props for the DataTable
@@ -342,6 +389,8 @@ DataTable.propTypes = {
   defaultPage: PropTypes.number,
   onPageChange: PropTypes.func.isRequired,
   expanded: PropTypes.element,
+  isCheckBox: PropTypes.bool,
+  onSelectedRows: PropTypes.func,
 };
 
 export default DataTable;

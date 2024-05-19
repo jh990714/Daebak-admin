@@ -29,6 +29,17 @@ export const addMemberCoupon = createAsyncThunk(
   }
 );
 
+export const addMemberPoints = createAsyncThunk(
+  "members/addMemberPoints",
+  async ({ members, points }) => {
+    const response = await ax.post("http://localhost:8080/points/points", {
+      members,
+      points,
+    });
+    return response.data;
+  }
+);
+
 const memberSlice = createSlice({
   name: "members",
   initialState: {
@@ -57,7 +68,7 @@ const memberSlice = createSlice({
       .addCase(saveMember.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.members = state.members.map((member) =>
-          member.id === action.payload.id ? action.payload : member
+          member.memberId === action.payload.memberId ? action.payload : member
         );
       })
       .addCase(saveMember.rejected, (state, action) => {
@@ -70,7 +81,7 @@ const memberSlice = createSlice({
       .addCase(saveMemberCoupon.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.members = state.members.map((member) =>
-          member.id === action.payload.id ? action.payload : member
+          member.memberId === action.payload.memberId ? action.payload : member
         );
       })
       .addCase(saveMemberCoupon.rejected, (state, action) => {
@@ -82,14 +93,30 @@ const memberSlice = createSlice({
       })
       .addCase(addMemberCoupon.fulfilled, (state, action) => {
         state.status = "succeeded";
-        const updatedMemberIds = action.payload.map((updatedMember) => updatedMember.id);
+        const updatedMemberIds = action.payload.map((updatedMember) => updatedMember.memberId);
         state.members = state.members.map((member) =>
-          updatedMemberIds.includes(member.id)
-            ? action.payload.find((updatedMember) => updatedMember.id === member.id)
+          updatedMemberIds.includes(member.memberId)
+            ? action.payload.find((updatedMember) => updatedMember.memberId === member.memberId)
             : member
         );
       })
       .addCase(addMemberCoupon.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(addMemberPoints.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addMemberPoints.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updatedMemberIds = action.payload.map((updatedMember) => updatedMember.memberId);
+        state.members = state.members.map((member) =>
+          updatedMemberIds.includes(member.memberId)
+            ? action.payload.find((updatedMember) => updatedMember.memberId === member.memberId)
+            : member
+        );
+      })
+      .addCase(addMemberPoints.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

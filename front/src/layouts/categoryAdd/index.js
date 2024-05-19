@@ -8,8 +8,11 @@ import MDInput from "components/MDInput";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import { fetchUpdateCategories } from "reducers/slices/categorySlice";
+import { useDispatch } from "react-redux";
 
 export const CategoryAdd = ({ isOpen, onClose }) => {
+  const dispatch = useDispatch();
   const [data, setData] = useState(null);
   const handleAddSubcategory = () => {
     const newSubcategories = [...(data.subcategories || []), { id: null, name: "" }];
@@ -27,8 +30,17 @@ export const CategoryAdd = ({ isOpen, onClose }) => {
 
   const handleSubmit = () => {
     console.log(data);
+    dispatch(fetchUpdateCategories(data))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
     onClose();
+    console.log(data);
   };
+
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth={"xl"}>
       <DialogTitle>상품 카테고리 추가</DialogTitle>

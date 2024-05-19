@@ -16,81 +16,99 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
-import Icon from "@mui/material/Icon";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-// Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-import MDAvatar from "components/MDAvatar";
-import MDProgress from "components/MDProgress";
+import { useSelector } from "react-redux";
+import { CategoryEditDialog } from "../dialog/categoryEditDialog";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { fetchDeleteCategory } from "reducers/slices/categorySlice";
 
-// Images
-import LogoAsana from "assets/images/small-logos/logo-asana.svg";
-import logoGithub from "assets/images/small-logos/github.svg";
-import logoAtlassian from "assets/images/small-logos/logo-atlassian.svg";
-import logoSlack from "assets/images/small-logos/logo-slack.svg";
-import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-import logoInvesion from "assets/images/small-logos/logo-invision.svg";
+export const CategoriesTableData = ({ clickedCategories, setClickedCategories }) => {
+  const { categories } = useSelector((state) => state.categories);
+  const dispatch = useDispatch();
+  const [showPopup, setShowPopup] = useState(false);
+  const [data, setData] = useState();
 
-export default function data() {
-  const datas = [
-    { categoryName: "고등어", parentCategoryName: "생선" },
-    { categoryName: "삼치-조기", parentCategoryName: "생선" },
-    { categoryName: "굴비", parentCategoryName: "생선" },
-    { categoryName: "장어", parentCategoryName: "생선" },
-    { categoryName: "돔", parentCategoryName: "생선" },
-    { categoryName: "새우", parentCategoryName: "갑각" },
-    { categoryName: "게", parentCategoryName: "갑각" },
-    { categoryName: "낙지", parentCategoryName: "갑각" },
-    { categoryName: "오징어", parentCategoryName: "갑각" },
-    { categoryName: "문어", parentCategoryName: "갑각" },
-    { categoryName: "전복", parentCategoryName: "조개" },
-    { categoryName: "소라", parentCategoryName: "조개" },
-    { categoryName: "가리비(준비중)", parentCategoryName: "조개" },
-    { categoryName: "키조개(준비중)", parentCategoryName: "조개" },
-    { categoryName: "새조개(준비중)", parentCategoryName: "조개" },
-    { categoryName: "다시마(준비중)", parentCategoryName: "해조" },
-    { categoryName: "김(준비중)", parentCategoryName: "해조" },
-    { categoryName: "미역(준비중)", parentCategoryName: "해조" },
-    { categoryName: "해초(준비중)", parentCategoryName: "해조" },
-    { categoryName: "회(준비중)", parentCategoryName: "수산가공품" },
-    { categoryName: "해산물볶음", parentCategoryName: "수산가공품" },
-    { categoryName: "오징어채", parentCategoryName: "수산가공품" },
-    { categoryName: "어묵", parentCategoryName: "수산가공품" },
-    { categoryName: "소금염장어", parentCategoryName: "기타 수산물" },
-    { categoryName: "멸치", parentCategoryName: "기타 수산물" },
-    { categoryName: "냉동생선", parentCategoryName: "기타 수산물" },
-  ];
-
-  const Category = ({ image, name }) => (
-    <MDBox display="flex" alignItems="center" lineHeight={1}>
-      <MDAvatar src={image} name={name} size="sm" variant="rounded" />
-      <MDTypography display="block" variant="button" fontWeight="medium" ml={1} lineHeight={1}>
-        {name}
-      </MDTypography>
-    </MDBox>
-  );
-
-  const Progress = ({ color, value }) => (
-    <MDBox display="flex" alignItems="center">
-      <MDTypography variant="caption" color="text" fontWeight="medium">
-        {value}%
-      </MDTypography>
-      <MDBox ml={0.5} width="9rem">
-        <MDProgress variant="gradient" color={color} value={value} />
-      </MDBox>
-    </MDBox>
-  );
-  console.log("sss");
-  return {
-    columns: [
-      { Header: "카테고리", accessor: "category" },
-      { Header: "상위 카테고리", accessor: "parentCategory" },
-    ],
-
-    rows: datas.map((data) => ({
-      category: <Category image={LogoAsana} name={data.categoryName} />,
-      parentCategory: <Category image={LogoAsana} name={data.parentCategoryName} />,
-    })),
+  const handleShowCategory = (category) => {
+    setData(category);
+    setShowPopup(true);
   };
-}
+
+  const handleDeleteCategory = (category) => {
+    const confirmDelete = window.confirm(`"${category.name}" 카테고리를 정말로 삭제하시겠습니까?`);
+    if (confirmDelete) {
+      dispatch(fetchDeleteCategory(category.id))
+        .then(() => {
+          console.log("저장 성공");
+        })
+        .catch((error) => {
+          console.error("저장 실패:", error);
+        });
+    }
+  };
+
+  const handleShowProduct = (subCategory) => {
+    const isAlreadyClicked = clickedCategories.some(
+      (clickedCategory) => clickedCategory.id === subCategory.id
+    );
+    console.log(isAlreadyClicked, subCategory);
+    if (isAlreadyClicked) {
+      const updatedClickedCategories = clickedCategories.filter(
+        (clickedCategory) => clickedCategory.id !== subCategory.id
+      );
+      setClickedCategories(updatedClickedCategories);
+    } else {
+      setClickedCategories((prevClickedCategories) => [...prevClickedCategories, subCategory]);
+    }
+  };
+
+  return (
+    <div className="flex flex-wrap px-10 gap-20">
+      {categories.map((category, index) => (
+        <div key={index} className="rounded-md">
+          <div key={index} className="flex gap-5 items-center border-b-4">
+            <span className="font-semibold text-xl">{category.name}</span>
+            <div>
+              <IconButton onClick={() => handleShowCategory(category)} size="medium">
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                color="error"
+                onClick={() => handleDeleteCategory(category)}
+                size="medium"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>
+          </div>
+          <ul className="mt-4 space-y-4">
+            {category.subcategories.map((subCategory, subIndex) => (
+              <li
+                key={subIndex}
+                className={`cursor-pointer text-sm border-b-[1px]${
+                  clickedCategories.some((clickedCategory) => clickedCategory.id === subCategory.id)
+                    ? " text-blue-500 font-bold"
+                    : ""
+                }`}
+                onClick={() => handleShowProduct(subCategory)}
+              >
+                {subCategory.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      {showPopup && (
+        <CategoryEditDialog
+          data={data}
+          setData={setData}
+          isOpen={showPopup}
+          handleClose={() => setShowPopup(false)}
+        />
+      )}
+    </div>
+  );
+};

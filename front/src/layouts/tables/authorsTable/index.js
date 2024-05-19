@@ -18,8 +18,10 @@ function AuthorsTable() {
   const { dataColumns: columns, dataRows: rows } = authorsTableData();
   const [addPointsSelectRows, setAddPointsSelectRows] = useState(false);
   const [addCouponSelectRows, setAddCouponSelectRows] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedMembers, setSelectMembers] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
-  const { status } = useSelector((state) => state.members);
+  const { members, status } = useSelector((state) => state.members);
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
@@ -31,6 +33,11 @@ function AuthorsTable() {
 
   const handleShowAddCouponDialog = () => {
     setAddCouponSelectRows(!addCouponSelectRows);
+  };
+
+  const handleSelectedRows = (selectedRows) => {
+    const selectedRowData = selectedRows.map((id) => members.find((member) => member.id === id));
+    setSelectMembers(selectedRowData);
   };
 
   if (status === "loading") {
@@ -81,14 +88,18 @@ function AuthorsTable() {
             noEndBorder
             defaultPage={pageIndex}
             onPageChange={handlePageChange}
+            isCheckBox={true}
+            onSelectedRows={handleSelectedRows}
           />
         </MDBox>
       </Card>
       <AddCouponDialog
+        selectMembers={selectedMembers}
         isOpen={addCouponSelectRows}
         onClose={() => setAddCouponSelectRows(!addCouponSelectRows)}
       />
       <AddPointsDialog
+        selectMembers={selectedMembers}
         isOpen={addPointsSelectRows}
         onClose={() => setAddPointsSelectRows(!addPointsSelectRows)}
       />

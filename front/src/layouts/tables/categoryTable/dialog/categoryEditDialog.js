@@ -8,8 +8,12 @@ import MDInput from "components/MDInput";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import { fetchUpdateCategories } from "reducers/slices/categorySlice";
+import { useDispatch } from "react-redux";
 
-export const CategoryEditDialog = ({ data, setData, isOpen, handleClose, handleSubmit }) => {
+export const CategoryEditDialog = ({ data, setData, isOpen, handleClose }) => {
+  const dispatch = useDispatch();
+
   const handleAddSubcategory = () => {
     const newSubcategories = [...(data.subcategories || []), { id: null, name: "" }];
     const newData = { ...data, subcategories: newSubcategories };
@@ -22,6 +26,19 @@ export const CategoryEditDialog = ({ data, setData, isOpen, handleClose, handleS
       const newData = { ...data, subcategories: newSubcategories };
       setData(newData);
     }
+  };
+
+  const handleSubmit = () => {
+    console.log(data);
+    dispatch(fetchUpdateCategories(data))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
+    handleClose();
+    console.log(data);
   };
 
   return (
@@ -101,5 +118,4 @@ CategoryEditDialog.propTypes = {
   setData: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
 };

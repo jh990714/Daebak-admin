@@ -92,8 +92,7 @@ public class MemberServiceImpl implements MemberService {
                 memberRepository.save(memberEntity); // 변경사항 저장
             }
             
-            // 변경된 MemberEntity를 기반으로 새로운 MemberDto 생성 및 반환 (변환 로직은 생략)
-            return mapper.toDto(memberEntity); // convertToDto는 MemberEntity를 MemberDto로 변환하는 메소드입니다.
+            return mapper.toDto(memberEntity);
             
         } else {
             throw new IllegalArgumentException("Member with id " + memberDto.getMemberId() + " not found");

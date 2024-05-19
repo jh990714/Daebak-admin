@@ -29,21 +29,18 @@ const ProductsTableData = ({ customDatas }) => {
     { Header: "action", accessor: "action", align: "center" },
   ];
 
-  const [anchorEls, setAnchorEls] = useState(Array(customDatas.length).fill(null));
+  const [rowData, setRowData] = useState(customDatas[0]);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
-  const [rowData, setRowData] = useState(customDatas[0]); // 수정할 행의 데이터
-  const [editDialogs, setEditDialogs] = useState(Array(customDatas.length).fill(false));
-  // const [editCategoryDialogs, setEditCategoryDialogs] = useState(
-  //   Array(customDatas.length).fill(false)
-  // );
+  const [anchorEls, setAnchorEls] = useState(Array(customDatas.length).fill(null));
+  const [dialogs, setDialogs] = useState(Array(customDatas.length).fill(false));
+  const [dialogType, setDialogType] = useState(null);
 
   const handleClick = (event, index) => {
-    console.log(anchorEls, index);
-
     const newAnchorEls = [...anchorEls];
     newAnchorEls[index] = event.currentTarget;
     setAnchorEls(newAnchorEls);
     setDialogAnchorEl(index);
+
     setRowData(customDatas[index]);
   };
 
@@ -51,21 +48,23 @@ const ProductsTableData = ({ customDatas }) => {
     setAnchorEls(Array(customDatas.length).fill(null));
   };
 
-  const handleEdit = () => {
-    setEditDialogs((prevState) => ({
+  const handleDialog = (type) => {
+    setDialogType(type);
+    setDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: true,
     }));
     handleClose();
   };
 
-  // const handleCategoryEdit = () => {
-  //   setEditCategoryDialogs((prevState) => ({
-  //     ...prevState,
-  //     [dialogAnchorEl]: true,
-  //   }));
-  //   handleClose(dialogAnchorEl);
-  // };
+  const handleDialogClose = () => {
+    setDialogType(null);
+    setDialogs((prevState) => ({
+      ...prevState,
+      [dialogAnchorEl]: false,
+    }));
+    setDialogAnchorEl(null);
+  };
 
   const handleRecommendedToggle = () => {
     // datas[dialogAnchorEl].recommended = !datas[dialogAnchorEl].recommended;
@@ -77,32 +76,6 @@ const ProductsTableData = ({ customDatas }) => {
     // 삭제 동작을 수행하는 함수 호출
     console.log("Delete clicked", dialogAnchorEl);
   };
-
-  const handleEditDialogClose = () => {
-    setEditDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: false,
-    }));
-    setDialogAnchorEl(null);
-  };
-
-  const handleEditDialogSubmit = () => {
-    // 수정 동작을 수행하는 함수 호출
-    console.log("Edit submitted:");
-    setEditDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: false,
-    }));
-    setDialogAnchorEl(null);
-  };
-
-  // const handleCategoryEditDialogClose = () => {
-  //   setEditCategoryDialogs((prevState) => ({
-  //     ...prevState,
-  //     [dialogAnchorEl]: false,
-  //   }));
-  //   setDialogAnchorEl(null);
-  // };
 
   const Product = ({ image, name }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
@@ -172,25 +145,28 @@ const ProductsTableData = ({ customDatas }) => {
             open={Boolean(anchorEls[index])}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleEdit}>수정</MenuItem>
-            {/* <MenuItem onClick={handleCategoryEdit}>카테고리 수정</MenuItem> */}
+            <MenuItem onClick={() => handleDialog("edit")}>수정</MenuItem>
+            <MenuItem onClick={() => handleDialog("categoryEdit")}>카테고리 수정</MenuItem>
             <MenuItem onClick={handleRecommendedToggle}>
               {rowData?.recommended ? "추천 상품 해제" : "추천 상품 등록"}
             </MenuItem>
             <MenuItem onClick={handleDelete}>삭제</MenuItem>
           </Menu>
-          <ProductEditDialog
-            rowData={rowData}
-            setRowData={setRowData}
-            isOpen={editDialogs[index]}
-            handleEditDialogClose={handleEditDialogClose}
-            handleEditDialogSubmit={handleEditDialogSubmit}
-          />
-          {/* <ProductByCategoryEditDialog
-            rowData={rowData?}
-            isOpen={editCategoryDialogs[index]}
-            onClose={handleCategoryEditDialogClose}
-          /> */}
+          {dialogType === "edit" && dialogs[index] && rowData && (
+            <ProductEditDialog
+              rowData={rowData}
+              setRowData={setRowData}
+              isOpen={dialogType === "edit" && dialogs[index]}
+              onClose={handleDialogClose}
+            />
+          )}
+          {dialogType === "categoryEdit" && dialogs[index] && rowData && (
+            <ProductByCategoryEditDialog
+              rowData={rowData}
+              isOpen={dialogType === "categoryEdit" && dialogs[index]}
+              onClose={handleDialogClose}
+            />
+          )}
         </>
       ),
     }));
