@@ -12,6 +12,7 @@ import { fetchMembers } from "reducers/slices/memberSlice";
 import { fetchCoupons } from "reducers/slices/couponSlice";
 import { fetchReviews } from "reducers/slices/reviewSlice";
 import { fetchQnas } from "reducers/slices/qnaSlice";
+import { fetchCategories } from "reducers/slices/categorySlice";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
@@ -21,6 +22,7 @@ store.dispatch(fetchMembers());
 store.dispatch(fetchCoupons());
 store.dispatch(fetchReviews());
 store.dispatch(fetchQnas());
+store.dispatch(fetchCategories());
 
 root.render(
   <BrowserRouter>

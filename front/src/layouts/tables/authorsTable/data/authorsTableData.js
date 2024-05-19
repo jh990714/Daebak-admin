@@ -12,6 +12,7 @@ import { UserInfoEditDialog } from "../dialog/userInfoEditDialog";
 import { UserCouponDialog } from "../dialog/userCouponDialog";
 import { useSelector } from "react-redux";
 import { DataGrid } from "@mui/x-data-grid";
+import { AddPointsDialog } from "../dialog/addPointsDialog";
 
 export default function authorsTableData() {
   const { members, status } = useSelector((state) => state.members);
@@ -84,6 +85,7 @@ export default function authorsTableData() {
 
   console.log(rowData);
   const dataRows = members.map((data, index) => ({
+    id: data.id,
     author: <Author image={team2} name={data.name} id={data.id} />,
     email: data.email,
     phone: data.phone,
@@ -104,6 +106,7 @@ export default function authorsTableData() {
         <Menu anchorEl={anchorEls[index]} open={Boolean(anchorEls[index])} onClose={handleClose}>
           <MenuItem onClick={() => handleDialog("edit")}>수정</MenuItem>
           <MenuItem onClick={() => handleDialog("coupon")}>보유 쿠폰</MenuItem>
+          <MenuItem onClick={() => handleDialog("points")}>적립금 추가</MenuItem>
           <MenuItem onClick={() => handleDialog("delete")}>삭제</MenuItem>
         </Menu>
         {dialogType === "coupon" && dialogs[index] && rowData && (
@@ -119,6 +122,13 @@ export default function authorsTableData() {
             rowData={rowData}
             setRowData={setRowData}
             isOpen={dialogType === "edit" && dialogs[index]}
+            onClose={handleDialogClose}
+          />
+        )}
+        {dialogType === "points" && dialogs[index] && rowData && (
+          <AddPointsDialog
+            selectMembers={[rowData]}
+            isOpen={dialogType === "points" && dialogs[index]}
             onClose={handleDialogClose}
           />
         )}

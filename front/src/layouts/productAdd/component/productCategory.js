@@ -8,9 +8,10 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
 import datas from "layouts/tables/categoryTable/data/categoryDatas";
+import { useSelector } from "react-redux";
 
 export const ProductCategory = ({ rowData, setRowData }) => {
-  const categories = datas;
+  const { categories } = useSelector((state) => state.categories);
 
   const dataColumns = [
     { Header: "상위 카테고리", accessor: "parentCategory", align: "left" },

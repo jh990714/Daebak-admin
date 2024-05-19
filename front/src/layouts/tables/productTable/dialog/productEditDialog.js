@@ -9,13 +9,7 @@ import MDTypography from "components/MDTypography";
 import MDProgress from "components/MDProgress";
 
 import DataTable from "examples/Tables/DataTable";
-export const ProductEditDialog = ({
-  rowData,
-  setRowData,
-  isOpen,
-  handleEditDialogClose,
-  handleEditDialogSubmit,
-}) => {
+export const ProductEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
   const dataColumns = [
     { Header: "이미지", accessor: "image", align: "left" },
     { Header: "상품", accessor: "product", align: "left" },
@@ -27,8 +21,12 @@ export const ProductEditDialog = ({
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
   ];
 
+  const handleSubmit = () => {
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onClose={handleEditDialogClose} fullWidth={true} maxWidth={"xl"}>
+    <Dialog open={isOpen} onClose={onClose} fullWidth={true} maxWidth={"xl"}>
       <DialogContent>
         <Card>
           <MDBox
@@ -158,8 +156,8 @@ export const ProductEditDialog = ({
         </Card>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleEditDialogClose}>취소</Button>
-        <Button onClick={handleEditDialogSubmit}>저장</Button>
+        <Button onClick={onClose}>취소</Button>
+        <Button onClick={handleSubmit}>저장</Button>
       </DialogActions>
     </Dialog>
   );
@@ -180,6 +178,5 @@ ProductEditDialog.propTypes = {
   ),
   setRowData: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  handleEditDialogClose: PropTypes.func.isRequired,
-  handleEditDialogSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
