@@ -28,6 +28,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import Icon from "@mui/material/Icon";
 import Autocomplete from "@mui/material/Autocomplete";
+import Checkbox from "@mui/material/Checkbox";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -239,8 +240,8 @@ function DataTable({
               <TableRow key={key} {...headerGroup.getHeaderGroupProps()}>
                 {isCheckBox && (
                   <DataTableHeadCell width={10} sorted={false}>
-                    <input
-                      type="checkbox"
+                    <Checkbox
+                      defaultChecked
                       checked={selectedRows.length === rows.length}
                       onChange={handleAllRowsSelection}
                     />
@@ -268,8 +269,8 @@ function DataTable({
                   <TableRow key={key} {...row.getRowProps()}>
                     {isCheckBox && (
                       <DataTableBodyCell>
-                        <input
-                          type="checkbox"
+                        <Checkbox
+                          defaultChecked
                           checked={selectedRows.includes(row.original.id)}
                           onChange={() => handleRowSelection(row.original.id)}
                         />

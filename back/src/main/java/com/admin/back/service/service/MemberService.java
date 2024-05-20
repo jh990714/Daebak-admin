@@ -9,9 +9,9 @@ import com.admin.back.entity.MemberEntity;
 public interface MemberService {
     List<MemberDto> getMembers();
 
-    MemberDto updateMember(MemberDto member);
+    MemberDto updateMember(MemberDto memberDto);
 
-    MemberDto updateMemberCoupon(MemberDto member);
+    MemberDto updateMemberCoupon(MemberDto memberDto);
 
-    List<MemberDto> addCouponToMembers(List<MemberDto> members, CouponDto couponDto);
+    List<MemberDto> addCouponToMembers(List<MemberDto> memberDtos, CouponDto couponDto);
 }

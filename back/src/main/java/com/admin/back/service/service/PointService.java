@@ -8,6 +8,6 @@ import com.admin.back.dto.PointsDto;
 
 public interface PointService {
 
-    List<MemberDto> addMPointsToMembers(List<MemberDto> members, PointsDto points);
+    List<MemberDto> addMPointsToMembers(List<MemberDto> memberDtos, PointsDto pointsDto);
     
 }

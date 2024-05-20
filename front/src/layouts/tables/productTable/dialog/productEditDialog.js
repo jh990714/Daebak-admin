@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Autocomplete, TextField, Button } from "@mui/material";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
@@ -9,7 +9,11 @@ import MDTypography from "components/MDTypography";
 import MDProgress from "components/MDProgress";
 
 import DataTable from "examples/Tables/DataTable";
-export const ProductEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
+import { fetchUpdateProduct } from "reducers/slices/productSlice";
+import { useDispatch } from "react-redux";
+
+export const ProductEditDialog = ({ rowData, isOpen, onClose }) => {
+  const dispatch = useDispatch();
   const dataColumns = [
     { Header: "이미지", accessor: "image", align: "left" },
     { Header: "상품", accessor: "product", align: "left" },
@@ -20,8 +24,18 @@ export const ProductEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
     { Header: "재고", accessor: "stockQuantity", align: "center" },
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
   ];
+  const [data, setData] = useState(rowData);
 
   const handleSubmit = () => {
+    console.log(data);
+
+    dispatch(fetchUpdateProduct(data))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
     onClose();
   };
 
@@ -59,16 +73,16 @@ export const ProductEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                             if (file) {
                               const reader = new FileReader();
                               reader.onload = (event) => {
-                                const newData = { ...rowData, image: event.target.result };
-                                setRowData(newData);
+                                const newData = { ...data, image: event.target.result };
+                                setData(newData);
                               };
                               reader.readAsDataURL(file);
                             }
                           }}
                         />
-                        {rowData?.image && (
+                        {data?.image && (
                           <img
-                            src={rowData.image}
+                            src={data.image}
                             alt="Selected Image"
                             className="w-[150px] h-auto object-cover rounded-md mt-2"
                           />
@@ -79,10 +93,10 @@ export const ProductEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                       <MDInput
                         type="text"
                         label="상품명"
-                        value={rowData?.name}
+                        value={data?.name}
                         onChange={(e) => {
-                          const newData = { ...rowData, name: e.target.value };
-                          setRowData(newData);
+                          const newData = { ...data, name: e.target.value };
+                          setData(newData);
                         }}
                       />
                     ),
@@ -90,10 +104,10 @@ export const ProductEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                       <MDInput
                         type="number"
                         label="정상가"
-                        value={rowData?.regularPrice}
+                        value={data?.regularPrice}
                         onChange={(e) => {
-                          const newData = { ...rowData, regularPrice: e.target.value };
-                          setRowData(newData);
+                          const newData = { ...data, regularPrice: e.target.value };
+                          setData(newData);
                         }}
                       />
                     ),
@@ -101,22 +115,22 @@ export const ProductEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                       <MDInput
                         type="number"
                         label="할인"
-                        value={rowData?.salePrice}
+                        value={data?.salePrice}
                         onChange={(e) => {
-                          const newData = { ...rowData, salePrice: e.target.value };
-                          setRowData(newData);
+                          const newData = { ...data, salePrice: e.target.value };
+                          setData(newData);
                         }}
                       />
                     ),
-                    finalPrice: [rowData?.regularPrice] - [rowData?.salePrice],
+                    finalPrice: [data?.regularPrice] - [data?.salePrice],
                     description: (
                       <MDInput
                         type="text"
                         label="설명"
-                        value={rowData?.description}
+                        value={data?.description}
                         onChange={(e) => {
-                          const newData = { ...rowData, description: e.target.value };
-                          setRowData(newData);
+                          const newData = { ...data, description: e.target.value };
+                          setData(newData);
                         }}
                       />
                     ),
@@ -124,10 +138,10 @@ export const ProductEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                       <MDInput
                         type="number"
                         label="재고"
-                        value={rowData?.stockQuantity}
+                        value={data?.stockQuantity}
                         onChange={(e) => {
-                          const newData = { ...rowData, stockQuantity: e.target.value };
-                          setRowData(newData);
+                          const newData = { ...data, stockQuantity: e.target.value };
+                          setData(newData);
                         }}
                       />
                     ),
@@ -135,13 +149,13 @@ export const ProductEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                       <MDInput
                         type="number"
                         label="배송비 당 최대 허용 수"
-                        value={rowData?.maxQuantityPerDelivery}
+                        value={data?.maxQuantityPerDelivery}
                         onChange={(e) => {
                           const newData = {
-                            ...rowData,
+                            ...data,
                             maxQuantityPerDelivery: e.target.value,
                           };
-                          setRowData(newData);
+                          setData(newData);
                         }}
                       />
                     ),
@@ -176,7 +190,6 @@ ProductEditDialog.propTypes = {
       maxQuantityPerDelivery: PropTypes.number.isRequired,
     })
   ),
-  setRowData: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };

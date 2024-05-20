@@ -149,7 +149,7 @@ export default function data({ customDatas }) {
       contents: data.contents,
       score: data.score,
       reviewDate: new Date(data.reviewDate).toLocaleString(),
-      isBest: Number(data.isBest),
+      isBest: Number(data?.isBest),
       orderNumber: data.orderNumber,
       response: data.response,
       action: (
