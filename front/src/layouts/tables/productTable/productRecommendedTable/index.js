@@ -8,6 +8,7 @@ import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
 
 import productRecommendedData from "./data/productRecommendedData";
+import { useSelector } from "react-redux";
 
 export const ProductRecommendedTable = () => {
   const [pageIndex, setPageIndex] = useState(0);

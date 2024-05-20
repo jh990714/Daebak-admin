@@ -5,6 +5,7 @@ import couponReducer from "./slices/couponSlice";
 import reviewReducer from "./slices/reviewSlice";
 import qnaReducer from "./slices/qnaSlice";
 import categoryReducer from "./slices/categorySlice";
+import dealProductReducer from "./slices/dealProductSlice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     reviews: reviewReducer,
     qnas: qnaReducer,
     categories: categoryReducer,
+    dealProducts: dealProductReducer,
   },
 });
 

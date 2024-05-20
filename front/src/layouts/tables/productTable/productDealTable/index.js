@@ -8,6 +8,7 @@ import MDButton from "components/MDButton";
 import DataTable from "examples/Tables/DataTable";
 
 import productDealData from "./data/productDealData";
+import { ProductDealAddDialog } from "./dialog/productDealAddDialog";
 
 export const ProductDealTable = () => {
   const [showProductDeal, setShowProductDeal] = useState(false);
@@ -58,15 +59,7 @@ export const ProductDealTable = () => {
           </MDBox>
         </Card>
       </Grid>
-      {/* {showProductDeal && (
-        <ProductDealsDialog
-          rowData={rowData}
-          setRowData={setRowData}
-          isOpen={true}
-          handleEditDialogClose={handleAddProductDeal}
-          handleEditDialogSubmit={handleAddProductDeal}
-        />
-      )} */}
+      {showProductDeal && <ProductDealAddDialog isOpen={true} onClose={handleAddProductDeal} />}
     </>
   );
 };

@@ -8,15 +8,12 @@ import MDBox from "components/MDBox";
 import DataTable from "examples/Tables/DataTable";
 
 import reviewMissingData from "./data/reviewMissingData";
+import { ExpandedContent } from "../expanded/expandedContent";
 
 export const ReviewMissingTable = () => {
   const [pageIndex, setPageIndex] = useState(0);
 
-  const {
-    columns: missingReviewColumns,
-    rows: missingReviewRows,
-    expanded: expanded,
-  } = reviewMissingData();
+  const { columns: missingReviewColumns, rows: missingReviewRows } = reviewMissingData();
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
@@ -49,7 +46,7 @@ export const ReviewMissingTable = () => {
             noEndBorder
             defaultPage={pageIndex}
             onPageChange={handlePageChange}
-            expanded={expanded}
+            expanded={(rowData) => <ExpandedContent rowData={rowData} />}
           />
         </MDBox>
       </Card>

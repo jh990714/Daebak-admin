@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.admin.back.dto.ProductDealDto;
 import com.admin.back.dto.ProductDto;
+import com.admin.back.entity.ProductDealEntity;
 import com.admin.back.entity.ProductEntity;
+import com.admin.back.repository.ProductDealRepository;
 import com.admin.back.repository.ProductRepository;
 import com.admin.back.service.service.ProductService;
 
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductServiceImpl implements ProductService  {
 
     private final ProductRepository productRepository;
+    private final ProductDealRepository productDealRepository;
 
     @Override
     public List<ProductDto> getProducts() {
@@ -53,6 +57,63 @@ public class ProductServiceImpl implements ProductService  {
             return ProductDto.fromEntity(updatedProductEntity);
         } else {
             throw new IllegalArgumentException("Product with ID " + productDto.getProductId() + " not found.");
+        }
+    }
+
+    @Override
+    public List<ProductDealDto> getDealProducts() {
+        List<ProductDealEntity> productDealEntities = productDealRepository.findAll();
+    
+        List<ProductDealDto> productDealDTOs = productDealEntities.stream()
+            .map(ProductDealDto::fromEntity)
+            .collect(Collectors.toList());
+
+        return productDealDTOs;
+    }
+
+    @Override
+    public ProductDealDto updateDealProducts(ProductDealDto productDeal) {
+        Optional<ProductDealEntity> optionalProductDealEntity= productDealRepository.findById(productDeal.getDealId());
+
+        if (optionalProductDealEntity.isPresent()) {
+            ProductDealEntity productDealEntity = optionalProductDealEntity.get();
+
+            productDealEntity.setDealPrice(productDeal.getDealPrice());
+            productDealEntity.setStartDate(productDeal.getStartDate());
+            productDealEntity.setEndDate(productDeal.getEndDate());
+
+            ProductDealEntity updatedProductDealEntity = productDealRepository.save(productDealEntity);
+            
+            return ProductDealDto.fromEntity(updatedProductDealEntity);
+        } else {
+            throw new IllegalArgumentException("Product with ID " + productDeal.getDealId() + " not found.");
+        }
+    }
+
+    @Override
+    public ProductDealDto saveDealProducts(ProductDealDto productDeal) {
+        ProductDealEntity newPoductDealEntity = ProductDealDto.toEntity(productDeal);
+
+        Optional<ProductDealEntity> optionalProductDealEntity = productDealRepository.findByProduct(newPoductDealEntity.getProduct());
+        
+        if (optionalProductDealEntity.isPresent()) {
+            productDealRepository.delete(optionalProductDealEntity.get());
+        }
+        
+        ProductDealEntity savedProductDealEntity = productDealRepository.save(newPoductDealEntity);
+        return ProductDealDto.fromEntity(savedProductDealEntity);
+    }
+
+    @Override
+    public ProductDealDto deleteDealProducts(ProductDealDto productDeal) {
+        Optional<ProductDealEntity> optionalProductDealEntity = productDealRepository.findById(productDeal.getDealId());
+
+        if (optionalProductDealEntity.isPresent()) {
+            productDealRepository.deleteById(productDeal.getDealId());
+
+            return productDeal;
+        } else {
+            throw new IllegalArgumentException("Deal with ID " + productDeal.getDealId() + " not found.");
         }
     }
     

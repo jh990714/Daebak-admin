@@ -24,7 +24,7 @@ public class ReviewEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
-    private int reviewId;
+    private Long reviewId;
 
     @Column(name = "product_id")
     private int productId;
@@ -65,5 +65,8 @@ public class ReviewEntity {
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewImageEntity> images;
 
-    // Getters and Setters
+    public void addResponse(ReviewResponseEntity reviewResponseEntity) {
+        this.responses.add(reviewResponseEntity);
+        reviewResponseEntity.setReview(this);
+    }
 }

@@ -21,7 +21,7 @@ function AuthorsTable() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedMembers, setSelectMembers] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
-  const { members, status } = useSelector((state) => state.members);
+  const { members } = useSelector((state) => state.members);
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
@@ -39,10 +39,6 @@ function AuthorsTable() {
     const selectedRowData = selectedRows.map((id) => members.find((member) => member.id === id));
     setSelectMembers(selectedRowData);
   };
-
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
 
   return (
     <Grid item xs={12}>

@@ -13,6 +13,7 @@ import LogoAsana from "assets/images/small-logos/logo-asana.svg";
 import { useEffect, useState } from "react";
 import { ProductEditDialog } from "../dialog/productEditDialog";
 import { ProductByCategoryEditDialog } from "../dialog/productByCategoryEditDialog";
+import { useSelector } from "react-redux";
 
 const ProductsTableData = ({ customDatas }) => {
   console.log("ProductsTableData");
