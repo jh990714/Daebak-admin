@@ -33,41 +33,7 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 
 import { useState } from "react";
 import { ReviewResponseDialog } from "../dialog/reviewResponseDialog";
-
-const expandedContent = (rowData) => {
-  const handleEditNoteIconClick = () => {
-    console.log("ggg");
-  };
-  return (
-    <>
-      <ul className="mb-4 p-2 overflow-y-auto max-h-60 gap-y-2">
-        {rowData.response.map((res, index) => (
-          <li key={index} className="flex mb-4 gap-4">
-            ⤷
-            <MDTypography width={"100%"} display="flex" flexDirection="column">
-              <span className="text-sm">{new Date(res.responseDate).toLocaleString()} </span>
-              <MDInput
-                value={res.responseText}
-                multiline
-                rows={3}
-                fullWidth
-                maxWidth={"xl"}
-                readOnly
-              />
-            </MDTypography>
-          </li>
-        ))}
-      </ul>
-      <div className="flex gap-4 p-2 border-y">
-        ⤷
-        <MDInput label={"답변작성"} multiline rows={3} fullWidth={true} maxWidth={"xl"} />
-        <IconButton aria-label="send response" onClick={handleEditNoteIconClick}>
-          <EditNoteIcon />
-        </IconButton>
-      </div>
-    </>
-  );
-};
+import { ExpandedContent } from "../expanded/expandedContent";
 
 export default function data({ customDatas }) {
   const [rowData, setRowData] = useState(customDatas[0]);
@@ -143,6 +109,7 @@ export default function data({ customDatas }) {
   const transformDataForReview = (customDatas) => {
     console.log("isb", customDatas[0].isBest);
     return customDatas.map((data, index) => ({
+      reviewId: data.reviewId,
       memberName: data.memberName,
       productName: data.productName,
       optionName: data.optionName,
@@ -190,7 +157,5 @@ export default function data({ customDatas }) {
     columns: dataColumns,
 
     rows: transformDataForReview(customDatas),
-
-    expanded: expandedContent,
   };
 }

@@ -15,7 +15,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { AddPointsDialog } from "../dialog/addPointsDialog";
 
 export default function authorsTableData() {
-  const { members, status } = useSelector((state) => state.members);
+  const { members } = useSelector((state) => state.members);
 
   const Author = ({ image, name, id }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>

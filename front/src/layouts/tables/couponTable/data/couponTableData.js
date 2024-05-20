@@ -10,7 +10,6 @@ import { useSelector } from "react-redux";
 export const couponTableData = () => {
   const { coupons } = useSelector((state) => state.coupons);
   console.log("쿠폰 응답: ", coupons);
-  // const datas = couponDatas;
   const [rowData, setRowData] = useState(coupons[0]);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
   const [anchorEls, setAnchorEls] = useState(Array(coupons.length).fill(null));

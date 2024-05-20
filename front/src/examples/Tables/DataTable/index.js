@@ -64,7 +64,7 @@ function DataTable({
     : ["5", "10", "15", "20", "25"];
   const columns = useMemo(() => table.columns, [table]);
   const data = useMemo(() => table.rows, [table]);
-  const [expandedRows, setExpandedRows] = useState(false);
+  const [expandedRows, setExpandedRows] = useState(true);
   const [selectedRows, setSelectedRows] = useState([]);
 
   const toggleExpandedRow = () => {
