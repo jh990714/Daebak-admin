@@ -32,7 +32,7 @@ export const addMemberCoupon = createAsyncThunk(
 export const addMemberPoints = createAsyncThunk(
   "members/addMemberPoints",
   async ({ members, points }) => {
-    const response = await ax.post("http://localhost:8080/points/points", {
+    const response = await axios.post("http://localhost:8080/points/points", {
       members,
       points,
     });

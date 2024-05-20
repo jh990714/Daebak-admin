@@ -31,7 +31,7 @@ public class PointServiceImpl implements PointService {
 
     @Override
     @Transactional
-    public List<MemberDto> addMPointsToMembers(List<MemberDto> memberDtos, PointsDto points) {
+    public List<MemberDto> addMPointsToMembers(List<MemberDto> memberDtos, PointsDto pointsDto) {
         List<MemberDto> updatedMemberDtos = new ArrayList<>();
 
         for (MemberDto memberDto : memberDtos) {
@@ -44,11 +44,11 @@ public class PointServiceImpl implements PointService {
                 MemberPointsEntity memberPoints = memberEntity.getMemberPoints();
 
                 if (memberPoints != null) {
-                    memberPoints.setPoints(memberPoints.getPoints().add(points.getPoints()));
+                    memberPoints.setPoints(memberPoints.getPoints().add(pointsDto.getPoints()));
                     subTotal = memberPoints.getPoints();
                 } else {
                     memberPoints = new MemberPointsEntity();
-                    memberPoints.setPoints(points.getPoints());
+                    memberPoints.setPoints(pointsDto.getPoints());
                     memberPoints.setMember(memberEntity);
                     memberEntity.setMemberPoints(memberPoints);
                 }
@@ -57,8 +57,8 @@ public class PointServiceImpl implements PointService {
                 PointsDetailsEntity pointsDetails = new PointsDetailsEntity();
                 pointsDetails.setMemberId(memberEntity.getMemberId());
                 pointsDetails.setDate(new Date());
-                pointsDetails.setDescription(points.getDescription());
-                pointsDetails.setUsageAmount(points.getPoints());
+                pointsDetails.setDescription(pointsDto.getDescription());
+                pointsDetails.setUsageAmount(pointsDto.getPoints());
                 pointsDetails.setSubTotal(subTotal);
 
                 pointsDetailsRepository.save(pointsDetails);

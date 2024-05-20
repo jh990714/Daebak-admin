@@ -32,7 +32,6 @@ public class MemberServiceImpl implements MemberService {
     private final CouponService couponService;
 
     private final MemberRepository memberRepository;
-    private final MemberCouponRepository memberCouponRepository;
     private final Mapper mapper;
 
     @PersistenceContext
