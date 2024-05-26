@@ -103,7 +103,7 @@ export default function data() {
   ];
 
   const dataRows = dealProducts.map((data, index) => ({
-    product: <Product image={LogoAsana} name={data.product.name} />,
+    product: <Product image={data.product.imageUrl} name={data.product.name} />,
     dealPrice: data.dealPrice,
     startDate: format(parseISO(data.startDate), "yyyy-MM-dd HH:mm"),
     endDate: format(parseISO(data.endDate), "yyyy-MM-dd HH:mm"),

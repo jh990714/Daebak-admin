@@ -1,10 +1,15 @@
 package com.admin.back.service.implement;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.admin.back.dto.ProductDealDto;
 import com.admin.back.dto.ProductDto;
@@ -13,13 +18,16 @@ import com.admin.back.entity.ProductEntity;
 import com.admin.back.repository.ProductDealRepository;
 import com.admin.back.repository.ProductRepository;
 import com.admin.back.service.service.ProductService;
+import com.admin.back.service.service.S3Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService  {
 
+    private final S3Service s3Service;
     private final ProductRepository productRepository;
     private final ProductDealRepository productDealRepository;
 
@@ -42,7 +50,6 @@ public class ProductServiceImpl implements ProductService  {
 
             productEntity.setCategory(productDto.getCategory());
             productEntity.setName(productDto.getName());
-            productEntity.setImageUrl(productDto.getImageUrl());
             productEntity.setStockQuantity(productDto.getStockQuantity());
             productEntity.setRegularPrice(productDto.getRegularPrice());
             productEntity.setSalePrice(productDto.getSalePrice());
@@ -51,6 +58,16 @@ public class ProductServiceImpl implements ProductService  {
             productEntity.setArrivalDate(productDto.getArrivalDate());
             productEntity.setRecommended(productDto.getRecommended());
             productEntity.setMaxQuantityPerDelivery(productDto.getMaxQuantityPerDelivery());
+
+            // if (image != null) {
+            //     String imageUrl;
+            //     try {
+            //         imageUrl = s3Service.saveImageToS3(image, "product/" + UUID.randomUUID().toString());
+            //         productEntity.setImageUrl(imageUrl);
+            //     } catch (IOException e) {
+            //         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save image to S3", e);
+            //     }
+            // }
 
             ProductEntity updatedProductEntity = productRepository.save(productEntity);
 
@@ -116,5 +133,73 @@ public class ProductServiceImpl implements ProductService  {
             throw new IllegalArgumentException("Deal with ID " + productDeal.getDealId() + " not found.");
         }
     }
-    
+
+    @Override
+    public ProductDto addProduct(ProductDto product, MultipartFile image) {
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setCategory(product.getCategory());
+        productEntity.setName(product.getName());
+        productEntity.setStockQuantity(product.getStockQuantity());
+        productEntity.setRegularPrice(product.getRegularPrice());
+        productEntity.setSalePrice(product.getSalePrice());
+        productEntity.setShippingCost(product.getShippingCost());
+        productEntity.setDescription(product.getDescription());
+        productEntity.setMaxQuantityPerDelivery(product.getMaxQuantityPerDelivery());
+
+        String imageUrl;
+        try {
+            imageUrl = s3Service.saveImageToS3(image, "product/" + UUID.randomUUID().toString());
+            productEntity.setImageUrl(imageUrl);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save image to S3", e);
+        }
+        
+
+        ProductEntity updatedProductEntity = productRepository.save(productEntity);
+
+        return ProductDto.fromEntity(updatedProductEntity);
+    }
+
+    @Transactional
+    @Override
+    public void deleteProduct(Long productId) {
+        Optional<ProductEntity> optionalProduct = productRepository.findById(productId);
+        
+        if (optionalProduct.isPresent()) {
+            ProductEntity productEntity = optionalProduct.get();
+            productRepository.delete(productEntity);
+
+            try {
+                s3Service.deleteImageFromS3(productEntity.getImageUrl());
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete image to S3", e);
+            }
+        } else {
+            throw new IllegalArgumentException("Product with ID " + productId + " not found.");
+        }
+    }
+
+    @Override
+    public ProductDto updateImage(Long productId, MultipartFile image) {
+        Optional<ProductEntity> optionalProduct = productRepository.findById(productId);
+        
+        if (optionalProduct.isPresent()) {
+            ProductEntity productEntity = optionalProduct.get();
+
+            try {
+                s3Service.deleteImageFromS3(productEntity.getImageUrl());
+
+                String imageUrl;
+                imageUrl = s3Service.saveImageToS3(image, "product/" + UUID.randomUUID().toString());
+                productEntity.setImageUrl(imageUrl);
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save image to S3", e);
+            }
+
+            ProductEntity updatedProductEntity = productRepository.save(productEntity);
+            return ProductDto.fromEntity(updatedProductEntity);
+        } else {
+            throw new IllegalArgumentException("Product with ID " + productId + " not found.");
+        }
+    }
 }

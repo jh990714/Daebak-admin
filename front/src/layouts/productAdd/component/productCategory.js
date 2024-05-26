@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 
 export const ProductCategory = ({ rowData, setRowData }) => {
   const { categories } = useSelector((state) => state.categories);
-  console.log(rowData);
+
   const dataColumns = [
     { Header: "상위 카테고리", accessor: "parentCategory", align: "left" },
     { Header: "하위 카테고리", accessor: "childCategory", align: "left" },

@@ -22,6 +22,7 @@ export const ProductEditDialog = ({ rowData, isOpen, onClose }) => {
     { Header: "최종가", accessor: "finalPrice", align: "center" },
     { Header: "설명", accessor: "description", align: "center" },
     { Header: "재고", accessor: "stockQuantity", align: "center" },
+    { Header: "배송비", accessor: "shippingCost", align: "center" },
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
   ];
   const [data, setData] = useState(rowData);
@@ -71,18 +72,14 @@ export const ProductEditDialog = ({ rowData, isOpen, onClose }) => {
                           onChange={(e) => {
                             const file = e.target.files[0];
                             if (file) {
-                              const reader = new FileReader();
-                              reader.onload = (event) => {
-                                const newData = { ...data, image: event.target.result };
-                                setData(newData);
-                              };
-                              reader.readAsDataURL(file);
+                              const newData = { ...data, image: file };
+                              setData(newData);
                             }
                           }}
                         />
                         {data?.image && (
                           <img
-                            src={data.image}
+                            src={URL.createObjectURL(data.image)}
                             alt="Selected Image"
                             className="w-[150px] h-auto object-cover rounded-md mt-2"
                           />
@@ -145,6 +142,17 @@ export const ProductEditDialog = ({ rowData, isOpen, onClose }) => {
                         }}
                       />
                     ),
+                    shippingCost: (
+                      <MDInput
+                        type="number"
+                        label="배송비"
+                        value={data?.shippingCost}
+                        onChange={(e) => {
+                          const newData = { ...rowData, shippingCost: e.target.value };
+                          setData(newData);
+                        }}
+                      />
+                    ),
                     maxQuantityPerDelivery: (
                       <MDInput
                         type="number"
@@ -187,6 +195,7 @@ ProductEditDialog.propTypes = {
       description: PropTypes.string.isRequired,
       stockQuantity: PropTypes.number.isRequired,
       recommended: PropTypes.number.isRequired,
+      shippingCost: PropTypes.number.isRequired,
       maxQuantityPerDelivery: PropTypes.number.isRequired,
     })
   ),

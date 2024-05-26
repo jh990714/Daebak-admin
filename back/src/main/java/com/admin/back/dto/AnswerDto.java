@@ -8,7 +8,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class AnswerDto {
-    private int answerId;
+    private Long answerId;
     private String responseText;
     private Date responseDate;
 }

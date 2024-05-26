@@ -13,10 +13,13 @@ import LogoAsana from "assets/images/small-logos/logo-asana.svg";
 import { useEffect, useState } from "react";
 import { ProductEditDialog } from "../dialog/productEditDialog";
 import { ProductByCategoryEditDialog } from "../dialog/productByCategoryEditDialog";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDeleteProduct } from "reducers/slices/productSlice";
+import { fetchUpdateProduct } from "reducers/slices/productSlice";
+import { ProductImageEditDialog } from "../dialog/productImageEditDialog";
 
 const ProductsTableData = ({ customDatas }) => {
-  console.log("ProductsTableData");
+  const dispatch = useDispatch();
   const dataColumns = [
     { Header: "상품", accessor: "product", align: "left" },
     { Header: "정상가", accessor: "regularPrice", align: "center" },
@@ -68,14 +71,27 @@ const ProductsTableData = ({ customDatas }) => {
   };
 
   const handleRecommendedToggle = () => {
-    // datas[dialogAnchorEl].recommended = !datas[dialogAnchorEl].recommended;
-    handleClose();
+    const updateRowData = { ...rowData, recommended: !rowData.recommended };
+    dispatch(fetchUpdateProduct(updateRowData))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
   };
 
   const handleDelete = () => {
-    handleClose();
-    // 삭제 동작을 수행하는 함수 호출
-    console.log("Delete clicked", dialogAnchorEl);
+    const confirmDelete = window.confirm(`"${rowData.name}" 상품을 정말로 삭제하겠습니까?`);
+    if (confirmDelete) {
+      dispatch(fetchDeleteProduct(rowData.productId))
+        .then(() => {
+          console.log("저장 성공");
+        })
+        .catch((error) => {
+          console.error("저장 실패:", error);
+        });
+    }
   };
 
   const Product = ({ image, name }) => (
@@ -121,7 +137,7 @@ const ProductsTableData = ({ customDatas }) => {
 
   const transformDataForProduct = (customDatas) => {
     return customDatas.map((data, index) => ({
-      product: <Product image={LogoAsana} name={data.name} />,
+      product: <Product image={data.imageUrl} name={data.name} />,
       regularPrice: data.regularPrice,
       salePrice: data.salePrice,
       finalPrice: data.regularPrice - data.salePrice,
@@ -129,6 +145,7 @@ const ProductsTableData = ({ customDatas }) => {
       stockQuantity: data.stockQuantity,
       risk: <Progress value={(data.stockQuantity / 100) * 100} />,
       recommended: data.recommended,
+      shippingCost: data.shippingCost,
       maxQuantityPerDelivery: data.maxQuantityPerDelivery,
       action: (
         <>
@@ -148,6 +165,7 @@ const ProductsTableData = ({ customDatas }) => {
           >
             <MenuItem onClick={() => handleDialog("edit")}>수정</MenuItem>
             <MenuItem onClick={() => handleDialog("categoryEdit")}>카테고리 수정</MenuItem>
+            <MenuItem onClick={() => handleDialog("imageEdit")}>이미지 수정</MenuItem>
             <MenuItem onClick={handleRecommendedToggle}>
               {rowData?.recommended ? "추천 상품 해제" : "추천 상품 등록"}
             </MenuItem>
@@ -165,6 +183,13 @@ const ProductsTableData = ({ customDatas }) => {
             <ProductByCategoryEditDialog
               rowData={rowData}
               isOpen={dialogType === "categoryEdit" && dialogs[index]}
+              onClose={handleDialogClose}
+            />
+          )}
+          {dialogType === "imageEdit" && dialogs[index] && rowData && (
+            <ProductImageEditDialog
+              rowData={rowData}
+              isOpen={dialogType === "imageEdit" && dialogs[index]}
               onClose={handleDialogClose}
             />
           )}

@@ -3,6 +3,7 @@ package com.admin.back.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,8 +31,22 @@ public class ReviewController {
     }
 
     @PutMapping("/{reviewId}")
-    public ResponseEntity<?> putMethodName(@PathVariable Long reviewId, @RequestBody ReviewResponseDto reviewResponse) {
+    public ResponseEntity<?> saveReviewResponse(@PathVariable Long reviewId, @RequestBody ReviewResponseDto reviewResponse) {
         ReviewDto reviewDto = reviewService.saveReviewResponse(reviewId, reviewResponse);
+        
+        return ResponseEntity.ok().body(reviewDto);
+    }
+
+    @PutMapping("best/{reviewId}")
+    public ResponseEntity<?> updateBestReivew(@PathVariable Long reviewId) {
+        ReviewDto reviewDto = reviewService.updateBestReivew(reviewId);
+        
+        return ResponseEntity.ok().body(reviewDto);
+    }
+
+    @DeleteMapping("/{reviewId}/response/{responseId}")
+    public ResponseEntity<?> deleteResponse(@PathVariable Long reviewId, @PathVariable Long responseId) {
+        ReviewDto reviewDto = reviewService.deleteResponse(reviewId, responseId);
         
         return ResponseEntity.ok().body(reviewDto);
     }

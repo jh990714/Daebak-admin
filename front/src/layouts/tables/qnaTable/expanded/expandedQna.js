@@ -11,6 +11,8 @@ import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { fetchSaveReviews } from "reducers/slices/reviewSlice";
 import { fetchDeleteResponse } from "reducers/slices/reviewSlice";
+import { fetchAddAnswer } from "reducers/slices/qnaSlice";
+import { fetchDeleteAnswer } from "reducers/slices/qnaSlice";
 
 export const ExpandedContent = ({ rowData }) => {
   const dispatch = useDispatch();
@@ -21,12 +23,11 @@ export const ExpandedContent = ({ rowData }) => {
       return;
     }
 
-    const reviewResponse = {
-      adminId: 1,
+    const answer = {
       responseText: inputValue,
     };
-
-    dispatch(fetchSaveReviews({ reviewId: rowData.reviewId, reviewResponse }))
+    console.log(rowData.questionId, inputValue);
+    dispatch(fetchAddAnswer({ questionId: rowData.questionId, answer }))
       .then(() => {
         console.log("저장 성공");
       })
@@ -38,7 +39,7 @@ export const ExpandedContent = ({ rowData }) => {
   const handleDeleteResponse = (response) => {
     const confirmDelete = window.confirm(`해당 답변을 삭제하시겠습니까?`);
     if (confirmDelete) {
-      dispatch(fetchDeleteResponse({ reviewId: rowData.reviewId, responseId: response.responseId }))
+      dispatch(fetchDeleteAnswer({ questionId: rowData.questionId, answerId: response.answerId }))
         .then(() => {
           console.log("저장 성공");
         })
@@ -51,7 +52,7 @@ export const ExpandedContent = ({ rowData }) => {
   return (
     <>
       <ul className="mb-4 p-2 overflow-y-auto max-h-60 gap-y-2">
-        {rowData.response.map((res, index) => (
+        {rowData.answer.map((res, index) => (
           <li key={index} className="flex mb-4 gap-4">
             ⤷
             <MDTypography width={"100%"} display="flex" flexDirection="column">

@@ -14,10 +14,10 @@ import lombok.Setter;
 public class ReviewDto {
     private Long reviewId;
 
-    private int productId;
+    private Long productId;
     private String productName;
 
-    private int optionId;
+    private Long optionId;
     private String optionName;
 
     private Long memberId;
@@ -34,10 +34,10 @@ public class ReviewDto {
     public static ReviewDto fromEntity(ReviewEntity reviewEntity) {
         ReviewDto reviewDto = new ReviewDto();
         reviewDto.setReviewId(reviewEntity.getReviewId());
-        reviewDto.setProductId(reviewEntity.getProductId());
+        reviewDto.setProductId(reviewEntity.getProduct().getProductId());
         reviewDto.setProductName(reviewEntity.getProduct().getName());
-        reviewDto.setOptionId(reviewEntity.getOptionId());
-        // reviewDto.setOptionName(reviewEntity.getOption().getName()); // 옵션 이름 추가
+        reviewDto.setOptionId(reviewEntity.getOption().getOptionId());
+        reviewDto.setOptionName(reviewEntity.getOption().getName()); // 옵션 이름 추가
         reviewDto.setMemberId(reviewEntity.getMember().getMemberId());
         reviewDto.setMemberName(reviewEntity.getMember().getName());
         reviewDto.setContents(reviewEntity.getContents());

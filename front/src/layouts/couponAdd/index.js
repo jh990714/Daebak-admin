@@ -9,8 +9,11 @@ import MDTypography from "components/MDTypography";
 import MDProgress from "components/MDProgress";
 
 import DataTable from "examples/Tables/DataTable";
+import { useDispatch } from "react-redux";
+import { fetchUpdateCoupon } from "reducers/slices/couponSlice";
 
 export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
+  const dispatch = useDispatch();
   const [data, setData] = useState(rowData);
   const dataColumns = [
     { Header: "쿠폰코드", accessor: "couponCode", align: "left" },
@@ -26,14 +29,16 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
     setData(rowData);
   }, [rowData]);
 
-  useEffect(() => {
-    setData(data);
-  }, [data]);
-
   const handleSubmit = () => {
     console.log(data);
+    dispatch(fetchUpdateCoupon({ coupon: data }))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
 
-    setRowData(data);
     onClose();
   };
   return (
@@ -100,7 +105,7 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     ),
                     validFrom: (
                       <MDInput
-                        type="date"
+                        type="datetime-local"
                         label="시작날짜"
                         value={data.validFrom}
                         onChange={(e) => {
@@ -113,7 +118,7 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     ),
                     validUntil: (
                       <MDInput
-                        type="date"
+                        type="datetime-local"
                         label="종료날짜"
                         value={data.validUntil}
                         onChange={(e) => {

@@ -57,7 +57,7 @@ public class ProductEntity {
 
     @Column(name = "max_quantity_per_delivery")
     private Integer maxQuantityPerDelivery;
-
+    
     // @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     // private List<ReviewEntity> reviews;
 }

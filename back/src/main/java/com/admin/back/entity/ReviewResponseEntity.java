@@ -21,7 +21,7 @@ public class ReviewResponseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "response_id")
-    private int responseId;
+    private Long responseId;
 
     @Column(name = "admin_id")
     private int adminId;

@@ -1,10 +1,15 @@
 import React from "react";
 
+import PropTypes from "prop-types";
+
+import MDInput from "components/MDInput";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import DataTable from "examples/Tables/DataTable";
 
-export const ProductSubInfo = () => {
+export const ProductSubInfo = ({ rowData, setRowData }) => {
+  const dataColumns = [{ Header: "세부정보 이미지", accessor: "image", align: "left" }];
   return (
     <Card>
       <MDBox
@@ -17,10 +22,47 @@ export const ProductSubInfo = () => {
         coloredShadow="info"
       >
         <MDTypography variant="h6" color="white">
-          삼품 세부정보
+          상품 세부정보
         </MDTypography>
       </MDBox>
-      <MDBox></MDBox>
+      <MDBox pt={3}>
+        <DataTable
+          table={{
+            columns: dataColumns,
+            rows: [
+              {
+                image: (
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const newData = { ...rowData, image: file };
+                          setRowData(newData);
+                        }
+                      }}
+                    />
+                    {rowData?.image && (
+                      <img src={URL.createObjectURL(rowData?.image)} alt="Selected Image" />
+                    )}
+                  </>
+                ),
+              },
+            ],
+          }}
+          isSorted={false}
+          entriesPerPage={false}
+          showTotalEntries={false}
+        />
+      </MDBox>
     </Card>
   );
+};
+
+ProductSubInfo.propTypes = {
+  rowData: PropTypes.object,
+  setRowData: PropTypes.func.isRequired,
 };

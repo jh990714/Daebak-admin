@@ -9,4 +9,8 @@ public interface ReviewService {
     List<ReviewDto> getAllReviews();
 
     ReviewDto saveReviewResponse(Long reviewId, ReviewResponseDto reviewResponse);
+
+    ReviewDto updateBestReivew(Long reviewId);
+
+    ReviewDto deleteResponse(Long reviewId, Long responseId);
 }

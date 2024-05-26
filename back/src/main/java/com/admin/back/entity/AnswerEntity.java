@@ -20,12 +20,12 @@ import jakarta.persistence.Table;
 public class AnswerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int answerId;
+    private Long answerId;
 
     private String content;
     private Date createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "question_id", insertable = false, updatable = false)
+    @JoinColumn(name = "question_id")
     private QuestionEntity question;
 }

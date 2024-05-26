@@ -13,6 +13,35 @@ export const fetchCoupons = createAsyncThunk("coupons/fetchCoupons", async () =>
   }
 });
 
+export const fetchUpdateCoupon = createAsyncThunk(
+  "coupons/fetchUpdateCoupon",
+  async ({ coupon }) => {
+    try {
+      const response = await axios.post("http://localhost:8080/coupon", coupon);
+      console.log("couponResponse");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching coupons:", error);
+      throw error; // 에러를 던져서 rejected 상태로 전환
+    }
+  }
+);
+
+export const fetchDeleteCoupon = createAsyncThunk(
+  "coupons/fetchDeleteCoupon",
+  async ({ couponId }) => {
+    try {
+      console.log("delete");
+      const response = await axios.delete(`http://localhost:8080/coupon/${couponId}`);
+      console.log("couponResponse");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching coupons:", error);
+      throw error; // 에러를 던져서 rejected 상태로 전환
+    }
+  }
+);
+
 // coupontSlice 정의
 const coupontSlice = createSlice({
   name: "coupons",
@@ -32,6 +61,39 @@ const coupontSlice = createSlice({
         state.coupons = action.payload;
       })
       .addCase(fetchCoupons.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchUpdateCoupon.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUpdateCoupon.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updatedCoupon = action.payload;
+        const index = state.coupons.findIndex(
+          (coupon) => coupon.couponId === updatedCoupon.couponId
+        );
+
+        if (index !== -1) {
+          state.coupons[index] = updatedCoupon;
+        } else {
+          state.coupons.push(updatedCoupon);
+        }
+      })
+      .addCase(fetchUpdateCoupon.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchDeleteCoupon.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchDeleteCoupon.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const deleteCouponId = action.payload;
+
+        state.coupons = state.coupons.filter((coupon) => coupon.couponId !== deleteCouponId);
+      })
+      .addCase(fetchDeleteCoupon.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

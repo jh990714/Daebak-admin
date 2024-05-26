@@ -26,12 +26,6 @@ public class ReviewEntity {
     @Column(name = "review_id")
     private Long reviewId;
 
-    @Column(name = "product_id")
-    private int productId;
-
-    @Column(name = "option_id")
-    private int optionId;
-
     @Column(name = "contents")
     private String contents;
 
@@ -55,9 +49,9 @@ public class ReviewEntity {
     @JoinColumn(name = "member_id", insertable = false, updatable = false)
     private MemberEntity member;
 
-    // @ManyToOne
-    // @JoinColumn(name = "option_id", insertable = false, updatable = false)
-    // private OptionEntity option;
+    @ManyToOne
+    @JoinColumn(name = "option_id", insertable = false, updatable = false)
+    private OptionEntity option;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewResponseEntity> responses;
