@@ -39,10 +39,13 @@ import QnaTable from "./qnaTable";
 import { CouponTable } from "./couponTable";
 import { useSelector } from "react-redux";
 import couponSlice from "reducers/slices/couponSlice";
+import Loading from "components/Loading";
+import { ProductDealTable } from "./productDealTable";
 
 const items = [
   { key: "users", label: "사용자", component: <AuthorsTable /> },
   { key: "categories", label: "카테고리", component: <CategoryTable /> },
+  { key: "productDeals", label: "타임 특가", component: <ProductDealTable /> },
   { key: "products", label: "상품", component: <ProductTable /> },
   { key: "reviews", label: "상품 리뷰", component: <ReviewTable /> },
   { key: "qnas", label: "Q&A", component: <QnaTable /> },
@@ -51,13 +54,23 @@ const items = [
 
 const slice = ["categories", "coupons", "dealProducts", "members", "products", "qnas", "reviews"];
 function Tables() {
-  const categories = useSelector((state) => state.categories.status);
-  const coupons = useSelector((state) => state.coupons.status);
-  const dealProducts = useSelector((state) => state.dealProducts.status);
-  const members = useSelector((state) => state.members.status);
-  const products = useSelector((state) => state.products.status);
-  const qnas = useSelector((state) => state.qnas.status);
-  const reviews = useSelector((state) => state.reviews.status);
+  const categoriesStatus = useSelector((state) => state.categories.status);
+  const couponsStatus = useSelector((state) => state.coupons.status);
+  const dealProductsStatus = useSelector((state) => state.dealProducts.status);
+  const membersStatus = useSelector((state) => state.members.status);
+  const productsStatus = useSelector((state) => state.products.status);
+  const qnasStatus = useSelector((state) => state.qnas.status);
+  const reviewsStatus = useSelector((state) => state.reviews.status);
+
+  const statusMap = {
+    users: membersStatus,
+    categories: categoriesStatus,
+    productDeals: dealProductsStatus,
+    products: productsStatus,
+    reviews: reviewsStatus,
+    qnas: qnasStatus,
+    coupons: couponsStatus,
+  };
 
   const [selectedItems, setSelectedItems] = useState(items.map((item) => item.key));
 
@@ -77,13 +90,13 @@ function Tables() {
     }
   };
 
-  const isLoading = [categories, coupons, dealProducts, members, products, qnas, reviews].includes(
-    "loading"
-  );
+  // const isLoading = [categories, coupons, dealProducts, members, products, qnas, reviews].includes(
+  //   "loading"
+  // );
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <>
@@ -116,7 +129,14 @@ function Tables() {
         </FormGroup>
         <MDBox pt={6} pb={3}>
           <Grid container spacing={6}>
-            {items.map((item) => selectedItems.includes(item.key) && item.component)}
+            {items.map((item) => {
+              const isLoading = statusMap[item.key] === "loading";
+              return (
+                <Grid item xs={12} key={item.key}>
+                  {selectedItems.includes(item.key) && (isLoading ? <Loading /> : item.component)}
+                </Grid>
+              );
+            })}
           </Grid>
         </MDBox>
         <Footer />
