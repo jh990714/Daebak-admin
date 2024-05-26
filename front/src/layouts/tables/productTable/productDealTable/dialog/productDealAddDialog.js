@@ -33,7 +33,7 @@ export const ProductDealAddDialog = ({ isOpen, onClose }) => {
       data.product &&
       value > data.product.regularPrice - data.product.salePrice
     ) {
-      value = 0;
+      value = data.product.regularPrice - data.product.salePrice;
     }
     setData({ ...data, [key]: value });
   };

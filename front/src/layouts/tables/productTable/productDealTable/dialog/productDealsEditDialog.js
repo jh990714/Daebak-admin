@@ -18,7 +18,9 @@ export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
   const dispatch = useDispatch();
   const dataColumns = [
     { Header: "상품", accessor: "product", align: "left" },
+    { Header: "현재가", accessor: "regularPrice", align: "center" },
     { Header: "추가 할인", accessor: "dealPrice", align: "center" },
+    { Header: "최종가", accessor: "finalPrice", align: "center" },
     { Header: "시작 시간", accessor: "startDate", align: "center" },
     { Header: "종료 시간", accessor: "endDate", align: "center" },
   ];
@@ -29,11 +31,11 @@ export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
   }, [rowData]);
 
   const handleSubmit = () => {
-    const utcData = {
-      ...data,
-      startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
-      endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
-    };
+    // const utcData = {
+    //   ...data,
+    //   startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
+    //   endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
+    // };
 
     dispatch(fetchUpdateDealProducts(utcData))
       .then(() => {
@@ -43,6 +45,19 @@ export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
         console.error("저장 실패:", error);
       });
     onClose();
+  };
+
+  const handleChange = (key) => (event) => {
+    let value = event.target.value;
+
+    if (
+      key === "dealPrice" &&
+      data.product &&
+      value > data.product.regularPrice - data.product.salePrice
+    ) {
+      value = data.product.regularPrice - data.product.salePrice;
+    }
+    setData({ ...data, [key]: value });
   };
 
   return (
@@ -80,43 +95,37 @@ export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
                         {data?.product.name}
                       </MDTypography>
                     ),
+                    regularPrice: data.product
+                      ? data.product?.regularPrice - data.product?.salePrice
+                      : "",
                     dealPrice: (
                       <MDInput
                         type="number"
-                        label="추가할인"
-                        value={data?.dealPrice}
-                        onChange={(e) => {
-                          const newData = { ...data, dealPrice: e.target.value };
-                          setData(newData);
-                        }}
+                        value={data.dealPrice}
+                        onChange={handleChange("dealPrice")}
                       />
                     ),
+                    finalPrice: data.product
+                      ? data.product?.regularPrice - data.product?.salePrice - data.dealPrice
+                      : "",
                     startDate: (
                       <MDInput
-                        type="datetime-local" // datetime 형식을 사용
-                        label="시작 시간"
+                        type="datetime-local"
                         value={
                           data.startDate
                             ? format(parseISO(data.startDate), "yyyy-MM-dd'T'HH:mm")
                             : ""
                         }
-                        onChange={(e) => {
-                          const newData = { ...data, startDate: e.target.value };
-                          setData(newData);
-                        }}
+                        onChange={handleChange("startDate")}
                       />
                     ),
                     endDate: (
                       <MDInput
-                        type="datetime-local" // datetime 형식을 사용
-                        label="종료 시간"
+                        type="datetime-local"
                         value={
                           data.endDate ? format(parseISO(data.endDate), "yyyy-MM-dd'T'HH:mm") : ""
                         }
-                        onChange={(e) => {
-                          const newData = { ...data, endDate: e.target.value };
-                          setData(newData);
-                        }}
+                        onChange={handleChange("endDate")}
                       />
                     ),
                   },
