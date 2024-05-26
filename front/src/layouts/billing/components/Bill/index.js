@@ -24,7 +24,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material
 import { useMaterialUIController } from "context";
 import BillingInfoModal from "./billingInfoModal";
 
-function Bill({ id, name, orderNumber, orderAt, orderItems, amount, noGutter }) {
+function Bill({ id, memberName, impUid, orderNumber, orderDate, trackingNumber, noGutter }) {
   const [showDetail, setShowDetail] = useState(false);
   const [showAllItems, setShowAllItems] = useState(false);
 
@@ -62,7 +62,7 @@ function Bill({ id, name, orderNumber, orderAt, orderItems, amount, noGutter }) 
           >
             <MDTypography variant="button" fontWeight="medium">
               {id}:&nbsp;&nbsp;&nbsp;
-              {name}
+              {memberName}
             </MDTypography>
             <MDBox
               display="flex"
@@ -70,15 +70,30 @@ function Bill({ id, name, orderNumber, orderAt, orderItems, amount, noGutter }) 
               mt={{ xs: 2, sm: 0 }}
               ml={{ xs: -1.5, sm: 0 }}
             >
+              {!trackingNumber && (
+                <MDBox mr={1}>
+                  <MDButton variant="text" color="info">
+                    <Icon>local_shipping</Icon>&nbsp;운송장 번호 등록
+                  </MDButton>
+                </MDBox>
+              )}
+              <MDButton variant="text" color={darkMode ? "white" : "dark"} onClick={toggleDetail}>
+                <Icon>edit</Icon>&nbsp;상세 정보 보기
+              </MDButton>
               <MDBox mr={1}>
                 <MDButton variant="text" color="error">
                   <Icon>delete</Icon>&nbsp;결제 취소
                 </MDButton>
               </MDBox>
-              <MDButton variant="text" color={darkMode ? "white" : "dark"} onClick={toggleDetail}>
-                <Icon>edit</Icon>&nbsp;상세 정보 보기
-              </MDButton>
             </MDBox>
+          </MDBox>
+          <MDBox mb={2} lineHeight={0}>
+            <MDTypography variant="caption" color="text">
+              포트원 거래번호:&nbsp;&nbsp;&nbsp;
+              <MDTypography variant="caption" fontWeight="medium">
+                {impUid}
+              </MDTypography>
+            </MDTypography>
           </MDBox>
           <MDBox mb={1} lineHeight={0}>
             <MDTypography variant="caption" color="text">
@@ -88,37 +103,24 @@ function Bill({ id, name, orderNumber, orderAt, orderItems, amount, noGutter }) 
               </MDTypography>
             </MDTypography>
           </MDBox>
-          <MDBox mb={1} lineHeight={0}>
+          <MDBox mb={2} lineHeight={0}>
             <MDTypography variant="caption" color="text">
               주문 날짜:&nbsp;&nbsp;&nbsp;
               <MDTypography variant="caption" fontWeight="medium">
-                {orderAt}
+                {orderDate}
               </MDTypography>
             </MDTypography>
           </MDBox>
-          <MDTypography variant="caption" color="text">
-            주문 목록:&nbsp;&nbsp;&nbsp;
-            {orderItems.slice(0, showAllItems ? orderItems.length : 3).map((item, index) => (
-              <MDBox key={index} pt={1} pl={2} mb={1} lineHeight={0}>
+          {trackingNumber && (
+            <MDBox mb={1} lineHeight={0}>
+              <MDTypography variant="caption" color="text">
+                운송장 번호:&nbsp;&nbsp;&nbsp;
                 <MDTypography variant="caption" fontWeight="medium">
-                  {index + 1}: {item.itemName} ({item.quantity}개),
+                  {trackingNumber}
                 </MDTypography>
-              </MDBox>
-            ))}
-            {!showAllItems && orderItems.length > 3 && (
-              <Button variant="text" color="primary" onClick={toggleAllItems}>
-                더보기
-              </Button>
-            )}
-          </MDTypography>
-          <MDBox mb={1} lineHeight={0}>
-            <MDTypography variant="caption" color="text">
-              결제 가격:&nbsp;&nbsp;&nbsp;
-              <MDTypography variant="caption" fontWeight="medium">
-                {amount.toLocaleString()}원
               </MDTypography>
-            </MDTypography>
-          </MDBox>
+            </MDBox>
+          )}
         </MDBox>
       </MDBox>
       <BillingInfoModal
@@ -136,17 +138,11 @@ Bill.defaultProps = {
 
 Bill.propTypes = {
   id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
+  memberName: PropTypes.string.isRequired,
+  impUid: PropTypes.string.isRequired,
   orderNumber: PropTypes.string.isRequired,
-  orderAt: PropTypes.string.isRequired,
-  orderItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      itemName: PropTypes.string.isRequired,
-      quantity: PropTypes.number.isRequired,
-      amount: PropTypes.number.isRequired,
-    })
-  ).isRequired,
-  amount: PropTypes.number.isRequired,
+  orderDate: PropTypes.string.isRequired,
+  trackingNumber: PropTypes.string.isRequired,
   noGutter: PropTypes.bool,
 };
 

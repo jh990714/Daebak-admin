@@ -51,6 +51,7 @@ import Icon from "@mui/material/Icon";
 import { ProductAdd } from "layouts/productAdd";
 import { CategoryAdd } from "layouts/categoryAdd";
 import { CouponDialog } from "layouts/couponAdd";
+import { OrderManagementSystem } from "layouts/orderManagementSystem";
 
 const routes = [
   {
@@ -71,6 +72,17 @@ const routes = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/tables",
     component: <Tables />,
+  },
+  {
+    type: "divider",
+  },
+  {
+    type: "collapse",
+    name: "발주 OMS",
+    key: "order-management-system",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/order-management-system",
+    component: <OrderManagementSystem />,
   },
   {
     type: "divider",

@@ -18,6 +18,7 @@ Coded by www.creative-tim.com
 // @mui material components
 import React from "react";
 import Icon from "@mui/material/Icon";
+import ThumbUpAltSharpIcon from "@mui/icons-material/ThumbUpAlt";
 
 import { Menu, MenuItem, IconButton, Button } from "@mui/material";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";

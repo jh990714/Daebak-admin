@@ -13,6 +13,7 @@ import { fetchCoupons } from "reducers/slices/couponSlice";
 import { fetchReviews } from "reducers/slices/reviewSlice";
 import { fetchQnas } from "reducers/slices/qnaSlice";
 import { fetchCategories } from "reducers/slices/categorySlice";
+import { fetchPaymentDetails } from "reducers/slices/paymentDetailSlice";
 import { fetchDealProducts } from "reducers/slices/dealProductSlice";
 
 const container = document.getElementById("app");
@@ -24,6 +25,7 @@ store.dispatch(fetchCoupons());
 store.dispatch(fetchReviews());
 store.dispatch(fetchQnas());
 store.dispatch(fetchCategories());
+store.dispatch(fetchPaymentDetails());
 store.dispatch(fetchDealProducts());
 
 root.render(
