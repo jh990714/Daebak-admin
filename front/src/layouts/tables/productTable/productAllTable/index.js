@@ -10,6 +10,7 @@ import MDButton from "components/MDButton";
 import DataTable from "examples/Tables/DataTable";
 
 import ProductAllData from "./data/ProductAllData";
+import { useSelector } from "react-redux";
 
 export const ProductAllTable = () => {
   const [pageIndex, setPageIndex] = useState(0);

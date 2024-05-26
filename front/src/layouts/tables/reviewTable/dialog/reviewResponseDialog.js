@@ -37,7 +37,7 @@ export const ReviewResponseDialog = ({ rowData, setRowData, isOpen, onClose }) =
                 {RenderTextLines(rowData.contents)}
               </MDTypography>
             </MDBox>
-            <MDBox px={5} pb={3}>
+            <MDBox px={5} pb={3} sx={{ maxHeight: "400px", overflowY: "auto" }}>
               {rowData.response.map((response) => (
                 <MDBox display="flex" key={response.responseId} gap={2}>
                   <MDTypography>⤷</MDTypography>

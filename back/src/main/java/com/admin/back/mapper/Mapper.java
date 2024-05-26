@@ -8,6 +8,7 @@ import com.admin.back.entity.MemberCouponEntity;
 import com.admin.back.entity.MemberEntity;
 
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,7 +27,7 @@ public class Mapper {
         dto.setPhone(entity.getPhone());
         dto.setAddress(entity.getAddress());
         dto.setPoints(entity.getMemberPoints().getPoints());
-        dto.setEmployed(new Date());
+        dto.setEmployed(LocalDateTime.now());
 
         Set<MemberCouponDto> memberCoupons = entity.getMemberCoupons().stream()
                 .map(this::toDto)

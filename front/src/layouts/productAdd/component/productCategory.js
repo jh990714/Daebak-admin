@@ -18,8 +18,17 @@ export const ProductCategory = ({ rowData, setRowData }) => {
     { Header: "하위 카테고리", accessor: "childCategory", align: "left" },
   ];
 
-  const [selectedParentCategory, setSelectedParentCategory] = useState(rowData.parentId);
-  const [selectedChildCategory, setSelectedChildCategory] = useState(rowData.childId);
+  const [selectedParentCategory, setSelectedParentCategory] = useState(null);
+  const [selectedChildCategory, setSelectedChildCategory] = useState(null);
+
+  useEffect(() => {
+    if (categories.length > 0 && rowData.parentId && rowData.childId) {
+      const parentCategory = categories.find((category) => category.id === rowData.parentId);
+      const childCategory = parentCategory?.subcategories.find((sub) => sub.id === rowData.childId);
+      setSelectedParentCategory(parentCategory || null);
+      setSelectedChildCategory(childCategory || null);
+    }
+  }, [categories, rowData]);
 
   const handleParentCategoryChange = (event, value) => {
     setSelectedParentCategory(value);

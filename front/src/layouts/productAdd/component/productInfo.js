@@ -17,6 +17,7 @@ export const ProductInfo = ({ rowData, setRowData }) => {
     { Header: "최종가", accessor: "finalPrice", align: "center" },
     { Header: "설명", accessor: "description", align: "center" },
     { Header: "재고", accessor: "stockQuantity", align: "center" },
+    { Header: "배송비", accessor: "shippingCost", align: "center" },
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
   ];
   return (
@@ -45,21 +46,18 @@ export const ProductInfo = ({ rowData, setRowData }) => {
                     <input
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={(e) => {
                         const file = e.target.files[0];
                         if (file) {
-                          const reader = new FileReader();
-                          reader.onload = (event) => {
-                            const newData = { ...rowData, image: event.target.result };
-                            setRowData(newData);
-                          };
-                          reader.readAsDataURL(file);
+                          const newData = { ...rowData, image: file };
+                          setRowData(newData);
                         }
                       }}
                     />
                     {rowData.image && (
                       <img
-                        src={rowData.image}
+                        src={URL.createObjectURL(rowData.image)}
                         alt="Selected Image"
                         className="w-[150px] h-auto object-cover rounded-md mt-2"
                       />
@@ -70,9 +68,9 @@ export const ProductInfo = ({ rowData, setRowData }) => {
                   <MDInput
                     type="text"
                     label="상품명"
-                    value={rowData.productName}
+                    value={rowData.name}
                     onChange={(e) => {
-                      const newData = { ...rowData, productName: e.target.value };
+                      const newData = { ...rowData, name: e.target.value };
                       setRowData(newData);
                     }}
                   />
@@ -94,7 +92,12 @@ export const ProductInfo = ({ rowData, setRowData }) => {
                     label="할인"
                     value={rowData.salePrice}
                     onChange={(e) => {
-                      const newData = { ...rowData, salePrice: e.target.value };
+                      let salePrice = e.target.value;
+                      if (rowData.regularPrice === null) return;
+                      if (salePrice > rowData.regularPrice) {
+                        salePrice = rowData.regularPrice;
+                      }
+                      const newData = { ...rowData, salePrice: salePrice };
                       setRowData(newData);
                     }}
                   />
@@ -118,6 +121,17 @@ export const ProductInfo = ({ rowData, setRowData }) => {
                     value={rowData.stockQuantity}
                     onChange={(e) => {
                       const newData = { ...rowData, stockQuantity: e.target.value };
+                      setRowData(newData);
+                    }}
+                  />
+                ),
+                shippingCost: (
+                  <MDInput
+                    type="number"
+                    label="배송비"
+                    value={rowData.shippingCost}
+                    onChange={(e) => {
+                      const newData = { ...rowData, shippingCost: e.target.value };
                       setRowData(newData);
                     }}
                   />
@@ -152,7 +166,7 @@ ProductInfo.propTypes = {
   rowData: PropTypes.arrayOf(
     PropTypes.shape({
       productId: PropTypes.number.isRequired,
-      productName: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
       regularPrice: PropTypes.number.isRequired,
       salePrice: PropTypes.number.isRequired,
       description: PropTypes.string.isRequired,

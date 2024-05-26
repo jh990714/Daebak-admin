@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import PropTypes from "prop-types";
 import CustomDataTable from "examples/CustomTable/CustomDataTable";
+import { ExpandedContent } from "./expanded/expandedContent";
 
 export const ReviewCustomTable = ({ columns, rows, expanded }) => {
   const [data, setData] = useState();
@@ -21,7 +22,7 @@ export const ReviewCustomTable = ({ columns, rows, expanded }) => {
       noEndBorder
       handleDataChange={handleDataChange}
       handleSubmit={handleSubmit}
-      expanded={expanded}
+      expanded={(rowData) => <ExpandedContent rowData={rowData} />}
     />
   );
 };

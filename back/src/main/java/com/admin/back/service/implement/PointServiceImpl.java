@@ -1,6 +1,7 @@
 package com.admin.back.service.implement;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,7 +57,7 @@ public class PointServiceImpl implements PointService {
                 // 포인트 내역 생성 및 저장
                 PointsDetailsEntity pointsDetails = new PointsDetailsEntity();
                 pointsDetails.setMemberId(memberEntity.getMemberId());
-                pointsDetails.setDate(new Date());
+                pointsDetails.setDate(LocalDateTime.now());
                 pointsDetails.setDescription(pointsDto.getDescription());
                 pointsDetails.setUsageAmount(pointsDto.getPoints());
                 pointsDetails.setSubTotal(subTotal);

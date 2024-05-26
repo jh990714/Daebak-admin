@@ -9,8 +9,13 @@ import MDTypography from "components/MDTypography";
 import MDProgress from "components/MDProgress";
 
 import DataTable from "examples/Tables/DataTable";
+import { useDispatch } from "react-redux";
+import { fetchUpdateCoupon } from "reducers/slices/couponSlice";
+import { format, parseISO } from "date-fns";
 
 export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
+  console.log(rowData);
+  const dispatch = useDispatch();
   const [data, setData] = useState(rowData);
   const dataColumns = [
     { Header: "쿠폰코드", accessor: "couponCode", align: "left" },
@@ -19,21 +24,29 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
     { Header: "시작날짜", accessor: "validFrom", align: "center" },
     { Header: "종료날짜", accessor: "validUntil", align: "center" },
     { Header: "최소주문금액", accessor: "minimumOrderAmount", align: "center" },
-    { Header: "사용기간", accessor: "expirationPeriod", align: "center" },
+    { Header: "사용기간(일)", accessor: "expirationPeriod", align: "center" },
   ];
 
   useEffect(() => {
+    console.log(rowData);
     setData(rowData);
   }, [rowData]);
 
-  useEffect(() => {
-    setData(data);
-  }, [data]);
-
   const handleSubmit = () => {
-    console.log(data);
+    const utcData = {
+      ...data,
+      validFrom: data.validFrom ? new Date(data.validFrom).toISOString() : null,
+      validUntil: data.validUntil ? new Date(data.validUntil).toISOString() : null,
+    };
 
-    setRowData(data);
+    dispatch(fetchUpdateCoupon({ coupon: utcData }))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
+
     onClose();
   };
   return (
@@ -63,7 +76,7 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                       <MDInput
                         type="text"
                         label="쿠폰코드"
-                        value={data.couponCode}
+                        value={data?.couponCode}
                         onChange={(e) => {
                           setData((prevData) => ({
                             ...prevData,
@@ -76,7 +89,7 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                       <MDInput
                         type="text"
                         label="쿠폰이름"
-                        value={data.couponName}
+                        value={data?.couponName}
                         onChange={(e) => {
                           setData((prevData) => ({
                             ...prevData,
@@ -89,7 +102,7 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                       <MDInput
                         type="number"
                         label="할인가격"
-                        value={data.discount}
+                        value={data?.discount}
                         onChange={(e) => {
                           setData((prevData) => ({
                             ...prevData,
@@ -100,9 +113,13 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     ),
                     validFrom: (
                       <MDInput
-                        type="date"
+                        type="datetime-local" // datetime-local로 변경
                         label="시작날짜"
-                        value={data.validFrom}
+                        value={
+                          data?.validFrom
+                            ? format(parseISO(data.validFrom), "yyyy-MM-dd'T'HH:mm")
+                            : ""
+                        }
                         onChange={(e) => {
                           setData((prevData) => ({
                             ...prevData,
@@ -113,9 +130,13 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     ),
                     validUntil: (
                       <MDInput
-                        type="date"
+                        type="datetime-local"
                         label="종료날짜"
-                        value={data.validUntil}
+                        value={
+                          data?.validUntil
+                            ? format(parseISO(data.validUntil), "yyyy-MM-dd'T'HH:mm")
+                            : ""
+                        }
                         onChange={(e) => {
                           setData((prevData) => ({
                             ...prevData,
@@ -128,7 +149,7 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                       <MDInput
                         type="number"
                         label="최소주문금액"
-                        value={data.minimumOrderAmount}
+                        value={data?.minimumOrderAmount}
                         onChange={(e) => {
                           setData((prevData) => ({
                             ...prevData,
@@ -140,8 +161,8 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     expirationPeriod: (
                       <MDInput
                         type="number"
-                        label="사용기간"
-                        value={data.expirationPeriod}
+                        label="사용기간(일)"
+                        value={data?.expirationPeriod}
                         onChange={(e) => {
                           setData((prevData) => ({
                             ...prevData,
@@ -169,29 +190,13 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
 };
 
 CouponDialog.propTypes = {
-  rowData: PropTypes.shape({
-    couponCode: PropTypes.string.isRequired,
-    couponName: PropTypes.string.isRequired,
-    discount: PropTypes.number.isRequired,
-    validFrom: PropTypes.string.isRequired,
-    validUntil: PropTypes.string.isRequired,
-    minimumOrderAmount: PropTypes.number.isRequired,
-    expirationPeriod: PropTypes.number.isRequired,
-  }),
+  rowData: PropTypes.object,
   setRowData: PropTypes.func,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
 CouponDialog.defaultProps = {
-  rowData: {
-    couponCode: " ",
-    couponName: " ",
-    discount: 0,
-    validFrom: " ",
-    validUntil: " ",
-    minimumOrderAmount: 0,
-    expirationPeriod: 0,
-  },
+  rowData: null,
   setRowData: () => {},
 };

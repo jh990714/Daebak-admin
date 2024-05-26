@@ -8,15 +8,12 @@ import MDBox from "components/MDBox";
 import DataTable from "examples/Tables/DataTable";
 
 import reviewCompletedData from "./data/reviewCompletedData";
+import { ExpandedContent } from "../expanded/expandedContent";
 
 export const ReviewCompletedTable = () => {
   const [pageIndex, setPageIndex] = useState(0);
 
-  const {
-    columns: completedReviewColumns,
-    rows: completedReviewRows,
-    expanded: expanded,
-  } = reviewCompletedData();
+  const { columns: completedReviewColumns, rows: completedReviewRows } = reviewCompletedData();
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
@@ -49,7 +46,7 @@ export const ReviewCompletedTable = () => {
             noEndBorder
             defaultPage={pageIndex}
             onPageChange={handlePageChange}
-            expanded={expanded}
+            expanded={(rowData) => <ExpandedContent rowData={rowData} />}
           />
         </MDBox>
       </Card>

@@ -9,4 +9,6 @@ import com.admin.back.entity.MemberEntity;
 public interface CouponService {
     public List<CouponDto> getCoupons();
     public MemberCouponEntity createMemberCoupon(CouponDto couponDto, MemberEntity memberEntity);
+    public CouponDto saveCoupon(CouponDto coupon);
+    public void deleteCoupon(Long couponId);
 }

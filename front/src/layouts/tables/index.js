@@ -37,6 +37,8 @@ import Checkbox from "@mui/material/Checkbox";
 import { FormControlLabel, FormGroup } from "@mui/material";
 import QnaTable from "./qnaTable";
 import { CouponTable } from "./couponTable";
+import { useSelector } from "react-redux";
+import couponSlice from "reducers/slices/couponSlice";
 
 const items = [
   { key: "users", label: "사용자", component: <AuthorsTable /> },
@@ -47,7 +49,16 @@ const items = [
   { key: "coupons", label: "쿠폰", component: <CouponTable /> },
 ];
 
+const slice = ["categories", "coupons", "dealProducts", "members", "products", "qnas", "reviews"];
 function Tables() {
+  const categories = useSelector((state) => state.categories.status);
+  const coupons = useSelector((state) => state.coupons.status);
+  const dealProducts = useSelector((state) => state.dealProducts.status);
+  const members = useSelector((state) => state.members.status);
+  const products = useSelector((state) => state.products.status);
+  const qnas = useSelector((state) => state.qnas.status);
+  const reviews = useSelector((state) => state.reviews.status);
+
   const [selectedItems, setSelectedItems] = useState(items.map((item) => item.key));
 
   const handleCheckboxClick = (item) => {
@@ -65,6 +76,14 @@ function Tables() {
       setSelectedItems(items.map((item) => item.key));
     }
   };
+
+  const isLoading = [categories, coupons, dealProducts, members, products, qnas, reviews].includes(
+    "loading"
+  );
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

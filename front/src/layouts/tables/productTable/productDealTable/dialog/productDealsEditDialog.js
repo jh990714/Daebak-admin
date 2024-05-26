@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import PropTypes from "prop-types";
@@ -9,15 +9,13 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-import DataTable from "examples/Tables/DataTable";
+import { format, parseISO } from "date-fns";
 
-export const ProductDealsEditDialog = ({
-  rowData,
-  setRowData,
-  isOpen,
-  handleEditDialogClose,
-  handleEditDialogSubmit,
-}) => {
+import DataTable from "examples/Tables/DataTable";
+import { fetchUpdateDealProducts } from "reducers/slices/dealProductSlice";
+
+export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
+  const dispatch = useDispatch();
   const dataColumns = [
     { Header: "상품", accessor: "product", align: "left" },
     { Header: "추가 할인", accessor: "dealPrice", align: "center" },
@@ -25,8 +23,30 @@ export const ProductDealsEditDialog = ({
     { Header: "종료 시간", accessor: "endDate", align: "center" },
   ];
 
+  const [data, setData] = useState(rowData);
+  useEffect(() => {
+    setData(rowData);
+  }, [rowData]);
+
+  const handleSubmit = () => {
+    const utcData = {
+      ...data,
+      startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
+      endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
+    };
+
+    dispatch(fetchUpdateDealProducts(utcData))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onClose={handleEditDialogClose} fullWidth={true} maxWidth={"xl"}>
+    <Dialog open={isOpen} onClose={onClose} fullWidth={true} maxWidth={"xl"}>
       <DialogTitle>행 수정</DialogTitle>
       <DialogContent>
         <Card>
@@ -50,24 +70,6 @@ export const ProductDealsEditDialog = ({
                 rows: [
                   {
                     product: (
-                      // <MDBox>
-                      //   <Autocomplete
-                      //     options={products}
-                      //     sx={{ width: 300 }}
-                      //     getOptionLabel={(option) => option.name}
-                      //     value={
-                      //       rowData?.name
-                      //         ? products.find((product) => product.name === rowData.name)
-                      //         : null
-                      //     }
-                      //     onChange={(event, newValue) => {
-                      //       if (newValue) {
-                      //         setRowData({ ...rowData, name: newValue.name });
-                      //       }
-                      //     }}
-                      //     renderInput={(params) => <TextField {...params} label="상품명" />}
-                      //   />
-                      // </MDBox>
                       <MDTypography
                         display="block"
                         variant="button"
@@ -75,39 +77,45 @@ export const ProductDealsEditDialog = ({
                         ml={1}
                         lineHeight={1}
                       >
-                        {rowData.name}
+                        {data?.product.name}
                       </MDTypography>
                     ),
                     dealPrice: (
                       <MDInput
                         type="number"
                         label="추가할인"
-                        value={rowData?.dealPrice}
+                        value={data?.dealPrice}
                         onChange={(e) => {
-                          const newData = { ...rowData, dealPrice: e.target.value };
-                          setRowData(newData);
+                          const newData = { ...data, dealPrice: e.target.value };
+                          setData(newData);
                         }}
                       />
                     ),
                     startDate: (
                       <MDInput
-                        type="datetime"
+                        type="datetime-local" // datetime 형식을 사용
                         label="시작 시간"
-                        value={rowData?.startDate}
+                        value={
+                          data.startDate
+                            ? format(parseISO(data.startDate), "yyyy-MM-dd'T'HH:mm")
+                            : ""
+                        }
                         onChange={(e) => {
-                          const newData = { ...rowData, startDate: e.target.value };
-                          setRowData(newData);
+                          const newData = { ...data, startDate: e.target.value };
+                          setData(newData);
                         }}
                       />
                     ),
                     endDate: (
                       <MDInput
-                        type="datetime"
+                        type="datetime-local" // datetime 형식을 사용
                         label="종료 시간"
-                        value={rowData?.endDate}
+                        value={
+                          data.endDate ? format(parseISO(data.endDate), "yyyy-MM-dd'T'HH:mm") : ""
+                        }
                         onChange={(e) => {
-                          const newData = { ...rowData, endDate: e.target.value };
-                          setRowData(newData);
+                          const newData = { ...data, endDate: e.target.value };
+                          setData(newData);
                         }}
                       />
                     ),
@@ -122,8 +130,8 @@ export const ProductDealsEditDialog = ({
         </Card>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleEditDialogClose}>취소</Button>
-        <Button onClick={handleEditDialogSubmit}>저장</Button>
+        <Button onClick={onClose}>취소</Button>
+        <Button onClick={handleSubmit}>저장</Button>
       </DialogActions>
     </Dialog>
   );
@@ -140,6 +148,5 @@ ProductDealsEditDialog.propTypes = {
   ),
   setRowData: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
-  handleEditDialogClose: PropTypes.func.isRequired,
-  handleEditDialogSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };

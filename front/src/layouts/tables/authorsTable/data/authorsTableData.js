@@ -15,7 +15,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { AddPointsDialog } from "../dialog/addPointsDialog";
 
 export default function authorsTableData() {
-  const { members, status } = useSelector((state) => state.members);
+  const { members } = useSelector((state) => state.members);
 
   const Author = ({ image, name, id }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
@@ -77,7 +77,7 @@ export default function authorsTableData() {
     { Header: "이메일", accessor: "email", align: "left" },
     { Header: "휴대폰 번호", accessor: "phone", align: "left" },
     { Header: "기본 배송지", accessor: "address", align: "left" },
-    { Header: "적립금", accessor: "points", align: "left" },
+    { Header: "적립금", accessor: "points", align: "center" },
     { Header: "쿠폰", accessor: "coupons", align: "left" },
     { Header: "가입 일자", accessor: "employed", align: "left" },
     { Header: "Action", accessor: "action", align: "left" },
@@ -90,9 +90,9 @@ export default function authorsTableData() {
     email: data.email,
     phone: data.phone,
     address: data.address,
-    points: data.points,
-    coupons: data.memberCoupons.length,
-    employed: data.employed,
+    points: `${data.points.toLocaleString()}원`,
+    coupons: `${data.memberCoupons.length}개`,
+    employed: new Date(data.employed).toLocaleString(),
     action: (
       <>
         <IconButton

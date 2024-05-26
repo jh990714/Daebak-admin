@@ -17,16 +17,11 @@ import { useSelector } from "react-redux";
 import { CategoriesTableData } from "./data/categoriesTableData";
 
 function CategoryTable() {
-  const { status } = useSelector((state) => state.categories);
   const [clickedCategories, setClickedCategories] = useState([]);
   const [showAddCategory, setShowAddCategory] = useState(false);
   const handleCloseCategory = () => {
     setShowAddCategory(!showAddCategory);
   };
-
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>

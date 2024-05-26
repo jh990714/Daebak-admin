@@ -16,73 +16,49 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
-import Icon from "@mui/material/Icon";
-import { Autocomplete, TextField, Menu, MenuItem, IconButton, Button } from "@mui/material";
-import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import { MoreVert } from "@mui/icons-material";
+import { Menu, MenuItem, IconButton, Button } from "@mui/material";
 
-import Card from "@mui/material/Card";
+import { MoreVert } from "@mui/icons-material";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
-import MDInput from "components/MDInput";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
-import MDProgress from "components/MDProgress";
-
-import DataTable from "examples/Tables/DataTable";
 
 // Images
 import LogoAsana from "assets/images/small-logos/logo-asana.svg";
-import logoGithub from "assets/images/small-logos/github.svg";
-import logoAtlassian from "assets/images/small-logos/logo-atlassian.svg";
-import logoSlack from "assets/images/small-logos/logo-slack.svg";
-import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-import logoInvesion from "assets/images/small-logos/logo-invision.svg";
-import { useEffect, useState } from "react";
-import { ProductDealsEditDialog } from "../../dialog/productDealsEditDialog";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { ProductDealsEditDialog } from "../dialog/productDealsEditDialog";
+import { fetchDeleteDealProduct } from "reducers/slices/dealProductSlice";
 
 export default function data() {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const { dealProducts } = useSelector((state) => state.dealProducts);
+  const dispatch = useDispatch();
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [anchorEls, setAnchorEls] = useState(Array(dealProducts.length).fill(null));
+  const [dialogs, setDialogs] = useState(Array(dealProducts.length).fill(false));
+  const [dialogType, setDialogType] = useState(null);
 
-  const datas = [
-    {
-      name: "상품 1",
-      dealPrice: 50,
-      startDate: "2024-04-14 10:00:00",
-      endDate: "2024-05-03 17:00:00",
-    },
-    {
-      name: "상품 2",
-      dealPrice: 100,
-      startDate: "2024-04-14 10:00:00",
-      endDate: "2024-05-03 17:00:00",
-    },
-    {
-      name: "상품 5",
-      dealPrice: 100,
-      startDate: "2024-04-14 10:00:00",
-      endDate: "2024-05-03 17:00:00",
-    },
-  ];
-
-  const [rowData, setRowData] = useState(datas[0]); // 수정할 행의 데이터
-  const [editDialogs, setEditDialogs] = useState(Array(datas.length).fill(false));
+  const [rowData, setRowData] = useState(dealProducts[0]);
 
   const handleClick = (event, index) => {
-    setAnchorEl(event.currentTarget);
+    const newAnchorEls = [...anchorEls];
+    newAnchorEls[index] = event.currentTarget;
+    setAnchorEls(newAnchorEls);
     setDialogAnchorEl(index);
-    setRowData(datas[index]);
+
+    setRowData(dealProducts[index]);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorEls(Array(dealProducts.length).fill(null));
   };
 
-  const handleEdit = () => {
-    setEditDialogs((prevState) => ({
+  const handleDialog = (type) => {
+    setDialogType(type);
+    setDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: true,
     }));
@@ -90,24 +66,23 @@ export default function data() {
   };
 
   const handleDelete = () => {
-    handleClose();
-    // 삭제 동작을 수행하는 함수 호출
-    console.log("Delete clicked", dialogAnchorEl);
+    const confirmDelete = window.confirm(
+      `"${rowData.product.name}" 타임 특가를 정말로 삭제하시겠습니까?`
+    );
+    if (confirmDelete) {
+      dispatch(fetchDeleteDealProduct(rowData))
+        .then(() => {
+          console.log("저장 성공");
+        })
+        .catch((error) => {
+          console.error("저장 실패:", error);
+        });
+    }
   };
 
-  const handleEditDialogClose = () => {
-    setEditDialogs((prevState) => ({
-      ...prevState,
-      [dialogAnchorEl]: false,
-    }));
-    setDialogAnchorEl(null);
-  };
-
-  const handleEditDialogSubmit = () => {
-    console.log(rowData);
-    // 수정 동작을 수행하는 함수 호출
-    console.log("Edit submitted:");
-    setEditDialogs((prevState) => ({
+  const handleDialogClose = () => {
+    setDialogType(null);
+    setDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: false,
     }));
@@ -125,43 +100,50 @@ export default function data() {
 
   const dataColumns = [
     { Header: "상품", accessor: "product", align: "left" },
+    { Header: "현재가", accessor: "regularPrice", align: "center" },
     { Header: "추가 할인", accessor: "dealPrice", align: "center" },
+    { Header: "최종가", accessor: "finalPrice", align: "center" },
     { Header: "시작 시간", accessor: "startDate", align: "center" },
     { Header: "종료 시간", accessor: "endDate", align: "center" },
     { Header: "action", accessor: "action", align: "center" },
   ];
 
-  return {
-    columns: dataColumns,
-
-    rows: datas.map((data, index) => ({
-      product: <Product image={LogoAsana} name={data.name} />,
-      dealPrice: [data.dealPrice],
-      startDate: [data.startDate],
-      endDate: [data.endDate],
-      action: (
-        <>
-          <IconButton
-            aria-label="more"
-            onClick={(e) => {
-              handleClick(e, index);
-            }}
-          >
-            <MoreVert />
-          </IconButton>
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-            <MenuItem onClick={handleEdit}>수정</MenuItem>
-            <MenuItem onClick={handleDelete}>삭제</MenuItem>
-          </Menu>
+  const dataRows = dealProducts.map((data, index) => ({
+    product: <Product image={data.product.imageUrl} name={data.product.name} />,
+    regularPrice: `${(data.product.regularPrice - data.product.salePrice).toLocaleString()}원`,
+    dealPrice: `${data.dealPrice.toLocaleString()}원`,
+    finalPrice: `${(data.product.regularPrice - data.product.salePrice - data.dealPrice).toLocaleString()}원`,
+    startDate: new Date(data.startDate).toLocaleString(),
+    endDate: new Date(data.endDate).toLocaleString(),
+    action: (
+      <>
+        <IconButton
+          aria-label="more"
+          onClick={(e) => {
+            handleClick(e, index);
+          }}
+        >
+          <MoreVert />
+        </IconButton>
+        <Menu anchorEl={anchorEls[index]} open={Boolean(anchorEls[index])} onClose={handleClose}>
+          <MenuItem onClick={() => handleDialog("edit")}>수정</MenuItem>
+          <MenuItem onClick={handleDelete}>삭제</MenuItem>
+        </Menu>
+        {dialogType === "edit" && dialogs[index] && rowData && (
           <ProductDealsEditDialog
             rowData={rowData}
             setRowData={setRowData}
-            isOpen={editDialogs[index]}
-            handleEditDialogClose={handleEditDialogClose}
-            handleEditDialogSubmit={handleEditDialogSubmit}
+            isOpen={dialogType === "edit" && dialogs[index]}
+            onClose={handleDialogClose}
           />
-        </>
-      ),
-    })),
+        )}
+      </>
+    ),
+  }));
+
+  return {
+    columns: dataColumns,
+
+    rows: dataRows,
   };
 }
