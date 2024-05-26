@@ -6,6 +6,7 @@ import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
 
 import qnaMissingData from "./data/qnaMissingData";
+import { ExpandedContent } from "../expanded/expandedQna";
 
 export const QnaMissingTable = () => {
   const [pageIndex, setPageIndex] = useState(0);
@@ -42,7 +43,7 @@ export const QnaMissingTable = () => {
             noEndBorder
             defaultPage={pageIndex}
             onPageChange={handlePageChange}
-            expanded={expanded}
+            expanded={(rowData) => <ExpandedContent rowData={rowData} />}
           />
         </MDBox>
       </Card>

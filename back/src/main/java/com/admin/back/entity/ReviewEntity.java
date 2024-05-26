@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -26,12 +26,6 @@ public class ReviewEntity {
     @Column(name = "review_id")
     private Long reviewId;
 
-    @Column(name = "product_id")
-    private int productId;
-
-    @Column(name = "option_id")
-    private int optionId;
-
     @Column(name = "contents")
     private String contents;
 
@@ -39,7 +33,7 @@ public class ReviewEntity {
     private int score;
 
     @Column(name = "review_date")
-    private Date reviewDate;
+    private LocalDateTime reviewDate;
 
     @Column(name = "is_best")
     private Boolean isBest;
@@ -55,9 +49,9 @@ public class ReviewEntity {
     @JoinColumn(name = "member_id", insertable = false, updatable = false)
     private MemberEntity member;
 
-    // @ManyToOne
-    // @JoinColumn(name = "option_id", insertable = false, updatable = false)
-    // private OptionEntity option;
+    @ManyToOne
+    @JoinColumn(name = "option_id", insertable = false, updatable = false)
+    private OptionEntity option;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewResponseEntity> responses;

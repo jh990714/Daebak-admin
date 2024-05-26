@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "member_coupon")
@@ -26,10 +26,10 @@ public class MemberCouponEntity {
     private Long id;
 
     @Column(name = "issue_date")
-    private Date issueDate;
+    private LocalDateTime issueDate;
 
     @Column(name = "valid_until")
-    private Date validUntil;
+    private LocalDateTime validUntil;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", referencedColumnName = "member_id")

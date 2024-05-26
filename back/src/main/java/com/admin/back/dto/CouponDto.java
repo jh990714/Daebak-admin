@@ -1,7 +1,7 @@
 package com.admin.back.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,8 +12,8 @@ public class CouponDto {
     private String couponCode;
     private String couponName;
     private BigDecimal discount;
-    private Date validFrom;
-    private Date validUntil;
+    private LocalDateTime validFrom;
+    private LocalDateTime validUntil;
     private BigDecimal minimumOrderAmount;
     private Integer expirationPeriod;
 }

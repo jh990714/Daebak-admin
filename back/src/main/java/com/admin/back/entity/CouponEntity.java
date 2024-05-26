@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,10 +36,10 @@ public class CouponEntity {
     private BigDecimal discount;
 
     @Column(name = "valid_from")
-    private Date validFrom;
+    private LocalDateTime validFrom;
 
     @Column(name = "valid_until")
-    private Date validUntil;
+    private LocalDateTime validUntil;
 
     @Column(name = "minimum_order_amount")
     private BigDecimal minimumOrderAmount;

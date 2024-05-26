@@ -1,7 +1,7 @@
 package com.admin.back.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.admin.back.entity.ProductDealEntity;
 
@@ -14,8 +14,8 @@ public class ProductDealDto {
     private Long dealId; 
     private ProductDto product;
     private BigDecimal dealPrice;
-    private Date startDate;
-    private Date endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
      public static ProductDealDto fromEntity(ProductDealEntity productDealEntity) {
         ProductDealDto productDealDto = new ProductDealDto();

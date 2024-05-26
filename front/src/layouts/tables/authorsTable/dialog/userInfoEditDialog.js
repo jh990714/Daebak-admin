@@ -10,7 +10,6 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
 import MDInput from "components/MDInput";
-import { format, parseISO } from "date-fns";
 import { useDispatch } from "react-redux";
 import { saveMember } from "reducers/slices/memberSlice";
 
@@ -85,14 +84,7 @@ export const UserInfoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => 
         />
       ),
       coupons: data.memberCoupons.length,
-      employed: (
-        <MDInput
-          type="date"
-          label="가입 일자"
-          value={format(parseISO(data.employed), "yyyy-MM-dd")}
-          readOnly
-        />
-      ),
+      employed: new Date(data.employed).toLocaleString(),
     },
   ];
 

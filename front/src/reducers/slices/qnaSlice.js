@@ -13,6 +13,34 @@ export const fetchQnas = createAsyncThunk("qnas/fetchQnas", async () => {
   }
 });
 
+export const fetchAddAnswer = createAsyncThunk(
+  "reviews/fetchAddAnswer",
+  async ({ questionId, answer }) => {
+    try {
+      const response = await axios.put(`http://localhost:8080/qna/${questionId}`, answer);
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
+export const fetchDeleteAnswer = createAsyncThunk(
+  "reviews/fetchDeleteResponse",
+  async ({ questionId, answerId }) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:8080/qna/${questionId}/answer/${answerId}`
+      );
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 // qnatSlice 정의
 const qnatSlice = createSlice({
   name: "qnas",
@@ -32,6 +60,42 @@ const qnatSlice = createSlice({
         state.qnas = action.payload;
       })
       .addCase(fetchQnas.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchAddAnswer.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAddAnswer.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updateQna = action.payload;
+        const index = state.qnas.findIndex((qna) => qna.questionId === updateQna.questionId);
+
+        if (index !== -1) {
+          state.qnas[index] = updateQna;
+        } else {
+          state.qnas.push(updateQna);
+        }
+      })
+      .addCase(fetchAddAnswer.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchDeleteAnswer.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchDeleteAnswer.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updateQna = action.payload;
+        const index = state.qnas.findIndex((qna) => qna.questionId === updateQna.questionId);
+
+        if (index !== -1) {
+          state.qnas[index] = updateQna;
+        } else {
+          state.qnas.push(updateQna);
+        }
+      })
+      .addCase(fetchDeleteAnswer.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

@@ -3,12 +3,13 @@ package com.admin.back.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
 public class AnswerDto {
-    private int answerId;
+    private Long answerId;
     private String responseText;
-    private Date responseDate;
+    private LocalDateTime responseDate;
 }

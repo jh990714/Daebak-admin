@@ -9,9 +9,9 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
-import DataTable from "examples/Tables/DataTable";
-
 import { format, parseISO } from "date-fns";
+
+import DataTable from "examples/Tables/DataTable";
 import { fetchUpdateDealProducts } from "reducers/slices/dealProductSlice";
 
 export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
@@ -29,7 +29,13 @@ export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
   }, [rowData]);
 
   const handleSubmit = () => {
-    dispatch(fetchUpdateDealProducts(data))
+    const utcData = {
+      ...data,
+      startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
+      endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
+    };
+
+    dispatch(fetchUpdateDealProducts(utcData))
       .then(() => {
         console.log("저장 성공");
       })
@@ -89,7 +95,11 @@ export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
                       <MDInput
                         type="datetime-local" // datetime 형식을 사용
                         label="시작 시간"
-                        value={format(parseISO(data.startDate), "yyyy-MM-dd'T'HH:mm")}
+                        value={
+                          data.startDate
+                            ? format(parseISO(data.startDate), "yyyy-MM-dd'T'HH:mm")
+                            : ""
+                        }
                         onChange={(e) => {
                           const newData = { ...data, startDate: e.target.value };
                           setData(newData);
@@ -100,7 +110,9 @@ export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
                       <MDInput
                         type="datetime-local" // datetime 형식을 사용
                         label="종료 시간"
-                        value={format(parseISO(data.endDate), "yyyy-MM-dd'T'HH:mm")}
+                        value={
+                          data.endDate ? format(parseISO(data.endDate), "yyyy-MM-dd'T'HH:mm") : ""
+                        }
                         onChange={(e) => {
                           const newData = { ...data, endDate: e.target.value };
                           setData(newData);

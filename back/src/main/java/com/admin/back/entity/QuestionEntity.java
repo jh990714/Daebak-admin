@@ -3,7 +3,7 @@ package com.admin.back.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,16 +24,28 @@ import jakarta.persistence.Table;
 public class QuestionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int questionId;
-
-    private int productId;
+    private Long questionId;
     private String question;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
     private MemberEntity member;
 
+    @OneToOne
+    @JoinColumn(name = "product_id")
+    private ProductEntity product;
+
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<AnswerEntity> answers;
+
+    public void addAnswer(AnswerEntity answerEntity) {
+        this.answers.add(answerEntity);
+        answerEntity.setQuestion(this);
+    }
+
+    public void removeAnswer(AnswerEntity answerEntity) {
+        this.answers.remove(answerEntity);
+        answerEntity.setQuestion(null);
+    }
 }

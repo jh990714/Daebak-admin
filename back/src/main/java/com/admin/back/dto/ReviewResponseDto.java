@@ -1,16 +1,16 @@
 package com.admin.back.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
 public class ReviewResponseDto {
-    private int responseId;
+    private Long responseId;
     private int adminId;
     private String responseText;
-    private Date responseDate;
+    private LocalDateTime responseDate;
 
     // Getters and Setters
 }

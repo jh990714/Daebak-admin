@@ -4,7 +4,7 @@ import lombok.Data;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "product_deals")
@@ -23,8 +23,8 @@ public class ProductDealEntity {
     private BigDecimal dealPrice;
 
     @Column(name = "start_date")
-    private Date startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "end_date")
-    private Date endDate;
+    private LocalDateTime endDate;
 }

@@ -1,8 +1,12 @@
 package com.admin.back.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import com.admin.back.entity.OptionEntity;
 import com.admin.back.entity.ProductEntity;
 
 import lombok.Getter;
@@ -19,9 +23,10 @@ public class ProductDto {
     private BigDecimal salePrice;
     private BigDecimal shippingCost;
     private String description;
-    private Date arrivalDate;
+    private LocalDateTime arrivalDate;
     private Boolean recommended;
     private Integer maxQuantityPerDelivery;
+    private List<OptionDto> options = new ArrayList<>();;
 
     // Optional: Include methods to convert between entity and DTO
     public static ProductDto fromEntity(ProductEntity productEntity) {
@@ -38,6 +43,18 @@ public class ProductDto {
         productDto.setArrivalDate(productEntity.getArrivalDate());
         productDto.setRecommended(productEntity.getRecommended());
         productDto.setMaxQuantityPerDelivery(productEntity.getMaxQuantityPerDelivery());
+        
+        productDto.setOptions(
+                productEntity.getOptions().stream()
+                    .map(optionEntity -> {
+                        OptionDto optionDto = new OptionDto();
+                        optionDto.setOptionId(optionEntity.getOptionId());
+                        optionDto.setName(optionEntity.getName());
+                        optionDto.setAddPrice(optionEntity.getAddPrice());
+                        return optionDto;
+                    })
+                    .collect(Collectors.toList())
+            );
         return productDto;
     }
 
@@ -55,6 +72,37 @@ public class ProductDto {
         productEntity.setArrivalDate(productDto.getArrivalDate());
         productEntity.setRecommended(productDto.getRecommended());
         productEntity.setMaxQuantityPerDelivery(productDto.getMaxQuantityPerDelivery());
+       
+        productEntity.setOptions(
+                productDto.getOptions().stream()
+                    .map(optionDto -> {
+                        OptionEntity optionEntity = new OptionEntity();
+                        optionEntity.setOptionId(optionDto.getOptionId());
+                        optionEntity.setName(optionDto.getName());
+                        optionEntity.setAddPrice(optionDto.getAddPrice());
+                        return optionEntity;
+                    })
+                    .collect(Collectors.toList())
+            );
         return productEntity;
     }
+    @Override
+    public String toString() {
+        return "ProductDto{" +
+                "productId=" + productId +
+                ", category=" + category +
+                ", name='" + name + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", stockQuantity=" + stockQuantity +
+                ", regularPrice=" + regularPrice +
+                ", salePrice=" + salePrice +
+                ", shippingCost=" + shippingCost +
+                ", description='" + description + '\'' +
+                ", arrivalDate=" + arrivalDate +
+                ", recommended=" + recommended +
+                ", maxQuantityPerDelivery=" + maxQuantityPerDelivery +
+                ", option=" + options +
+                '}';
+    }
+
 }

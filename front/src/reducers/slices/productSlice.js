@@ -17,12 +17,70 @@ export const fetchUpdateProduct = createAsyncThunk(
   "products/fetchUpdateProduct",
   async (product) => {
     try {
-      const response = await axios.post("http://localhost:8080/product", product);
+      const response = await axios.put("http://localhost:8080/product", product);
       console.log("productResponse");
       return response.data;
     } catch (error) {
       console.error("Error fetching products:", error);
       throw error; // 에러를 던져서 rejected 상태로 전환
+    }
+  }
+);
+
+export const fetchAddProduct = createAsyncThunk("product/fetchAddProduct", async (formData) => {
+  try {
+    const response = await axios.post("http://localhost:8080/product", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error adding product:", error);
+    throw error;
+  }
+});
+
+export const fetchUpdateProductImage = createAsyncThunk(
+  "product/fetchUpdateProductImage",
+  async (formData) => {
+    try {
+      const response = await axios.post(`http://localhost:8080/product/image`, formData);
+      return response.data;
+    } catch (error) {
+      console.error("Error adding product:", error);
+      throw error;
+    }
+  }
+);
+
+export const fetchDeleteProduct = createAsyncThunk(
+  "product/fetchDeleteProduct",
+  async (productId) => {
+    try {
+      console.log(productId);
+      const response = await axios.delete(`http://localhost:8080/product/${productId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error adding product:", error);
+      throw error;
+    }
+  }
+);
+
+export const fetchUpdateOption = createAsyncThunk(
+  "product/fetchUpdateOption",
+  async ({ productId, options }) => {
+    try {
+      console.log(productId);
+      const response = await axios.post(
+        `http://localhost:8080/product/option/${productId}`,
+        options
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error adding product:", error);
+      throw error;
     }
   }
 );
@@ -59,6 +117,69 @@ const productSlice = createSlice({
         );
       })
       .addCase(fetchUpdateProduct.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchAddProduct.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAddProduct.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.products = [...state.products, action.payload];
+      })
+      .addCase(fetchAddProduct.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchUpdateProductImage.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUpdateProductImage.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updateProduct = action.payload;
+        const index = state.products.findIndex(
+          (product) => product.productId === updateProduct.productId
+        );
+
+        if (index !== -1) {
+          state.products[index] = updateProduct;
+        } else {
+          state.products.push(updateProduct);
+        }
+      })
+      .addCase(fetchUpdateProductImage.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchDeleteProduct.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchDeleteProduct.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const deleteProductId = action.payload;
+        state.products = state.products.filter((product) => product.productId !== deleteProductId);
+      })
+      .addCase(fetchDeleteProduct.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchUpdateOption.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUpdateOption.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updateProduct = action.payload;
+        const index = state.products.findIndex(
+          (product) => product.productId === updateProduct.productId
+        );
+
+        if (index !== -1) {
+          state.products[index] = updateProduct;
+        } else {
+          state.products.push(updateProduct);
+        }
+      })
+      .addCase(fetchUpdateOption.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

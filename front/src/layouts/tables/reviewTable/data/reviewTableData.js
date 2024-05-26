@@ -34,8 +34,13 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import { useState } from "react";
 import { ReviewResponseDialog } from "../dialog/reviewResponseDialog";
 import { ExpandedContent } from "../expanded/expandedContent";
+import { ReviewDetailDialog } from "../dialog/reviewDetailDialog";
+import { useDispatch } from "react-redux";
+import { fetchUpdateBestReview } from "reducers/slices/reviewSlice";
+import CheckIcon from "@mui/icons-material/Check";
 
 export default function data({ customDatas }) {
+  const dispatch = useDispatch();
   const [rowData, setRowData] = useState(customDatas[0]);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
   const [anchorEls, setAnchorEls] = useState(Array(customDatas.length).fill(null));
@@ -73,6 +78,18 @@ export default function data({ customDatas }) {
     setDialogAnchorEl(null);
   };
 
+  const handleToggleBestReview = () => {
+    dispatch(fetchUpdateBestReview({ reviewId: rowData.reviewId }))
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
+
+    handleClose();
+  };
+
   const ExpandableText = ({ text, maxLength }) => {
     const [expanded, setExpanded] = useState(false);
 
@@ -107,16 +124,17 @@ export default function data({ customDatas }) {
   ];
 
   const transformDataForReview = (customDatas) => {
-    console.log("isb", customDatas[0].isBest);
     return customDatas.map((data, index) => ({
       reviewId: data.reviewId,
+      memberId: data.memberId,
       memberName: data.memberName,
+      productId: data.productId,
       productName: data.productName,
       optionName: data.optionName,
       contents: data.contents,
       score: data.score,
       reviewDate: new Date(data.reviewDate).toLocaleString(),
-      isBest: Number(data?.isBest),
+      isBest: Boolean(data.isBest) ? <CheckIcon /> : null,
       orderNumber: data.orderNumber,
       response: data.response,
       action: (
@@ -137,17 +155,32 @@ export default function data({ customDatas }) {
             >
               답변 달기
             </MenuItem>
-            <MenuItem onClick={handleClose}>상세 정보</MenuItem>
-            <MenuItem onClick={handleClose}>
+            <MenuItem
+              onClick={() => {
+                handleDialog("detail");
+              }}
+            >
+              상세 정보
+            </MenuItem>
+            <MenuItem onClick={handleToggleBestReview}>
               {rowData.isBest ? "Best 리뷰 해제" : "Best 리뷰 등록"}
             </MenuItem>
           </Menu>
-          <ReviewResponseDialog
-            rowData={rowData}
-            setRowData={setRowData}
-            isOpen={dialogs[index] && dialogType === "response"}
-            onClose={handleDialogClose}
-          />
+          {dialogType === "response" && dialogs[index] && rowData && (
+            <ReviewResponseDialog
+              rowData={rowData}
+              setRowData={setRowData}
+              isOpen={dialogs[index] && dialogType === "response"}
+              onClose={handleDialogClose}
+            />
+          )}
+          {dialogType === "detail" && dialogs[index] && rowData && (
+            <ReviewDetailDialog
+              rowData={rowData}
+              isOpen={dialogs[index] && dialogType === "detail"}
+              onClose={handleDialogClose}
+            />
+          )}
         </>
       ),
     }));

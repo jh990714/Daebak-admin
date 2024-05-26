@@ -3,6 +3,7 @@ package com.admin.back.service.implement;
 import java.util.List;
 import java.lang.reflect.Member;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
@@ -47,14 +48,14 @@ public class CouponServiceImpl implements CouponService {
 
             MemberCouponEntity memberCoupon = new MemberCouponEntity();
             memberCoupon.setCoupon(couponEntity);
-            memberCoupon.setIssueDate(new Date());
+            memberCoupon.setIssueDate(LocalDateTime.now());
 
             if (couponEntity.getExpirationPeriod() != null) {
                 LocalDate currentDate = LocalDate.now();
-                LocalDate expirationDate = currentDate.plusMonths(couponEntity.getExpirationPeriod());
-                memberCoupon.setValidUntil(Date.from(expirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                LocalDate expirationDate = currentDate.plusDays(couponEntity.getExpirationPeriod());
+                memberCoupon.setValidUntil(expirationDate.atStartOfDay());
             } else {
-                memberCoupon.setValidUntil(couponEntity.getValidUntil());
+                memberCoupon.setValidUntil(couponEntity.getValidUntil().toLocalDate().atStartOfDay());
             }
 
             // MemberEntity를 MemberCouponEntity에 설정합니다.
@@ -68,6 +69,27 @@ public class CouponServiceImpl implements CouponService {
             return memberCoupon;
         } else {
             throw new IllegalArgumentException("Coupon with id " + couponDto.getCouponId() + " not found");
+        }
+    }
+
+    @Override
+    public CouponDto saveCoupon(CouponDto couponDto) {
+        CouponEntity couponEntity = mapper.toEntity(couponDto);
+        CouponEntity saveCouopnEntity = couponRepository.save(couponEntity);
+        
+        return mapper.toDto(saveCouopnEntity);
+    }
+
+    @Override
+    public void deleteCoupon(Long couponId) {
+        Optional<CouponEntity> optionalCouponEntity = couponRepository.findById(couponId);
+
+        if (optionalCouponEntity.isPresent()) {
+            CouponEntity couponEntity = optionalCouponEntity.get();
+
+            couponRepository.delete(couponEntity);
+        } else {
+            throw new IllegalArgumentException("Coupon with id " + couponId + " not found");
         }
     }
 

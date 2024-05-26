@@ -56,17 +56,7 @@ export const ProductByCategoryEditDialog = ({ rowData, isOpen, onClose }) => {
 };
 
 ProductByCategoryEditDialog.propTypes = {
-  rowData: PropTypes.shape({
-    productId: PropTypes.number.isRequired,
-    category: PropTypes.number.isRequired,
-    productName: PropTypes.string.isRequired,
-    regularPrice: PropTypes.number.isRequired,
-    salePrice: PropTypes.number.isRequired,
-    description: PropTypes.string.isRequired,
-    stockQuantity: PropTypes.number.isRequired,
-    recommended: PropTypes.number.isRequired,
-    maxQuantityPerDelivery: PropTypes.number.isRequired,
-  }),
+  rowData: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };

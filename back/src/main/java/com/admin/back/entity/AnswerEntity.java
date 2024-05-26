@@ -3,7 +3,7 @@ package com.admin.back.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,12 +20,12 @@ import jakarta.persistence.Table;
 public class AnswerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int answerId;
+    private Long answerId;
 
     private String content;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "question_id", insertable = false, updatable = false)
+    @JoinColumn(name = "question_id")
     private QuestionEntity question;
 }

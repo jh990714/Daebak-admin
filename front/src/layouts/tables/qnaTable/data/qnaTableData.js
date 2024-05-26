@@ -26,44 +26,10 @@ import MDTypography from "components/MDTypography";
 
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { ResponseDialog } from "../dialog/responseDialog";
-
-const expandedContent = (rowData) => {
-  const handleEditNoteIconClick = () => {
-    console.log("adf");
-  };
-
-  return (
-    <>
-      <ul className="mb-4 p-2 overflow-y-auto max-h-60 gap-y-2">
-        {rowData.answer.map((res, index) => (
-          <li key={index} className="flex mb-4 gap-4">
-            ⤷
-            <MDTypography width={"100%"} display="flex" flexDirection="column">
-              <span className="text-sm">{new Date(res.responseDate).toLocaleString()} </span>
-              <MDInput
-                value={res.responseText}
-                multiline
-                rows={3}
-                fullWidth
-                maxWidth={"xl"}
-                readOnly
-              />
-            </MDTypography>
-          </li>
-        ))}
-      </ul>
-      <div className="flex gap-4 p-2 border-y">
-        ⤷
-        <MDInput label={"답변작성"} multiline rows={3} fullWidth={true} maxWidth={"xl"} />
-        <IconButton aria-label="send response" onClick={handleEditNoteIconClick}>
-          <EditNoteIcon />
-        </IconButton>
-      </div>
-    </>
-  );
-};
+import { QnaDetailDialog } from "../dialog/qnaDetailDialog";
 
 export default function data({ customDatas }) {
+  console.log(customDatas);
   const [rowData, setRowData] = useState(customDatas[0]);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
   const [anchorEls, setAnchorEls] = useState(Array(customDatas.length).fill(null));
@@ -132,7 +98,10 @@ export default function data({ customDatas }) {
 
   const transformDataForQna = (customDatas) => {
     return customDatas.map((data, index) => ({
+      memberId: data.memberId,
       memberName: data.name,
+      productName: data.productName,
+      questionId: data.questionId,
       question: data.question,
       qnaDate: new Date(data.createdAt).toLocaleString(),
       answer: data.answers,
@@ -154,14 +123,29 @@ export default function data({ customDatas }) {
             >
               답변 달기
             </MenuItem>
-            <MenuItem>상세 정보</MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleDialog("detail");
+              }}
+            >
+              상세 정보
+            </MenuItem>
           </Menu>
-          <ResponseDialog
-            rowData={rowData}
-            setRowData={setRowData}
-            isOpen={dialogs[index] && dialogType === "response"}
-            onClose={handleDialogClose}
-          />
+          {dialogType === "response" && dialogs[index] && rowData && (
+            <ResponseDialog
+              rowData={rowData}
+              setRowData={setRowData}
+              isOpen={dialogs[index] && dialogType === "response"}
+              onClose={handleDialogClose}
+            />
+          )}
+          {dialogType === "detail" && dialogs[index] && rowData && (
+            <QnaDetailDialog
+              rowData={rowData}
+              isOpen={dialogs[index] && dialogType === "detail"}
+              onClose={handleDialogClose}
+            />
+          )}
         </>
       ),
     }));
@@ -171,7 +155,5 @@ export default function data({ customDatas }) {
     columns: dataColumns,
 
     rows: transformDataForQna(customDatas),
-
-    expanded: expandedContent,
   };
 }
