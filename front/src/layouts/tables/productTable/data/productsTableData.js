@@ -127,7 +127,7 @@ const ProductsTableData = ({ customDatas }) => {
       description: data.description,
       stockQuantity: data.stockQuantity,
       risk: <Progress value={(data.stockQuantity / 100) * 100} />,
-      recommended: data.recommended,
+      recommended: Number(data.recommended) === 1 && "✨",
       maxQuantityPerDelivery: data.maxQuantityPerDelivery,
       action: (
         <>

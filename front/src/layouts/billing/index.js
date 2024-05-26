@@ -31,8 +31,13 @@ import PaymentMethod from "layouts/billing/components/PaymentMethod";
 import Invoices from "layouts/billing/components/Invoices";
 import BillingInformation from "layouts/billing/components/BillingInformation";
 import Transactions from "layouts/billing/components/Transactions";
+import { useSelector } from "react-redux";
 
 function Billing() {
+  // const { status } = useSelector((state) => state.paymentDetails);
+  // if (status === "loading") {
+  //   return <div>Loading...</div>;
+  // }
   return (
     <DashboardLayout>
       <DashboardNavbar absolute isMini />
