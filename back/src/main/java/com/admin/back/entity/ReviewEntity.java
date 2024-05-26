@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -33,7 +33,7 @@ public class ReviewEntity {
     private int score;
 
     @Column(name = "review_date")
-    private Date reviewDate;
+    private LocalDateTime reviewDate;
 
     @Column(name = "is_best")
     private Boolean isBest;

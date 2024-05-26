@@ -68,6 +68,23 @@ export const fetchDeleteProduct = createAsyncThunk(
   }
 );
 
+export const fetchUpdateOption = createAsyncThunk(
+  "product/fetchUpdateOption",
+  async ({ productId, options }) => {
+    try {
+      console.log(productId);
+      const response = await axios.post(
+        `http://localhost:8080/product/option/${productId}`,
+        options
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error adding product:", error);
+      throw error;
+    }
+  }
+);
+
 // productSlice 정의
 const productSlice = createSlice({
   name: "products",
@@ -143,6 +160,26 @@ const productSlice = createSlice({
         state.products = state.products.filter((product) => product.productId !== deleteProductId);
       })
       .addCase(fetchDeleteProduct.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchUpdateOption.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUpdateOption.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const updateProduct = action.payload;
+        const index = state.products.findIndex(
+          (product) => product.productId === updateProduct.productId
+        );
+
+        if (index !== -1) {
+          state.products[index] = updateProduct;
+        } else {
+          state.products.push(updateProduct);
+        }
+      })
+      .addCase(fetchUpdateOption.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

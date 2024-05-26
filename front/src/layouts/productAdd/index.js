@@ -36,8 +36,8 @@ export const ProductAdd = ({ isOpen, onClose }) => {
     formData.append("category", productCategory.childId);
 
     options.forEach((option, index) => {
-      formData.append(`options[${index}][optionName]`, option.optionName);
-      formData.append(`options[${index}][optionAmount]`, option.optionAmount);
+      formData.append(`options[${index}].name`, option.name);
+      formData.append(`options[${index}].addPrice`, option.addPrice);
     });
 
     dispatch(fetchAddProduct(formData))

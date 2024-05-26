@@ -37,6 +37,7 @@ import { ExpandedContent } from "../expanded/expandedContent";
 import { ReviewDetailDialog } from "../dialog/reviewDetailDialog";
 import { useDispatch } from "react-redux";
 import { fetchUpdateBestReview } from "reducers/slices/reviewSlice";
+import CheckIcon from "@mui/icons-material/Check";
 
 export default function data({ customDatas }) {
   const dispatch = useDispatch();
@@ -133,7 +134,7 @@ export default function data({ customDatas }) {
       contents: data.contents,
       score: data.score,
       reviewDate: new Date(data.reviewDate).toLocaleString(),
-      isBest: Number(data?.isBest),
+      isBest: Boolean(data.isBest) ? <CheckIcon /> : null,
       orderNumber: data.orderNumber,
       response: data.response,
       action: (

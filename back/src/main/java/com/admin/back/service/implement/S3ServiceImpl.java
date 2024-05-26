@@ -75,7 +75,9 @@ public class S3ServiceImpl implements S3Service {
     @Override
     public void deleteImageFromS3(String key) throws IOException {
         try {
-            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(s3BucketName, key);
+            String newKey = key.replace(cloudfrontUrl + "/", "");
+
+            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(s3BucketName, newKey);
             s3Client.deleteObject(deleteObjectRequest);
         } catch (AmazonServiceException e) {
             e.printStackTrace();

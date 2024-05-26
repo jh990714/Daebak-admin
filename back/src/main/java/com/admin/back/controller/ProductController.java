@@ -3,6 +3,7 @@ package com.admin.back.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.admin.back.dto.OptionDto;
 import com.admin.back.dto.ProductDealDto;
 import com.admin.back.dto.ProductDto;
 import com.admin.back.entity.ProductEntity;
@@ -44,7 +45,7 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<?> addProduct(@RequestParam("image") MultipartFile image, 
                                         @ModelAttribute ProductDto product) {
-        System.out.println(image);
+        System.out.println(product);
         ProductDto updateProductDto = productService.addProduct(product, image);
         
         return ResponseEntity.ok().body(updateProductDto);
@@ -101,6 +102,14 @@ public class ProductController {
         productService.deleteProduct(productId);
 
         return ResponseEntity.ok().body(productId);
+    }
+
+    
+    @PostMapping("option/{productId}")
+    public ResponseEntity<?> updateProductOption(@PathVariable Long productId, @RequestBody List<OptionDto> options) {
+        ProductDto updateProductDto = productService.updateProductOption(productId, options);
+
+        return ResponseEntity.ok().body(updateProductDto);
     }
     
 }

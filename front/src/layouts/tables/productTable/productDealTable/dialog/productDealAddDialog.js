@@ -26,7 +26,16 @@ export const ProductDealAddDialog = ({ isOpen, onClose }) => {
   });
 
   const handleChange = (key) => (event) => {
-    setData({ ...data, [key]: event.target.value });
+    let value = event.target.value;
+
+    if (
+      key === "dealPrice" &&
+      data.product &&
+      value > data.product.regularPrice - data.product.salePrice
+    ) {
+      value = 0;
+    }
+    setData({ ...data, [key]: value });
   };
 
   const handleProductChange = (event, value) => {
@@ -34,7 +43,13 @@ export const ProductDealAddDialog = ({ isOpen, onClose }) => {
   };
 
   const handleSubmit = () => {
-    dispatch(fetchSaveDealProducts(data))
+    const utcData = {
+      ...data,
+      startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
+      endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
+    };
+
+    dispatch(fetchSaveDealProducts(utcData))
       .then(() => {
         console.log("저장 성공");
       })
@@ -46,7 +61,9 @@ export const ProductDealAddDialog = ({ isOpen, onClose }) => {
 
   const dataColumns = [
     { Header: "상품", accessor: "product", align: "left" },
+    { Header: "현재가", accessor: "regularPrice", align: "center" },
     { Header: "추가 할인", accessor: "dealPrice", align: "center" },
+    { Header: "최종가", accessor: "finalPrice", align: "center" },
     { Header: "시작 시간", accessor: "startDate", align: "center" },
     { Header: "종료 시간", accessor: "endDate", align: "center" },
   ];
@@ -62,9 +79,13 @@ export const ProductDealAddDialog = ({ isOpen, onClose }) => {
         renderInput={(params) => <TextField {...params} label="상품" />}
       />
     ),
+    regularPrice: data.product ? data.product?.regularPrice - data.product?.salePrice : "",
     dealPrice: (
       <MDInput type="number" value={data.dealPrice || ""} onChange={handleChange("dealPrice")} />
     ),
+    finalPrice: data.product
+      ? data.product?.regularPrice - data.product?.salePrice - data.dealPrice
+      : "",
     startDate: (
       <MDInput
         type="datetime-local"

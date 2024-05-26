@@ -3,7 +3,7 @@ package com.admin.back.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +16,7 @@ public class QuestionDto {
     private Long productId;
     private String productName;
     private String question;
-    private Date createdAt;
+    private LocalDateTime createdAt;
     private Long memberId;
     private String name;
     private List<AnswerDto> answers;

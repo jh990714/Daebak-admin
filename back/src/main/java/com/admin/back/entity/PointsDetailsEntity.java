@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "points_details")
@@ -22,7 +22,7 @@ public class PointsDetailsEntity {
     private Long memberId;
 
     @Column(name = "date", nullable = false)
-    private Date date;
+    private LocalDateTime date;
 
     @Column(name = "description", nullable = false)
     private String description;

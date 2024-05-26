@@ -15,7 +15,6 @@ import { useDispatch } from "react-redux";
 export const ProductEditDialog = ({ rowData, isOpen, onClose }) => {
   const dispatch = useDispatch();
   const dataColumns = [
-    { Header: "이미지", accessor: "image", align: "left" },
     { Header: "상품", accessor: "product", align: "left" },
     { Header: "정상가", accessor: "regularPrice", align: "center" },
     { Header: "할인", accessor: "salePrice", align: "center" },
@@ -64,28 +63,6 @@ export const ProductEditDialog = ({ rowData, isOpen, onClose }) => {
                 columns: dataColumns,
                 rows: [
                   {
-                    image: (
-                      <>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            if (file) {
-                              const newData = { ...data, image: file };
-                              setData(newData);
-                            }
-                          }}
-                        />
-                        {data?.image && (
-                          <img
-                            src={URL.createObjectURL(data.image)}
-                            alt="Selected Image"
-                            className="w-[150px] h-auto object-cover rounded-md mt-2"
-                          />
-                        )}
-                      </>
-                    ),
                     product: (
                       <MDInput
                         type="text"
@@ -114,7 +91,12 @@ export const ProductEditDialog = ({ rowData, isOpen, onClose }) => {
                         label="할인"
                         value={data?.salePrice}
                         onChange={(e) => {
-                          const newData = { ...data, salePrice: e.target.value };
+                          let salePrice = e.target.value;
+                          if (data?.regularPrice === null) return;
+                          if (salePrice > data?.regularPrice) {
+                            salePrice = data?.regularPrice;
+                          }
+                          const newData = { ...data, salePrice: salePrice };
                           setData(newData);
                         }}
                       />

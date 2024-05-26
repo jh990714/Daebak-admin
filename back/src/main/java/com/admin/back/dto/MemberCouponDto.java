@@ -1,13 +1,14 @@
 package com.admin.back.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
 public class MemberCouponDto {
     private Long id;
-    private Date issueDate;
-    private Date validUntil;
+    private LocalDateTime issueDate;
+    private LocalDateTime validUntil;
     private CouponDto coupon;
 }

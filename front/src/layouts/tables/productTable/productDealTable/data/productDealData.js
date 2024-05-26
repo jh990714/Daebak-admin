@@ -30,32 +30,35 @@ import LogoAsana from "assets/images/small-logos/logo-asana.svg";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { format, parseISO } from "date-fns";
 import { ProductDealsEditDialog } from "../dialog/productDealsEditDialog";
 import { fetchDeleteDealProduct } from "reducers/slices/dealProductSlice";
 
 export default function data() {
   const { dealProducts } = useSelector((state) => state.dealProducts);
   const dispatch = useDispatch();
-  const [anchorEl, setAnchorEl] = useState(null);
   const [dialogAnchorEl, setDialogAnchorEl] = useState(0);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [anchorEls, setAnchorEls] = useState(Array(dealProducts.length).fill(null));
+  const [dialogs, setDialogs] = useState(Array(dealProducts.length).fill(false));
+  const [dialogType, setDialogType] = useState(null);
 
   const [rowData, setRowData] = useState(dealProducts[0]);
-  const [editDialogs, setEditDialogs] = useState(Array(dealProducts.length).fill(false));
 
   const handleClick = (event, index) => {
-    setAnchorEl(event.currentTarget);
+    const newAnchorEls = [...anchorEls];
+    newAnchorEls[index] = event.currentTarget;
+    setAnchorEls(newAnchorEls);
     setDialogAnchorEl(index);
+
     setRowData(dealProducts[index]);
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorEls(Array(dealProducts.length).fill(null));
   };
 
-  const handleEdit = () => {
-    setEditDialogs((prevState) => ({
+  const handleDialog = (type) => {
+    setDialogType(type);
+    setDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: true,
     }));
@@ -77,8 +80,9 @@ export default function data() {
     }
   };
 
-  const handleEditDialogClose = () => {
-    setEditDialogs((prevState) => ({
+  const handleDialogClose = () => {
+    setDialogType(null);
+    setDialogs((prevState) => ({
       ...prevState,
       [dialogAnchorEl]: false,
     }));
@@ -96,7 +100,9 @@ export default function data() {
 
   const dataColumns = [
     { Header: "상품", accessor: "product", align: "left" },
+    { Header: "현재가", accessor: "regularPrice", align: "center" },
     { Header: "추가 할인", accessor: "dealPrice", align: "center" },
+    { Header: "최종가", accessor: "finalPrice", align: "center" },
     { Header: "시작 시간", accessor: "startDate", align: "center" },
     { Header: "종료 시간", accessor: "endDate", align: "center" },
     { Header: "action", accessor: "action", align: "center" },
@@ -104,9 +110,11 @@ export default function data() {
 
   const dataRows = dealProducts.map((data, index) => ({
     product: <Product image={data.product.imageUrl} name={data.product.name} />,
-    dealPrice: data.dealPrice,
-    startDate: format(parseISO(data.startDate), "yyyy-MM-dd HH:mm"),
-    endDate: format(parseISO(data.endDate), "yyyy-MM-dd HH:mm"),
+    regularPrice: `${(data.product.regularPrice - data.product.salePrice).toLocaleString()}원`,
+    dealPrice: `${data.dealPrice.toLocaleString()}원`,
+    finalPrice: `${(data.product.regularPrice - data.product.salePrice - data.dealPrice).toLocaleString()}원`,
+    startDate: new Date(data.startDate).toLocaleString(),
+    endDate: new Date(data.endDate).toLocaleString(),
     action: (
       <>
         <IconButton
@@ -117,16 +125,18 @@ export default function data() {
         >
           <MoreVert />
         </IconButton>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <MenuItem onClick={handleEdit}>수정</MenuItem>
+        <Menu anchorEl={anchorEls[index]} open={Boolean(anchorEls[index])} onClose={handleClose}>
+          <MenuItem onClick={() => handleDialog("edit")}>수정</MenuItem>
           <MenuItem onClick={handleDelete}>삭제</MenuItem>
         </Menu>
-        <ProductDealsEditDialog
-          rowData={rowData}
-          setRowData={setRowData}
-          isOpen={editDialogs[index]}
-          onClose={handleEditDialogClose}
-        />
+        {dialogType === "edit" && dialogs[index] && rowData && (
+          <ProductDealsEditDialog
+            rowData={rowData}
+            setRowData={setRowData}
+            isOpen={dialogType === "edit" && dialogs[index]}
+            onClose={handleDialogClose}
+          />
+        )}
       </>
     ),
   }));

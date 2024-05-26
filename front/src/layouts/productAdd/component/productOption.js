@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 import Card from "@mui/material/Card";
+import { IconButton } from "@mui/material";
+import { RemoveCircle } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import MDBox from "components/MDBox";
@@ -11,38 +13,50 @@ import DataTable from "examples/Tables/DataTable";
 
 export const ProductOption = ({ rowData, setRowData }) => {
   const handleAddRow = () => {
-    setRowData([...rowData, { optionName: "", optionAmount: "" }]);
+    setRowData([...rowData, { name: "", addPrice: "" }]);
+  };
+
+  const handleDeleteRow = (index) => {
+    const newOptions = [...rowData];
+    newOptions.splice(index, 1);
+    setRowData(newOptions);
   };
 
   const handleInputChange = (index, field, value) => {
-    const newRows = [...rowData];
-    newRows[index][field] = value;
-    setRowData(newRows);
+    const newOptions = [...rowData];
+    newOptions[index] = { ...newOptions[index], [field]: value };
+    setRowData(newOptions);
   };
 
   const dataColumns = [
-    { Header: "옵션명", accessor: "optionName", align: "left" },
-    { Header: "추가 가격", accessor: "optionAmount", align: "left" },
+    { Header: "옵션명", accessor: "name", align: "left" },
+    { Header: "추가 가격", accessor: "addPrice", align: "left" },
+    { Header: "", accessor: "actions", align: "center" },
   ];
 
   const renderRows = () => {
     return rowData.map((row, index) => ({
-      optionName: (
+      name: (
         <TextField
-          value={row.optionName}
-          onChange={(e) => handleInputChange(index, "optionName", e.target.value)}
+          value={row.name}
+          onChange={(e) => handleInputChange(index, "name", e.target.value)}
           variant="outlined"
           fullWidth
         />
       ),
-      optionAmount: (
+      addPrice: (
         <TextField
           type="number"
-          value={row.optionAmount}
-          onChange={(e) => handleInputChange(index, "optionAmount", e.target.value)}
+          value={row.addPrice}
+          onChange={(e) => handleInputChange(index, "addPrice", e.target.value)}
           variant="outlined"
           fullWidth
         />
+      ),
+      actions: (
+        <IconButton color="error" onClick={() => handleDeleteRow(index)}>
+          <RemoveCircle />
+        </IconButton>
       ),
     }));
   };

@@ -77,7 +77,7 @@ export const couponTableData = () => {
     validFrom: new Date(data.validFrom).toLocaleString(),
     validUntil: new Date(data.validUntil).toLocaleString(),
     minimumOrderAmount: `${data.minimumOrderAmount.toLocaleString()}원`,
-    expirationPeriod: data.expirationPeriod,
+    expirationPeriod: data.expirationPeriod ? `${data.expirationPeriod}일` : null,
     action: (
       <>
         <IconButton

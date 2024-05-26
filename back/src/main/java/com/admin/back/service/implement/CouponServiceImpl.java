@@ -3,6 +3,7 @@ package com.admin.back.service.implement;
 import java.util.List;
 import java.lang.reflect.Member;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
@@ -47,14 +48,14 @@ public class CouponServiceImpl implements CouponService {
 
             MemberCouponEntity memberCoupon = new MemberCouponEntity();
             memberCoupon.setCoupon(couponEntity);
-            memberCoupon.setIssueDate(new Date());
+            memberCoupon.setIssueDate(LocalDateTime.now());
 
             if (couponEntity.getExpirationPeriod() != null) {
                 LocalDate currentDate = LocalDate.now();
-                LocalDate expirationDate = currentDate.plusMonths(couponEntity.getExpirationPeriod());
-                memberCoupon.setValidUntil(Date.from(expirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                LocalDate expirationDate = currentDate.plusDays(couponEntity.getExpirationPeriod());
+                memberCoupon.setValidUntil(expirationDate.atStartOfDay());
             } else {
-                memberCoupon.setValidUntil(couponEntity.getValidUntil());
+                memberCoupon.setValidUntil(couponEntity.getValidUntil().toLocalDate().atStartOfDay());
             }
 
             // MemberEntity를 MemberCouponEntity에 설정합니다.

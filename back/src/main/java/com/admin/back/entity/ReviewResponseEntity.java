@@ -1,6 +1,6 @@
 package com.admin.back.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +30,7 @@ public class ReviewResponseEntity {
     private String responseText;
 
     @Column(name = "response_date")
-    private Date responseDate;
+    private LocalDateTime responseDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")

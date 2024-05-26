@@ -14,6 +14,7 @@ import com.admin.back.service.service.ReviewService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,6 +75,7 @@ public class ReviewServiceImpl implements ReviewService {
             ReviewResponseEntity reviewResponseEntity = new ReviewResponseEntity();
             reviewResponseEntity.setAdminId(reviewResponse.getAdminId());
             reviewResponseEntity.setResponseText(reviewResponse.getResponseText());
+            reviewResponseEntity.setResponseDate(LocalDateTime.now());
             
             reviewEntity.addResponse(reviewResponseEntity);
 

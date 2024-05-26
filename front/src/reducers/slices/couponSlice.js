@@ -5,7 +5,7 @@ import axios from "axios";
 export const fetchCoupons = createAsyncThunk("coupons/fetchCoupons", async () => {
   try {
     const response = await axios.get("http://localhost:8080/coupon/all");
-    console.log("couponResponse");
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching coupons:", error);

@@ -1,6 +1,6 @@
 package com.admin.back.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +25,7 @@ public class ReviewDto {
 
     private String contents;
     private int score;
-    private Date reviewDate;
+    private LocalDateTime reviewDate;
     private Boolean isBest;
     private String orderNumber;
     private List<String> imgUrl;
