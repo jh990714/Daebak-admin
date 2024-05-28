@@ -4,7 +4,7 @@ import axios from "axios";
 // fetchProducts 액션 정의
 export const fetchProducts = createAsyncThunk("products/fetchProducts", async () => {
   try {
-    const response = await axios.get("http://localhost:8080/product/getProducts");
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/product/getProducts`);
     console.log("productResponse");
     return response.data;
   } catch (error) {
@@ -17,7 +17,7 @@ export const fetchUpdateProduct = createAsyncThunk(
   "products/fetchUpdateProduct",
   async (product) => {
     try {
-      const response = await axios.put("http://localhost:8080/product", product);
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/product`, product);
       console.log("productResponse");
       return response.data;
     } catch (error) {
@@ -29,7 +29,7 @@ export const fetchUpdateProduct = createAsyncThunk(
 
 export const fetchAddProduct = createAsyncThunk("product/fetchAddProduct", async (formData) => {
   try {
-    const response = await axios.post("http://localhost:8080/product", formData, {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/product`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -45,7 +45,7 @@ export const fetchUpdateProductImage = createAsyncThunk(
   "product/fetchUpdateProductImage",
   async (formData) => {
     try {
-      const response = await axios.post(`http://localhost:8080/product/image`, formData);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/product/image`, formData);
       return response.data;
     } catch (error) {
       console.error("Error adding product:", error);
@@ -59,7 +59,7 @@ export const fetchDeleteProduct = createAsyncThunk(
   async (productId) => {
     try {
       console.log(productId);
-      const response = await axios.delete(`http://localhost:8080/product/${productId}`);
+      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/product/${productId}`);
       return response.data;
     } catch (error) {
       console.error("Error adding product:", error);
@@ -74,7 +74,7 @@ export const fetchUpdateOption = createAsyncThunk(
     try {
       console.log(productId);
       const response = await axios.post(
-        `http://localhost:8080/product/option/${productId}`,
+        `${process.env.REACT_APP_API_URL}/product/option/${productId}`,
         options
       );
       return response.data;

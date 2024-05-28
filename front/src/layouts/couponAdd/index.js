@@ -35,8 +35,8 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
   const handleSubmit = () => {
     const utcData = {
       ...data,
-      validFrom: data.validFrom ? new Date(data.validFrom).toISOString() : null,
-      validUntil: data.validUntil ? new Date(data.validUntil).toISOString() : null,
+      // validFrom: data.validFrom ? new Date(data.validFrom).toISOString() : null,
+      // validUntil: data.validUntil ? new Date(data.validUntil).toISOString() : null,
     };
 
     dispatch(fetchUpdateCoupon({ coupon: utcData }))
@@ -75,7 +75,6 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     couponCode: (
                       <MDInput
                         type="text"
-                        label="쿠폰코드"
                         value={data?.couponCode}
                         onChange={(e) => {
                           setData((prevData) => ({
@@ -88,7 +87,6 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     couponName: (
                       <MDInput
                         type="text"
-                        label="쿠폰이름"
                         value={data?.couponName}
                         onChange={(e) => {
                           setData((prevData) => ({
@@ -101,7 +99,6 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     discount: (
                       <MDInput
                         type="number"
-                        label="할인가격"
                         value={data?.discount}
                         onChange={(e) => {
                           setData((prevData) => ({
@@ -114,7 +111,6 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     validFrom: (
                       <MDInput
                         type="datetime-local" // datetime-local로 변경
-                        label="시작날짜"
                         value={
                           data?.validFrom
                             ? format(parseISO(data.validFrom), "yyyy-MM-dd'T'HH:mm")
@@ -131,7 +127,6 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     validUntil: (
                       <MDInput
                         type="datetime-local"
-                        label="종료날짜"
                         value={
                           data?.validUntil
                             ? format(parseISO(data.validUntil), "yyyy-MM-dd'T'HH:mm")
@@ -148,7 +143,6 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     minimumOrderAmount: (
                       <MDInput
                         type="number"
-                        label="최소주문금액"
                         value={data?.minimumOrderAmount}
                         onChange={(e) => {
                           setData((prevData) => ({
@@ -161,7 +155,6 @@ export const CouponDialog = ({ rowData, setRowData, isOpen, onClose }) => {
                     expirationPeriod: (
                       <MDInput
                         type="number"
-                        label="사용기간(일)"
                         value={data?.expirationPeriod}
                         onChange={(e) => {
                           setData((prevData) => ({
