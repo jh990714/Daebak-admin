@@ -17,7 +17,10 @@ export const fetchUpdateDealProducts = createAsyncThunk(
   "dealProducts/fetchUpdateDealProducts",
   async (dealProduct) => {
     try {
-      const response = await axios.post("http://localhost:8080/product/deal", dealProduct);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/product/deal`,
+        dealProduct
+      );
 
       return response.data;
     } catch (error) {
@@ -31,7 +34,10 @@ export const fetchSaveDealProducts = createAsyncThunk(
   "dealProducts/fetchSaveDealProducts",
   async (dealProduct) => {
     try {
-      const response = await axios.put("http://localhost:8080/product/deal", dealProduct);
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/product/deal`,
+        dealProduct
+      );
 
       return response.data;
     } catch (error) {
@@ -45,7 +51,10 @@ export const fetchDeleteDealProduct = createAsyncThunk(
   "dealProducts/fetchDeleteDealProduct",
   async (dealProduct) => {
     try {
-      const response = await axios.post("http://localhost:8080/product/deal/delete", dealProduct);
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/product/deal/delete`,
+        dealProduct
+      );
 
       return response.data;
     } catch (error) {
@@ -94,7 +103,16 @@ const dealProductSlice = createSlice({
       })
       .addCase(fetchSaveDealProducts.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.dealProducts = [...state.dealProducts, action.payload];
+        const updateDealProduct = action.payload;
+        const index = state.dealProducts.findIndex(
+          (dealProduct) => dealProduct.dealId === updateDealProduct.dealId
+        );
+
+        if (index !== -1) {
+          state.dealProducts[index] = updateDealProduct;
+        } else {
+          state.dealProducts.push(updateDealProduct);
+        }
       })
       .addCase(fetchSaveDealProducts.rejected, (state, action) => {
         state.status = "failed";

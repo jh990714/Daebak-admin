@@ -31,11 +31,11 @@ export const ProductDealsEditDialog = ({ rowData, isOpen, onClose }) => {
   }, [rowData]);
 
   const handleSubmit = () => {
-    // const utcData = {
-    //   ...data,
-    //   startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
-    //   endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
-    // };
+    const utcData = {
+      ...data,
+      // startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
+      // endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
+    };
 
     dispatch(fetchUpdateDealProducts(utcData))
       .then(() => {

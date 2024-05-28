@@ -4,7 +4,7 @@ import axios from "axios";
 // fetchQnas 액션 정의
 export const fetchQnas = createAsyncThunk("qnas/fetchQnas", async () => {
   try {
-    const response = await axios.get("http://localhost:8080/qna/all");
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/qna/all`);
     console.log("qnaResponse", response.data);
     return response.data;
   } catch (error) {
@@ -17,7 +17,10 @@ export const fetchAddAnswer = createAsyncThunk(
   "reviews/fetchAddAnswer",
   async ({ questionId, answer }) => {
     try {
-      const response = await axios.put(`http://localhost:8080/qna/${questionId}`, answer);
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/qna/${questionId}`,
+        answer
+      );
 
       return response.data;
     } catch (error) {
@@ -31,7 +34,7 @@ export const fetchDeleteAnswer = createAsyncThunk(
   async ({ questionId, answerId }) => {
     try {
       const response = await axios.delete(
-        `http://localhost:8080/qna/${questionId}/answer/${answerId}`
+        `${process.env.REACT_APP_API_URL}/qna/${questionId}/answer/${answerId}`
       );
 
       return response.data;

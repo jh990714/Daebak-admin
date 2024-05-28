@@ -75,15 +75,8 @@ export const UserInfoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => 
           onChange={(e) => handleInputChange(e, "address")}
         />
       ),
-      points: (
-        <MDInput
-          type="number"
-          label="적립금"
-          value={data.points}
-          onChange={(e) => handleInputChange(e, "points")}
-        />
-      ),
-      coupons: data.memberCoupons.length,
+      points: `${data.points.toLocaleString()}원`,
+      coupons: `${data.memberCoupons.length}개`,
       employed: new Date(data.employed).toLocaleString(),
     },
   ];

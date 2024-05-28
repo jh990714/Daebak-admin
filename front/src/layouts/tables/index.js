@@ -132,9 +132,16 @@ function Tables() {
             {items.map((item) => {
               const isLoading = statusMap[item.key] === "loading";
               return (
-                <Grid item xs={12} key={item.key}>
-                  {selectedItems.includes(item.key) && (isLoading ? <Loading /> : item.component)}
-                </Grid>
+                <>
+                  {selectedItems.includes(item.key) &&
+                    (isLoading ? (
+                      <Grid item xs={12} key={item.key}>
+                        <Loading />
+                      </Grid>
+                    ) : (
+                      item.component
+                    ))}
+                </>
               );
             })}
           </Grid>

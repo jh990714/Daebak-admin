@@ -4,7 +4,7 @@ import axios from "axios";
 // fetchCoupons 액션 정의
 export const fetchCoupons = createAsyncThunk("coupons/fetchCoupons", async () => {
   try {
-    const response = await axios.get("http://localhost:8080/coupon/all");
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/coupon/all`);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -17,7 +17,7 @@ export const fetchUpdateCoupon = createAsyncThunk(
   "coupons/fetchUpdateCoupon",
   async ({ coupon }) => {
     try {
-      const response = await axios.post("http://localhost:8080/coupon", coupon);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/coupon`, coupon);
       console.log("couponResponse");
       return response.data;
     } catch (error) {
@@ -32,7 +32,7 @@ export const fetchDeleteCoupon = createAsyncThunk(
   async ({ couponId }) => {
     try {
       console.log("delete");
-      const response = await axios.delete(`http://localhost:8080/coupon/${couponId}`);
+      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/coupon/${couponId}`);
       console.log("couponResponse");
       return response.data;
     } catch (error) {

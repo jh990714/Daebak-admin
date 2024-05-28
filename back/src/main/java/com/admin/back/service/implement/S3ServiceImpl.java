@@ -35,13 +35,13 @@ public class S3ServiceImpl implements S3Service {
     private final AmazonS3 s3Client;
 
     @Override
-    public String saveImageToS3(MultipartFile imageFile, String fileName) throws IOException {
+    public String saveImageToS3(MultipartFile imageFile, String filePath) throws IOException {
         try {
             InputStream inputStream = imageFile.getInputStream();
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(inputStream.available());
             metadata.setContentType(imageFile.getContentType());
-            String key = fileName;
+            String key = filePath + UUID.randomUUID().toString();
 
             PutObjectRequest request = new PutObjectRequest(s3BucketName, key, inputStream, metadata);
             s3Client.putObject(request);
