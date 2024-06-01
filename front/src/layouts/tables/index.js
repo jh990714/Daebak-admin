@@ -41,6 +41,9 @@ import { useSelector } from "react-redux";
 import couponSlice from "reducers/slices/couponSlice";
 import Loading from "components/Loading";
 import { ProductDealTable } from "./productDealTable";
+import { BannerTable } from "./bannerTable";
+import { CarouselTable } from "./bannerTable/carouselTable";
+import { VideoTable } from "./bannerTable/videoTable";
 
 const items = [
   { key: "users", label: "사용자", component: <AuthorsTable /> },
@@ -50,6 +53,8 @@ const items = [
   { key: "reviews", label: "상품 리뷰", component: <ReviewTable /> },
   { key: "qnas", label: "Q&A", component: <QnaTable /> },
   { key: "coupons", label: "쿠폰", component: <CouponTable /> },
+  { key: "carousel", label: "캐러샐", component: <CarouselTable /> },
+  { key: "video", label: "홍보 영상", component: <VideoTable /> },
 ];
 
 const slice = ["categories", "coupons", "dealProducts", "members", "products", "qnas", "reviews"];
@@ -61,6 +66,8 @@ function Tables() {
   const productsStatus = useSelector((state) => state.products.status);
   const qnasStatus = useSelector((state) => state.qnas.status);
   const reviewsStatus = useSelector((state) => state.reviews.status);
+  const carouselStatus = useSelector((state) => state.carousel.status);
+  const promotionalVideoStatus = useSelector((state) => state.promotionalVideo.status);
 
   const statusMap = {
     users: membersStatus,
@@ -70,6 +77,8 @@ function Tables() {
     reviews: reviewsStatus,
     qnas: qnasStatus,
     coupons: couponsStatus,
+    carousel: carouselStatus,
+    video: promotionalVideoStatus,
   };
 
   const [selectedItems, setSelectedItems] = useState(items.map((item) => item.key));

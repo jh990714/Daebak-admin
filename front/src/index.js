@@ -15,6 +15,8 @@ import { fetchQnas } from "reducers/slices/qnaSlice";
 import { fetchCategories } from "reducers/slices/categorySlice";
 import { fetchPaymentDetails } from "reducers/slices/paymentDetailSlice";
 import { fetchDealProducts } from "reducers/slices/dealProductSlice";
+import { fetchCarousel } from "reducers/slices/carouselSlice";
+import { fetchPromotionalVideo } from "reducers/slices/promotionalVidoeSlice";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
@@ -27,6 +29,8 @@ store.dispatch(fetchQnas());
 store.dispatch(fetchCategories());
 store.dispatch(fetchPaymentDetails());
 store.dispatch(fetchDealProducts());
+store.dispatch(fetchCarousel());
+store.dispatch(fetchPromotionalVideo());
 
 root.render(
   <BrowserRouter>

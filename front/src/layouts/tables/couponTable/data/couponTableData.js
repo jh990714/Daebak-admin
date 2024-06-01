@@ -45,7 +45,6 @@ export const couponTableData = () => {
   };
 
   const handleDelete = () => {
-    console.log(rowData);
     const confirmDelete = window.confirm(`"${rowData.couponName}" 쿠폰을 정말로 삭제하시겠습니까?`);
     if (confirmDelete) {
       dispatch(fetchDeleteCoupon({ couponId: rowData.couponId }))
