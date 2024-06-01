@@ -7,6 +7,8 @@ import qnaReducer from "./slices/qnaSlice";
 import categoryReducer from "./slices/categorySlice";
 import paymentDetailReducer from "./slices/paymentDetailSlice";
 import dealProductReducer from "./slices/dealProductSlice";
+import carouselReducer from "./slices/carouselSlice";
+import promotionalVideoReducer from "./slices/promotionalVidoeSlice";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ const store = configureStore({
     categories: categoryReducer,
     paymentDetails: paymentDetailReducer,
     dealProducts: dealProductReducer,
+    carousel: carouselReducer,
+    promotionalVideo: promotionalVideoReducer,
   },
 });
 

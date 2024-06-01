@@ -4,7 +4,7 @@ import axios from "axios";
 // fetchProducts 액션 정의
 export const fetchDealProducts = createAsyncThunk("dealProducts/fetchDealProducts", async () => {
   try {
-    const response = await axios.get("http://localhost:8080/product/deal");
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/product/deal`);
     console.log(response.data);
     return response.data;
   } catch (error) {

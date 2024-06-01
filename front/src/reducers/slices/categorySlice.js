@@ -13,9 +13,10 @@ export const fetchCategories = createAsyncThunk("categories/fetchCategories", as
 });
 export const fetchUpdateCategories = createAsyncThunk(
   "categories/fetchUpdateCategories",
-  async (categoryDto) => {
+  async (formData) => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/category`, categoryDto);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/category`, formData);
+      console.log("updateCategory", response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching categories:", error);

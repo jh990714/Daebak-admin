@@ -76,95 +76,94 @@ function BillingInformation() {
     setCurrentPage(totalPages);
   };
 
-  // if (status === "loading") {
-  //   console.log("paymentDetails is loading ...");
-  //   return <Loading />;
-  // }
-  return <Loading />;
-  // return (
-  //   <Card>
-  //     <MDBox pt={3} px={2}>
-  //       <MDTypography variant="h6" fontWeight="medium">
-  //         결제 정보
-  //       </MDTypography>
-  //       <FormGroup row>
-  //         <FormControlLabel
-  //           control={
-  //             <Checkbox
-  //               color="primary"
-  //               checked={filter === "all"}
-  //               onChange={handleFilterChange}
-  //               value="all"
-  //             />
-  //           }
-  //           label="전체 보기"
-  //         />
-  //         <FormControlLabel
-  //           control={
-  //             <Checkbox
-  //               color="primary"
-  //               checked={filter === "withTracking"}
-  //               onChange={handleFilterChange}
-  //               value="withTracking"
-  //             />
-  //           }
-  //           label="운송장 번호 등록"
-  //         />
-  //         <FormControlLabel
-  //           control={
-  //             <Checkbox
-  //               color="primary"
-  //               checked={filter === "withoutTracking"}
-  //               onChange={handleFilterChange}
-  //               value="withoutTracking"
-  //             />
-  //           }
-  //           label="운송장 번호 미등록"
-  //         />
-  //       </FormGroup>
-  //     </MDBox>
-  //     <MDBox pt={1} pb={2} px={2}>
-  //       <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-  //         {currentData.map((billingInfo, index) => (
-  //           <Bill
-  //             key={index}
-  //             id={billingInfo.id}
-  //             memberName={billingInfo.memberName}
-  //             impUid={billingInfo.impUid}
-  //             orderNumber={billingInfo.orderNumber}
-  //             orderDate={billingInfo.orderDate}
-  //             trackingNumber={billingInfo.trackingNumber}
-  //           />
-  //         ))}
-  //       </MDBox>
-  //     </MDBox>
-  //     <MDPagination>
-  //       <MDPagination item onClick={() => handlePageChange(1)}>
-  //         <Icon>first_page</Icon>
-  //       </MDPagination>
-  //       <MDPagination item onClick={() => handlePageChange(currentPage - 1)}>
-  //         <Icon>keyboard_arrow_left</Icon>
-  //       </MDPagination>
-  //       {getPaginationItems().map((page) => (
-  //         <MDPagination
-  //           key={page}
-  //           item
-  //           active={page === currentPage}
-  //           onClick={() => handlePageChange(page)}
-  //         >
-  //           {page}
-  //         </MDPagination>
-  //       ))}
+  if (status === "loading") {
+    console.log("paymentDetails is loading ...");
+    return <Loading />;
+  }
+  return (
+    <Card>
+      <MDBox pt={3} px={2}>
+        <MDTypography variant="h6" fontWeight="medium">
+          결제 정보
+        </MDTypography>
+        <FormGroup row>
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                checked={filter === "all"}
+                onChange={handleFilterChange}
+                value="all"
+              />
+            }
+            label="전체 보기"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                checked={filter === "withTracking"}
+                onChange={handleFilterChange}
+                value="withTracking"
+              />
+            }
+            label="운송장 번호 등록"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                checked={filter === "withoutTracking"}
+                onChange={handleFilterChange}
+                value="withoutTracking"
+              />
+            }
+            label="운송장 번호 미등록"
+          />
+        </FormGroup>
+      </MDBox>
+      <MDBox pt={1} pb={2} px={2}>
+        <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
+          {currentData.map((billingInfo, index) => (
+            <Bill
+              key={index}
+              id={billingInfo.id}
+              memberName={billingInfo.memberName}
+              impUid={billingInfo.impUid}
+              orderNumber={billingInfo.orderNumber}
+              orderDate={billingInfo.orderDate}
+              trackingNumber={billingInfo.trackingNumber}
+            />
+          ))}
+        </MDBox>
+      </MDBox>
+      <MDPagination>
+        <MDPagination item onClick={() => handlePageChange(1)}>
+          <Icon>first_page</Icon>
+        </MDPagination>
+        <MDPagination item onClick={() => handlePageChange(currentPage - 1)}>
+          <Icon>keyboard_arrow_left</Icon>
+        </MDPagination>
+        {getPaginationItems().map((page) => (
+          <MDPagination
+            key={page}
+            item
+            active={page === currentPage}
+            onClick={() => handlePageChange(page)}
+          >
+            {page}
+          </MDPagination>
+        ))}
 
-  //       <MDPagination item onClick={() => handlePageChange(currentPage + 1)}>
-  //         <Icon>keyboard_arrow_right</Icon>
-  //       </MDPagination>
-  //       <MDPagination item onClick={handleLastPageClick}>
-  //         <Icon>last_page</Icon>
-  //       </MDPagination>
-  //     </MDPagination>
-  //   </Card>
-  // );
+        <MDPagination item onClick={() => handlePageChange(currentPage + 1)}>
+          <Icon>keyboard_arrow_right</Icon>
+        </MDPagination>
+        <MDPagination item onClick={handleLastPageClick}>
+          <Icon>last_page</Icon>
+        </MDPagination>
+      </MDPagination>
+    </Card>
+  );
 }
 
 export default BillingInformation;

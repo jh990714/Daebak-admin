@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { IconButton } from "@mui/material";
 import { RemoveCircle, AddCircleOutline } from "@mui/icons-material";
@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 
 export const CategoryEditDialog = ({ data, setData, isOpen, handleClose }) => {
   const dispatch = useDispatch();
+  const [categoryImage, setCategoryImage] = useState();
 
   const handleAddSubcategory = () => {
     const newSubcategories = [...(data.subcategories || []), { id: null, name: "" }];
@@ -33,7 +34,17 @@ export const CategoryEditDialog = ({ data, setData, isOpen, handleClose }) => {
       return;
     }
 
-    dispatch(fetchUpdateCategories(data))
+    const formData = new FormData();
+    formData.append("id", data.id);
+    formData.append("name", data.name);
+    if (categoryImage) {
+      formData.append("image", categoryImage);
+    }
+    if (data.subcategories) {
+      formData.append("subcategories", JSON.stringify(data.subcategories));
+    }
+
+    dispatch(fetchUpdateCategories(formData))
       .then(() => {
         console.log("저장 성공");
       })
@@ -59,21 +70,44 @@ export const CategoryEditDialog = ({ data, setData, isOpen, handleClose }) => {
             coloredShadow="info"
           >
             <MDTypography variant="h6" color="white">
-              <MDInput
-                type="text"
-                label="상위 카테고리"
-                value={data?.name}
+              <input
+                type="file"
+                accept="image/*"
                 onChange={(e) => {
-                  const newData = { ...data, name: e.target.value };
-                  setData(newData);
+                  const file = e.target.files[0];
+                  if (file) {
+                    setCategoryImage(file);
+                  }
                 }}
-                InputProps={{
-                  inputProps: {
-                    style: { color: "white" },
-                  },
-                }}
-                InputLabelProps={{ style: { color: "white" } }}
               />
+              <div className="flex gap-5 mt-5">
+                {categoryImage ? (
+                  <img src={URL.createObjectURL(categoryImage)} alt="Selected Image" width="40" />
+                ) : data.imageUrl ? (
+                  <img src={data.imageUrl} alt={data.name} width="40" />
+                ) : (
+                  <img
+                    src={`${process.env.PUBLIC_URL}/category/default.png`}
+                    alt={data.name}
+                    width="40"
+                  />
+                )}
+                <MDInput
+                  type="text"
+                  label="상위 카테고리"
+                  value={data?.name}
+                  onChange={(e) => {
+                    const newData = { ...data, name: e.target.value };
+                    setData(newData);
+                  }}
+                  InputProps={{
+                    inputProps: {
+                      style: { color: "white" },
+                    },
+                  }}
+                  InputLabelProps={{ style: { color: "white" } }}
+                />
+              </div>
             </MDTypography>
           </MDBox>
           <MDBox mx={2} py={3} px={2}>
@@ -111,6 +145,7 @@ CategoryEditDialog.propTypes = {
   data: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
+    imageUrl: PropTypes.string.isRequired,
     subcategories: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number,
