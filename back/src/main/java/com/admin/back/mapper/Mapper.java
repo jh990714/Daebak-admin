@@ -27,7 +27,7 @@ public class Mapper {
         dto.setPhone(entity.getPhone());
         dto.setAddress(entity.getAddress());
         dto.setPoints(entity.getMemberPoints().getPoints());
-        dto.setEmployed(LocalDateTime.now());
+        dto.setEmployed(entity.getCreateAt());
 
         Set<MemberCouponDto> memberCoupons = entity.getMemberCoupons().stream()
                 .map(this::toDto)

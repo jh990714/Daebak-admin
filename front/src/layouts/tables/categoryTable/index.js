@@ -12,15 +12,28 @@ import MDButton from "components/MDButton";
 import { CategoryAdd } from "layouts/categoryAdd";
 
 import { ProductByCategoryTable } from "./ProductByCategoryTable";
-import datas from "./data/categoryDatas";
-import { useSelector } from "react-redux";
 import { CategoriesTableData } from "./data/categoriesTableData";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { fetchCategories } from "reducers/slices/categorySlice";
 
 function CategoryTable() {
+  const dispatch = useDispatch();
   const [clickedCategories, setClickedCategories] = useState([]);
   const [showAddCategory, setShowAddCategory] = useState(false);
   const handleCloseCategory = () => {
     setShowAddCategory(!showAddCategory);
+  };
+
+  const handleRefresh = () => {
+    dispatch(fetchCategories())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
   };
 
   return (
@@ -46,9 +59,14 @@ function CategoryTable() {
                 }}
               >
                 <span>상품 카테고리 ( 상위 )</span>
-                <MDButton variant="h2" color="white" onClick={() => setShowAddCategory(true)}>
-                  추가
-                </MDButton>
+                <div>
+                  <MDButton variant="h2" color="white" onClick={() => setShowAddCategory(true)}>
+                    추가
+                  </MDButton>
+                  <IconButton color="white" onClick={handleRefresh}>
+                    <RefreshIcon />
+                  </IconButton>
+                </div>
               </div>
             </MDTypography>
           </MDBox>

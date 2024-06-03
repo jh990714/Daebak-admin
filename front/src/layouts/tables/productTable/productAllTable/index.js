@@ -8,11 +8,15 @@ import MDTypography from "components/MDTypography";
 import MDBox from "components/MDBox";
 import MDButton from "components/MDButton";
 import DataTable from "examples/Tables/DataTable";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
 
 import ProductAllData from "./data/ProductAllData";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "reducers/slices/productSlice";
 
 export const ProductAllTable = () => {
+  const dispatch = useDispatch();
   const [pageIndex, setPageIndex] = useState(0);
   const [showProduct, setShowProduct] = useState(false);
 
@@ -24,6 +28,16 @@ export const ProductAllTable = () => {
 
   const handleAddProduct = () => {
     setShowProduct(!showProduct);
+  };
+
+  const handleRefresh = () => {
+    dispatch(fetchProducts())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
   };
 
   return (
@@ -49,9 +63,14 @@ export const ProductAllTable = () => {
                 }}
               >
                 <span>모든 상품</span>
-                <MDButton variant="h2" color="white" onClick={handleAddProduct}>
-                  추가
-                </MDButton>
+                <div>
+                  <MDButton variant="h2" color="white" onClick={handleAddProduct}>
+                    추가
+                  </MDButton>
+                  <IconButton color="white" onClick={handleRefresh}>
+                    <RefreshIcon />
+                  </IconButton>
+                </div>
               </div>
             </MDTypography>
           </MDBox>

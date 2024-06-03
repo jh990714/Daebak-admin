@@ -88,10 +88,10 @@ export const promotionalVideoTableData = () => {
       </>
     ),
     product: (
-      <ul>
+      <ul className="gap-4 grid">
         {data.products.map((product, index) => (
           <li key={index}>
-            <Product image={product.imageUrl} name={product.name} />,
+            <Product image={product.imageUrl} name={product.name} />
           </li>
         ))}
       </ul>
