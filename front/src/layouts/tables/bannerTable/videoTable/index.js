@@ -5,10 +5,16 @@ import Card from "@mui/material/Card";
 
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
+
 import DataTable from "examples/Tables/DataTable";
 import { promotionalVideoTableData } from "./data/promotionalVideoTableData";
+import { useDispatch } from "react-redux";
+import { fetchPromotionalVideo } from "reducers/slices/promotionalVidoeSlice";
 
 export const VideoTable = () => {
+  const dispatch = useDispatch();
   const [rowData, setRowData] = useState({
     carouselId: null,
     imageUrl: null,
@@ -25,6 +31,17 @@ export const VideoTable = () => {
   const handleShowAddVideo = () => {
     setAddVideo(!addCarousel);
   };
+
+  const handleRefresh = () => {
+    dispatch(fetchPromotionalVideo())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
+  };
+
   return (
     <Grid item xs={12}>
       <Card>
@@ -39,7 +56,18 @@ export const VideoTable = () => {
           coloredShadow="error"
         >
           <MDTypography variant="h5" color="white">
-            홍보 영상
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>홍보 영상</span>
+              <IconButton color="white" onClick={handleRefresh}>
+                <RefreshIcon />
+              </IconButton>
+            </div>
           </MDTypography>
         </MDBox>
         <MDBox pt={3}>

@@ -7,10 +7,17 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import { carouselsTableData } from "./data/carouselsTableData";
 import DataTable from "examples/Tables/DataTable";
+
 import MDButton from "components/MDButton";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
+
 import { CarouselEditDialog } from "./dialog/carouselEditDialog";
+import { useDispatch } from "react-redux";
+import { fetchCarousel } from "reducers/slices/carouselSlice";
 
 export const CarouselTable = () => {
+  const dispatch = useDispatch();
   const [rowData, setRowData] = useState({
     carouselId: null,
     imageUrl: null,
@@ -26,6 +33,16 @@ export const CarouselTable = () => {
 
   const handleShowAddCarousel = () => {
     setAddCarousel(!addCarousel);
+  };
+
+  const handleRefresh = () => {
+    dispatch(fetchCarousel())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
   };
 
   return (
@@ -50,9 +67,14 @@ export const CarouselTable = () => {
               }}
             >
               <span>캐러샐</span>
-              <MDButton variant="h2" color="white" onClick={handleShowAddCarousel}>
-                추가
-              </MDButton>
+              <div>
+                <MDButton variant="h2" color="white" onClick={handleShowAddCarousel}>
+                  추가
+                </MDButton>
+                <IconButton color="white" onClick={handleRefresh}>
+                  <RefreshIcon />
+                </IconButton>
+              </div>
             </div>
           </MDTypography>
         </MDBox>

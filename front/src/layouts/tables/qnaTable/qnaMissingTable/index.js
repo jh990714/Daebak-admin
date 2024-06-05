@@ -4,11 +4,16 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
 
 import qnaMissingData from "./data/qnaMissingData";
 import { ExpandedContent } from "../expanded/expandedQna";
+import { useDispatch } from "react-redux";
+import { fetchQnas } from "reducers/slices/qnaSlice";
 
 export const QnaMissingTable = () => {
+  const dispatch = useDispatch();
   const [pageIndex, setPageIndex] = useState(0);
 
   const { columns: missingQnaColumns, rows: missingQnaRows, expanded: expanded } = qnaMissingData();
@@ -16,6 +21,17 @@ export const QnaMissingTable = () => {
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
   };
+
+  const handleRefresh = () => {
+    dispatch(fetchQnas())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
+  };
+
   return (
     <Grid item xs={12}>
       <Card>
@@ -29,8 +45,19 @@ export const QnaMissingTable = () => {
           borderRadius="lg"
           coloredShadow="warning"
         >
-          <MDTypography variant="h6" color="white">
-            Q&A (답변 미등록)
+          <MDTypography variant="h5" color="white">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>Q&A (답변 미등록)</span>
+              <IconButton color="white" onClick={handleRefresh}>
+                <RefreshIcon />
+              </IconButton>
+            </div>
           </MDTypography>
         </MDBox>
         <MDBox pt={3}>

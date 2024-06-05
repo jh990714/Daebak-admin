@@ -56,6 +56,7 @@ public class MemberServiceImpl implements MemberService {
             memberEntity.setEmail(memberDto.getEmail());
             memberEntity.setPhone(memberDto.getPhone());
             memberEntity.setAddress(memberDto.getAddress());
+            memberEntity.setCreateAt(memberDto.getEmployed());
 
             MemberEntity updatedMemberEntity = memberRepository.save(memberEntity);
 

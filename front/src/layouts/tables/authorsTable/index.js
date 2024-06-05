@@ -12,9 +12,14 @@ import authorsTableData from "layouts/tables/authorsTable/data/authorsTableData"
 import { AddCouponDialog } from "./dialog/addCouponDialog";
 import { AddPointsDialog } from "./dialog/addPointsDialog";
 import DataTable from "examples/Tables/DataTable";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
+import { fetchMembers } from "reducers/slices/memberSlice";
 
 function AuthorsTable() {
+  const dispatch = useDispatch();
   const { dataColumns: columns, dataRows: rows } = authorsTableData();
   const [addPointsSelectRows, setAddPointsSelectRows] = useState(false);
   const [addCouponSelectRows, setAddCouponSelectRows] = useState(false);
@@ -38,6 +43,16 @@ function AuthorsTable() {
   const handleSelectedRows = (selectedRows) => {
     const selectedRowData = selectedRows.map((id) => members.find((member) => member.id === id));
     setSelectMembers(selectedRowData);
+  };
+
+  const handleRefresh = () => {
+    dispatch(fetchMembers())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
   };
 
   return (
@@ -69,6 +84,9 @@ function AuthorsTable() {
                 <MDButton variant="h2" color="white" onClick={handleShowAddCouponDialog}>
                   쿠폰 추가
                 </MDButton>
+                <IconButton color="white" onClick={handleRefresh}>
+                  <RefreshIcon />
+                </IconButton>
               </div>
             </div>
           </MDTypography>

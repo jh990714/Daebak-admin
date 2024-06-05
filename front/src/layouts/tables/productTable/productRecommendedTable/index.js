@@ -6,11 +6,15 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
 
 import productRecommendedData from "./data/productRecommendedData";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "reducers/slices/productSlice";
 
 export const ProductRecommendedTable = () => {
+  const dispatch = useDispatch();
   const [pageIndex, setPageIndex] = useState(0);
 
   const { columns: recommendedProductsColumns, rows: recommendedProductsRows } =
@@ -18,6 +22,16 @@ export const ProductRecommendedTable = () => {
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
+  };
+
+  const handleRefresh = () => {
+    dispatch(fetchProducts())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
   };
 
   return (
@@ -34,7 +48,18 @@ export const ProductRecommendedTable = () => {
           coloredShadow="error"
         >
           <MDTypography variant="h5" color="white">
-            추천 상품
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>추천상품</span>
+              <IconButton color="white" onClick={handleRefresh}>
+                <RefreshIcon />
+              </IconButton>
+            </div>
           </MDTypography>
         </MDBox>
         <MDBox pt={3}>
