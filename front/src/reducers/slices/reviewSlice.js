@@ -4,7 +4,7 @@ import axios from "axios";
 // fetchReviews 액션 정의
 export const fetchReviews = createAsyncThunk("reviews/fetchReviews", async () => {
   try {
-    const response = await axios.get("http://localhost:8080/review/all");
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/review/all`);
     console.log("reviewResponse", response.data);
     return response.data;
   } catch (error) {
@@ -17,7 +17,10 @@ export const fetchSaveReviews = createAsyncThunk(
   "reviews/fetchSaveReviews",
   async ({ reviewId, reviewResponse }) => {
     try {
-      const response = await axios.put(`http://localhost:8080/review/${reviewId}`, reviewResponse);
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_URL}/review/${reviewId}`,
+        reviewResponse
+      );
       console.log("reviewResponse", response.data);
       return response.data;
     } catch (error) {
@@ -32,7 +35,7 @@ export const fetchDeleteResponse = createAsyncThunk(
   async ({ reviewId, responseId }) => {
     try {
       const response = await axios.delete(
-        `http://localhost:8080/review/${reviewId}/response/${responseId}`
+        `${process.env.REACT_APP_API_URL}/review/${reviewId}/response/${responseId}`
       );
 
       return response.data;
@@ -47,7 +50,7 @@ export const fetchUpdateBestReview = createAsyncThunk(
   "reviews/fetchUpdateBestReview",
   async ({ reviewId }) => {
     try {
-      const response = await axios.put(`http://localhost:8080/review/best/${reviewId}`);
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/review/best/${reviewId}`);
       console.log("reviewResponse", response.data);
       return response.data;
     } catch (error) {

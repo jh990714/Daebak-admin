@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const fetchCategories = createAsyncThunk("categories/fetchCategories", async () => {
   try {
-    const response = await axios.get("http://localhost:8080/category");
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/category`);
     console.log("category", response.data);
     return response.data;
   } catch (error) {
@@ -13,9 +13,10 @@ export const fetchCategories = createAsyncThunk("categories/fetchCategories", as
 });
 export const fetchUpdateCategories = createAsyncThunk(
   "categories/fetchUpdateCategories",
-  async (categoryDto) => {
+  async (formData) => {
     try {
-      const response = await axios.post("http://localhost:8080/category", categoryDto);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/category`, formData);
+      console.log("updateCategory", response.data);
       return response.data;
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -29,7 +30,9 @@ export const fetchDeleteCategory = createAsyncThunk(
   async (categoryId) => {
     try {
       console.log(categoryId);
-      const response = await axios.delete(`http://localhost:8080/category/${categoryId}`);
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/category/${categoryId}`
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching categories:", error);

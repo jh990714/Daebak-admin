@@ -3,25 +3,28 @@ import axios from "axios";
 import authorsDatas from "layouts/tables/authorsTable/data/authorsData";
 
 export const fetchMembers = createAsyncThunk("members/fetchMembers", async () => {
-  const response = await axios.get("http://localhost:8080/member/getMembers");
+  const response = await axios.get(`${process.env.REACT_APP_API_URL}/member/getMembers`);
 
   return response.data;
 });
 
 export const saveMember = createAsyncThunk("members/saveMember", async (memberData) => {
-  const response = await axios.put(`http://localhost:8080/member/update`, memberData);
+  const response = await axios.put(`${process.env.REACT_APP_API_URL}/member/update`, memberData);
   return response.data;
 });
 
 export const saveMemberCoupon = createAsyncThunk("members/saveMemberCoupon", async (memberData) => {
-  const response = await axios.put(`http://localhost:8080/member/updateCoupon`, memberData);
+  const response = await axios.put(
+    `${process.env.REACT_APP_API_URL}/member/updateCoupon`,
+    memberData
+  );
   return response.data;
 });
 
 export const addMemberCoupon = createAsyncThunk(
   "members/addMemberCoupon",
   async ({ members, coupon }) => {
-    const response = await axios.post("http://localhost:8080/member/addCoupon", {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/member/addCoupon`, {
       members,
       coupon,
     });
@@ -32,7 +35,7 @@ export const addMemberCoupon = createAsyncThunk(
 export const addMemberPoints = createAsyncThunk(
   "members/addMemberPoints",
   async ({ members, points }) => {
-    const response = await axios.post("http://localhost:8080/points/points", {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/points/points`, {
       members,
       points,
     });

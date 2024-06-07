@@ -4,11 +4,16 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
 
 import qnaCompletedData from "./data/qnaCompletedData";
 import { ExpandedContent } from "../expanded/expandedQna";
+import { fetchQnas } from "reducers/slices/qnaSlice";
+import { useDispatch } from "react-redux";
 
 export const QnaCompletedTable = () => {
+  const dispatch = useDispatch();
   const [pageIndex, setPageIndex] = useState(0);
 
   const {
@@ -19,6 +24,16 @@ export const QnaCompletedTable = () => {
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
+  };
+
+  const handleRefresh = () => {
+    dispatch(fetchQnas())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
   };
 
   return (
@@ -34,8 +49,19 @@ export const QnaCompletedTable = () => {
           borderRadius="lg"
           coloredShadow="info"
         >
-          <MDTypography variant="h6" color="white">
-            Q&A (답변 등록 완료)
+          <MDTypography variant="h5" color="white">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span>Q&A (답변 등록 완료)</span>
+              <IconButton color="white" onClick={handleRefresh}>
+                <RefreshIcon />
+              </IconButton>
+            </div>
           </MDTypography>
         </MDBox>
         <MDBox pt={3}>

@@ -7,11 +7,16 @@ import MDButton from "components/MDButton";
 import Card from "@mui/material/Card";
 import DataTable from "examples/Tables/DataTable";
 
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
+
 import { couponTableData } from "./data/couponTableData";
 import { CouponDialog } from "../../couponAdd";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCoupons } from "reducers/slices/couponSlice";
 
 export const CouponTable = () => {
+  const dispatch = useDispatch();
   const [pageIndex, setPageIndex] = useState(0);
   const [showAddCoupon, setShowAddCoupon] = useState(false);
 
@@ -23,6 +28,16 @@ export const CouponTable = () => {
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
+  };
+
+  const handleRefresh = () => {
+    dispatch(fetchCoupons())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
   };
 
   return (
@@ -47,9 +62,14 @@ export const CouponTable = () => {
               }}
             >
               <span>쿠폰</span>
-              <MDButton variant="h2" color="white" onClick={() => setShowAddCoupon(true)}>
-                추가
-              </MDButton>
+              <div>
+                <MDButton variant="h2" color="white" onClick={() => setShowAddCoupon(true)}>
+                  추가
+                </MDButton>
+                <IconButton color="white" onClick={handleRefresh}>
+                  <RefreshIcon />
+                </IconButton>
+              </div>
             </div>
           </MDTypography>
         </MDBox>

@@ -70,7 +70,18 @@ export const CategoriesTableData = ({ clickedCategories, setClickedCategories })
       {categories.map((category, index) => (
         <div key={index} className="rounded-md">
           <div key={index} className="flex gap-5 items-center border-b-4">
-            <span className="font-semibold text-xl">{category.name}</span>
+            <div className="flex items-center">
+              {category.imageUrl ? (
+                <img src={category.imageUrl} alt={category.name} width="40" />
+              ) : (
+                <img
+                  src={`${process.env.PUBLIC_URL}/category/default.png`}
+                  alt={category.name}
+                  width="40"
+                />
+              )}
+              <span className="font-semibold text-xl">{category.name}</span>
+            </div>
             <div>
               <IconButton onClick={() => handleShowCategory(category)} size="medium">
                 <EditIcon />

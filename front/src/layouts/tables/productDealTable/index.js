@@ -4,19 +4,34 @@ import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
 
 import DataTable from "examples/Tables/DataTable";
 
 import productDealData from "./data/productDealData";
 import { ProductDealAddDialog } from "./dialog/productDealAddDialog";
+import { fetchDealProducts } from "reducers/slices/dealProductSlice";
+import { useDispatch } from "react-redux";
 
 export const ProductDealTable = () => {
+  const dispatch = useDispatch();
   const [showProductDeal, setShowProductDeal] = useState(false);
 
   const { columns: productDealsColumns, rows: productDealsRows } = productDealData();
 
   const handleAddProductDeal = () => {
     setShowProductDeal(!showProductDeal);
+  };
+
+  const handleRefresh = () => {
+    dispatch(fetchDealProducts())
+      .then(() => {
+        console.log("저장 성공");
+      })
+      .catch((error) => {
+        console.error("저장 실패:", error);
+      });
   };
 
   return (
@@ -42,9 +57,14 @@ export const ProductDealTable = () => {
                 }}
               >
                 <span>타임 특가 상품</span>
-                <MDButton variant="h2" color="white" onClick={handleAddProductDeal}>
-                  추가
-                </MDButton>
+                <div>
+                  <MDButton variant="h2" color="white" onClick={handleAddProductDeal}>
+                    추가
+                  </MDButton>
+                  <IconButton color="white" onClick={handleRefresh}>
+                    <RefreshIcon />
+                  </IconButton>
+                </div>
               </div>
             </MDTypography>
           </MDBox>

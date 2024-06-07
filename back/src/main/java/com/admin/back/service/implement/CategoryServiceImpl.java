@@ -1,5 +1,6 @@
 package com.admin.back.service.implement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -8,20 +9,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.function.Function;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.admin.back.dto.CategoryDto;
 import com.admin.back.dto.CategoryDto.SubcategoryDTO;
 import com.admin.back.entity.CategoryEntity;
 import com.admin.back.repository.CategoryRepository;
 import com.admin.back.service.service.CategoryService;
+import com.admin.back.service.service.S3Service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService{
+    private final S3Service s3Service;
     private final CategoryRepository categoryRepository;
 
     @Override
@@ -29,20 +36,8 @@ public class CategoryServiceImpl implements CategoryService{
         List<CategoryDto> categoryDTOs = new ArrayList<>();
         List<CategoryEntity> categoryEntities = categoryRepository.findAll();
         for (CategoryEntity categoryEntity : categoryEntities) {
-            List<SubcategoryDTO> subcategoryDTOs = new ArrayList<>();
-
             if (categoryEntity.getParentCategory() == null) {
-                CategoryDto categoryDTO = new CategoryDto();
-                categoryDTO.setId(categoryEntity.getCategoryId());
-                categoryDTO.setName(categoryEntity.getName());
-                for (CategoryEntity subcategoryEntity : categoryEntity.getSubcategories()) {
-                    SubcategoryDTO subcategoryDTO = new SubcategoryDTO();
-                    subcategoryDTO.setId(subcategoryEntity.getCategoryId());
-                    subcategoryDTO.setName(subcategoryEntity.getName());
-                    // 필요한 경우 SubcategoryDTO에 추가 정보를 설정합니다.
-                    subcategoryDTOs.add(subcategoryDTO);
-                }
-                categoryDTO.setSubcategories(subcategoryDTOs);
+                CategoryDto categoryDTO = CategoryDto.fromEntity(categoryEntity);
                 categoryDTOs.add(categoryDTO);
             }
         }
@@ -50,107 +45,101 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryDto updateCategories(CategoryDto categoryDto) {
-        System.out.println(categoryDto.getId());
-
+    public CategoryDto updateCategories(CategoryDto categoryDto, MultipartFile image) {
         if (categoryDto.getId() == null) {
-            newCategory(categoryDto);
-
-            return categoryDto;
+            CategoryDto newCategory = newCategory(categoryDto, image);
+            return newCategory;
         }
-
+    
         Optional<CategoryEntity> optionalCategoryEntity = categoryRepository.findById(categoryDto.getId());
     
         if (optionalCategoryEntity.isPresent()) {
             CategoryEntity categoryEntity = optionalCategoryEntity.get();
-
             categoryEntity.setName(categoryDto.getName());
-
+    
             List<SubcategoryDTO> subcategoryDtos = categoryDto.getSubcategories();
             List<CategoryEntity> subCategoryEntities = categoryRepository.findByParentCategory(categoryEntity);
     
             Map<Long, CategoryEntity> subCategoryEntityMap = subCategoryEntities.stream()
                 .collect(Collectors.toMap(CategoryEntity::getCategoryId, Function.identity()));
     
-            // Process each subcategory DTO
+            // Extract IDs of remaining subcategories
+            Set<Long> remainingSubcategoryIds = subCategoryEntityMap.keySet();
+
             for (SubcategoryDTO subcategoryDto : subcategoryDtos) {
                 if (subcategoryDto.getName().equals("")) continue;
-                System.out.println("name" + subcategoryDto.getName());
+    
                 if (subcategoryDto.getId() == null || !subCategoryEntityMap.containsKey(subcategoryDto.getId())) {
-                    // Add new subcategory
                     CategoryEntity newSubcategoryEntity = new CategoryEntity();
                     newSubcategoryEntity.setName(subcategoryDto.getName());
                     newSubcategoryEntity.setParentCategory(categoryEntity);
                     categoryRepository.save(newSubcategoryEntity);
                 } else {
-
                     CategoryEntity existingSubcategoryEntity = subCategoryEntityMap.get(subcategoryDto.getId());
                     existingSubcategoryEntity.setName(subcategoryDto.getName());
                     categoryRepository.save(existingSubcategoryEntity);
-
-                    subCategoryEntityMap.remove(subcategoryDto.getId());
+    
+                    // Remove processed subcategory ID from remainingSubcategoryIds
+                    remainingSubcategoryIds.remove(existingSubcategoryEntity.getCategoryId());
                 }
             }
-    
-            // Delete remaining subcategories in the map
-            for (CategoryEntity subcategoryEntityToDelete : subCategoryEntityMap.values()) {
-                categoryRepository.delete(subcategoryEntityToDelete);
+
+            // Delete remaining subcategories not processed
+            for (Long remainingSubcategoryId : remainingSubcategoryIds) {
+                categoryRepository.deleteById(remainingSubcategoryId);
             }
+
+            try {
+                if (image != null) {
+                    s3Service.deleteImageFromS3(categoryEntity.getImageUrl());
     
-            return getCategoryDtoFromEntity(categoryEntity);
+                    String imageUrl = s3Service.saveImageToS3(image, "category/");
+                    categoryEntity.setImageUrl(imageUrl);
+                }
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save image to S3", e);
+            }
+            
+            CategoryEntity updateCategoryEntity = categoryRepository.save(categoryEntity);
+            return CategoryDto.fromEntity(updateCategoryEntity);
         } else {
             throw new IllegalArgumentException("Category with id " + categoryDto.getId() + " not found");
         }
     }
 
-    // CategoryEntity에서 CategoryDto로 변환하는 보조 메서드
-    private CategoryDto getCategoryDtoFromEntity(CategoryEntity categoryEntity) {
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setId(categoryEntity.getCategoryId());
-        categoryDto.setName(categoryEntity.getName());
-        List<SubcategoryDTO> subcategoryDTOs = new ArrayList<>();
-        for (CategoryEntity subcategoryEntity : categoryEntity.getSubcategories()) {
-            SubcategoryDTO subcategoryDTO = new SubcategoryDTO();
-            subcategoryDTO.setId(subcategoryEntity.getCategoryId());
-            subcategoryDTO.setName(subcategoryEntity.getName());
-            subcategoryDTOs.add(subcategoryDTO);
-        }
-        categoryDto.setSubcategories(subcategoryDTOs);
-        return categoryDto;
-    }
-
-    public CategoryDto newCategory(CategoryDto categoryDto) {
+    public CategoryDto newCategory(CategoryDto categoryDto, MultipartFile image) {
         CategoryEntity categoryEntity = new CategoryEntity();
         categoryEntity.setName(categoryDto.getName());
     
-        // 새로운 카테고리 저장
-        CategoryEntity savedCategoryEntity = categoryRepository.save(categoryEntity);
-      
+
         List<SubcategoryDTO> subcategoryDtos = categoryDto.getSubcategories();
-        List<SubcategoryDTO> newSubcategoryDTOs = new ArrayList<>();
-    
-        // 서브카테고리 추가
+        List<CategoryEntity> subCategoryEntities = new ArrayList<>();
+
+        categoryEntity.setSubcategories(subCategoryEntities);
+        CategoryEntity savedCategoryEntity = categoryRepository.save(categoryEntity);
+
         for (SubcategoryDTO subcategoryDto : subcategoryDtos) {
             if (subcategoryDto.getName().equals("")) continue;
-            CategoryEntity newSubcategoryEntity = new CategoryEntity();
-            newSubcategoryEntity.setName(subcategoryDto.getName());
-            newSubcategoryEntity.setParentCategory(savedCategoryEntity);
-    
-            // 새로운 서브카테고리 저장
-            CategoryEntity savedSubcategoryEntity = categoryRepository.save(newSubcategoryEntity);
-    
-            // 저장된 서브카테고리의 ID와 이름으로 SubcategoryDTO 생성 및 리스트에 추가
-            SubcategoryDTO newSubcategoryDTO = new SubcategoryDTO();
-            newSubcategoryDTO.setId(savedSubcategoryEntity.getCategoryId());
-            newSubcategoryDTO.setName(savedSubcategoryEntity.getName());
-            newSubcategoryDTOs.add(newSubcategoryDTO);
+
+            CategoryEntity subcategoryEntity = new CategoryEntity();
+            subcategoryEntity.setName(subcategoryDto.getName());
+            subcategoryEntity.setParentCategory(savedCategoryEntity);
+
+            CategoryEntity newSubCategoryEntity = categoryRepository.save(subcategoryEntity);
+            savedCategoryEntity.getSubcategories().add(newSubCategoryEntity);
         }
-    
-        // 카테고리의 ID와 서브카테고리 리스트 설정 후 반환
-        categoryDto.setId(savedCategoryEntity.getCategoryId());
-        categoryDto.setSubcategories(newSubcategoryDTOs);
         
-        return categoryDto;
+        try {
+            if (image != null) {
+                String imageUrl = s3Service.saveImageToS3(image, "category/");
+                savedCategoryEntity.setImageUrl(imageUrl);
+            }
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save image to S3", e);
+        }
+        CategoryEntity updateCategoryEntity = categoryRepository.save(savedCategoryEntity);
+        System.out.println(updateCategoryEntity);
+        return CategoryDto.fromEntity(updateCategoryEntity);
     }
 
     @Override
@@ -165,6 +154,15 @@ public class CategoryServiceImpl implements CategoryService{
         deleteCategoris.add(categoryEntity);
 
         categoryRepository.deleteAll(deleteCategoris);
+
+        try {
+            String imageUrl = categoryEntity.getImageUrl();
+            if (imageUrl != null) {
+                s3Service.deleteImageFromS3(categoryEntity.getImageUrl());
+            }
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete image to S3", e);
+        }
     }
-    
+
 }

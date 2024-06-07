@@ -1,5 +1,6 @@
 package com.admin.back.entity;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -59,6 +60,9 @@ public class MemberEntity {
 
     @Column(name = "role")
     private String role;
+
+    @Column(name = "create_at")
+    private LocalDateTime createAt;
     
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MemberCouponEntity> memberCoupons = new HashSet<>();

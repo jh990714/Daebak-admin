@@ -120,11 +120,19 @@ public class ProductServiceImpl implements ProductService  {
         Optional<ProductDealEntity> optionalProductDealEntity = productDealRepository.findByProduct(newPoductDealEntity.getProduct());
         
         if (optionalProductDealEntity.isPresent()) {
-            productDealRepository.delete(optionalProductDealEntity.get());
+            ProductDealEntity productDealEntity = optionalProductDealEntity.get();
+
+            productDealEntity.setDealPrice(productDeal.getDealPrice());
+            productDealEntity.setStartDate(productDeal.getStartDate());
+            productDealEntity.setEndDate(productDeal.getEndDate());
+
+            ProductDealEntity updatedProductDealEntity = productDealRepository.save(productDealEntity);
+            return ProductDealDto.fromEntity(updatedProductDealEntity);
+        } else {
+            ProductDealEntity savedProductDealEntity = productDealRepository.save(newPoductDealEntity);
+            return ProductDealDto.fromEntity(savedProductDealEntity);
         }
-        
-        ProductDealEntity savedProductDealEntity = productDealRepository.save(newPoductDealEntity);
-        return ProductDealDto.fromEntity(savedProductDealEntity);
+
     }
 
     @Override
@@ -167,7 +175,7 @@ public class ProductServiceImpl implements ProductService  {
 
         String imageUrl;
         try {
-            imageUrl = s3Service.saveImageToS3(image, "product/" + UUID.randomUUID().toString());
+            imageUrl = s3Service.saveImageToS3(image, "product/");
             productEntity.setImageUrl(imageUrl);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save image to S3", e);

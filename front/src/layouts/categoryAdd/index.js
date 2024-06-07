@@ -16,6 +16,7 @@ export const CategoryAdd = ({ isOpen, onClose }) => {
   const [data, setData] = useState({
     id: null,
     name: null,
+    imageUrl: null,
     subcategories: [],
   });
   const handleAddSubcategory = () => {
@@ -41,7 +42,19 @@ export const CategoryAdd = ({ isOpen, onClose }) => {
       return;
     }
 
-    dispatch(fetchUpdateCategories(data))
+    const formData = new FormData();
+    if (data.id) {
+      formData.append("id", data.id);
+    }
+    formData.append("name", data.name);
+    if (data.imageUrl) {
+      formData.append("image", data.imageUrl);
+    }
+    if (data.subcategories) {
+      formData.append("subcategories", JSON.stringify(data.subcategories));
+    }
+
+    dispatch(fetchUpdateCategories(formData))
       .then(() => {
         console.log("저장 성공");
       })
@@ -49,7 +62,6 @@ export const CategoryAdd = ({ isOpen, onClose }) => {
         console.error("저장 실패:", error);
       });
     onClose();
-    console.log(data);
   };
 
   return (
@@ -67,21 +79,37 @@ export const CategoryAdd = ({ isOpen, onClose }) => {
             coloredShadow="info"
           >
             <MDTypography variant="h6" color="white">
-              <MDInput
-                type="text"
-                label="상위 카테고리"
-                value={data?.name}
+              <input
+                type="file"
+                accept="image/*"
                 onChange={(e) => {
-                  const newData = { ...data, name: e.target.value };
-                  setData(newData);
+                  const file = e.target.files[0];
+                  if (file) {
+                    const newData = { ...data, imageUrl: file };
+                    setData(newData);
+                  }
                 }}
-                InputProps={{
-                  inputProps: {
-                    style: { color: "white" },
-                  },
-                }}
-                InputLabelProps={{ style: { color: "white" } }}
               />
+              <div className="flex gap-5 mt-5">
+                {data.imageUrl && (
+                  <img src={URL.createObjectURL(data.imageUrl)} alt="Selected Image" width="40" />
+                )}
+                <MDInput
+                  type="text"
+                  label="상위 카테고리"
+                  value={data?.name}
+                  onChange={(e) => {
+                    const newData = { ...data, name: e.target.value };
+                    setData(newData);
+                  }}
+                  InputProps={{
+                    inputProps: {
+                      style: { color: "white" },
+                    },
+                  }}
+                  InputLabelProps={{ style: { color: "white" } }}
+                />
+              </div>
             </MDTypography>
           </MDBox>
           <MDBox mx={2} py={3} px={2}>

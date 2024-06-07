@@ -33,7 +33,7 @@ export const ProductDealAddDialog = ({ isOpen, onClose }) => {
       data.product &&
       value > data.product.regularPrice - data.product.salePrice
     ) {
-      value = 0;
+      value = data.product.regularPrice - data.product.salePrice;
     }
     setData({ ...data, [key]: value });
   };
@@ -45,8 +45,8 @@ export const ProductDealAddDialog = ({ isOpen, onClose }) => {
   const handleSubmit = () => {
     const utcData = {
       ...data,
-      startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
-      endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
+      // startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
+      // endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
     };
 
     dispatch(fetchSaveDealProducts(utcData))
