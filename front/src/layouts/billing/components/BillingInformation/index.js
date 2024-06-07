@@ -15,6 +15,7 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import React, { useState } from "react";
+import * as XLSX from "xlsx";
 
 import Card from "@mui/material/Card";
 
@@ -26,36 +27,59 @@ import MDTypography from "components/MDTypography";
 import Bill from "layouts/billing/components/Bill";
 import MDPagination from "components/MDPagination";
 import Icon from "@mui/material/Icon";
-import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { Alert, Checkbox, FormControlLabel, FormGroup, IconButton, Snackbar } from "@mui/material";
 import { useSelector } from "react-redux";
 import Loading from "components/Loading";
+import statusText from "layouts/billing/constants/statusText";
+import MDButton from "components/MDButton";
+import { refreshStatus } from "api/paymentDeatil/refreshStatus";
+import store from "reducers/store";
+import { fetchPaymentDetails } from "reducers/slices/paymentDetailSlice";
+import { getBillingInfos } from "api/billing";
 
 function BillingInformation() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [snackbarState, setSnackbarState] = useState({
+    open: false,
+    message: "",
+    color: "success",
+  });
+
   const itemsPerPage = 5; // 한 페이지에 보여줄 항목 수
 
   const { paymentDetails, status } = useSelector((state) => state.paymentDetails);
 
-  const [filter, setFilter] = useState("all");
+  const statusKeys = Object.keys(statusText);
+  const trackingOptions = [
+    { value: true, label: "운송장 번호 등록" },
+    { value: false, label: "운송장 번호 미등록" },
+  ];
 
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value);
+  const [filterOptions, setFilterOptions] = useState({
+    status: statusKeys.reduce((acc, key) => ({ ...acc, [key]: true }), {}),
+    tracking: trackingOptions.reduce((acc, option) => ({ ...acc, [option.value]: true }), {}),
+  });
+
+  const handleCheckboxChange = (category, value) => {
+    setFilterOptions((prevState) => ({
+      ...prevState,
+      [category]: {
+        ...prevState[category],
+        [value]: !prevState[category][value],
+      },
+    }));
   };
 
   const filteredBillingInfos = paymentDetails.filter((info) => {
-    if (filter === "withTracking") {
-      return info.trackingNumber !== null;
-    }
-    if (filter === "withoutTracking") {
-      return info.trackingNumber === null;
-    }
-    return true;
+    const isMatchingStatus = filterOptions.status[info.status];
+    const isMatchingTracking = filterOptions.tracking[info.trackingNumber !== null];
+    return isMatchingStatus && isMatchingTracking;
   });
 
   // 현재 페이지의 데이터 계산
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentData = filteredBillingInfos.slice(startIndex, endIndex);
+  const currentPageData = filteredBillingInfos.slice(startIndex, endIndex);
 
   const handlePageChange = (page) => {
     setCurrentPage(
@@ -76,55 +100,119 @@ function BillingInformation() {
     setCurrentPage(totalPages);
   };
 
+  const handleSnacbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbarState({
+      ...snackbarState,
+      open: false,
+    });
+  };
+
+  const handleRefreshStatus = async () => {
+    let message = "";
+    let color = "";
+    try {
+      await refreshStatus();
+      store.dispatch(fetchPaymentDetails());
+      message = "결제 상태 Refresh에 성공하였습니다!";
+      color = "success";
+    } catch (error) {
+      console.error("Error refreshing payment status:", error);
+      message = "결제 상태 Refresh에 실패하였습니다.";
+      color = "error";
+    } finally {
+      setSnackbarState({
+        open: true,
+        message: message,
+        color: color,
+      });
+    }
+  };
+
+  const handleExportToExcel = async () => {
+    const impUids = filteredBillingInfos.map((info) => info.impUid);
+    try {
+      const data = await getBillingInfos(impUids);
+
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "결제 정보");
+
+      // 엑셀 파일 다운로드
+      XLSX.writeFile(workbook, "PaymentDetails.xlsx");
+    } catch (error) {
+      console.error("Error Export To Excel:", error);
+    }
+  };
+
   if (status === "loading") {
     console.log("paymentDetails is loading ...");
     return <Loading />;
   }
+
   return (
     <Card>
       <MDBox pt={3} px={2}>
-        <MDTypography variant="h6" fontWeight="medium">
-          결제 정보
-        </MDTypography>
+        <MDBox display="flex" justifyContent="space-between">
+          <MDTypography variant="h6" fontWeight="medium">
+            결제 정보
+          </MDTypography>
+          <MDBox>
+            <IconButton onClick={handleExportToExcel}>
+              <Icon color="success">sim_card_download_icon</Icon>
+            </IconButton>
+            <MDButton variant="contained" color="light" onClick={handleRefreshStatus}>
+              <Icon>refresh</Icon>&nbsp;결제 상태
+            </MDButton>
+          </MDBox>
+          <Snackbar open={snackbarState.open} autoHideDuration={2000} onClose={handleSnacbarClose}>
+            <Alert
+              onClose={handleSnacbarClose}
+              severity={snackbarState.color}
+              variant="filled"
+              sx={{ width: "100%", fontSize: "0.875rem", color: "#fff" }}
+            >
+              {snackbarState.message}
+            </Alert>
+          </Snackbar>
+        </MDBox>
         <FormGroup row>
-          <FormControlLabel
-            control={
-              <Checkbox
-                color="primary"
-                checked={filter === "all"}
-                onChange={handleFilterChange}
-                value="all"
-              />
-            }
-            label="전체 보기"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                color="primary"
-                checked={filter === "withTracking"}
-                onChange={handleFilterChange}
-                value="withTracking"
-              />
-            }
-            label="운송장 번호 등록"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                color="primary"
-                checked={filter === "withoutTracking"}
-                onChange={handleFilterChange}
-                value="withoutTracking"
-              />
-            }
-            label="운송장 번호 미등록"
-          />
+          {statusKeys.map((key) => (
+            <FormControlLabel
+              key={key}
+              control={
+                <Checkbox
+                  color="primary"
+                  checked={filterOptions.status[key]}
+                  onChange={() => handleCheckboxChange("status", key)}
+                />
+              }
+              label={statusText[key]}
+            />
+          ))}
+        </FormGroup>
+        <FormGroup row>
+          {trackingOptions.map((option) => (
+            <FormControlLabel
+              key={option.value}
+              control={
+                <Checkbox
+                  color="primary"
+                  checked={filterOptions.tracking[option.value]}
+                  onChange={() => handleCheckboxChange("tracking", option.value)}
+                />
+              }
+              label={option.label}
+            />
+          ))}
         </FormGroup>
       </MDBox>
       <MDBox pt={1} pb={2} px={2}>
         <MDBox component="ul" display="flex" flexDirection="column" p={0} m={0}>
-          {currentData.map((billingInfo, index) => (
+          {currentPageData.map((billingInfo, index) => (
             <Bill
               key={index}
               id={billingInfo.id}
@@ -133,6 +221,8 @@ function BillingInformation() {
               orderNumber={billingInfo.orderNumber}
               orderDate={billingInfo.orderDate}
               trackingNumber={billingInfo.trackingNumber}
+              mid={billingInfo.mid}
+              status={billingInfo.status}
             />
           ))}
         </MDBox>
