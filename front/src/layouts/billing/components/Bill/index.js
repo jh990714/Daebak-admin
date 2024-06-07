@@ -18,15 +18,29 @@ import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Card from "@mui/material/Card";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { useMaterialUIController } from "context";
-import BillingInfoModal from "./billingInfoModal";
+import BillingInfoPanel from "./panel/billingInfoPanel";
+import statusStyles from "../../constants/statusStyles";
+import statusText from "../../constants/statusText";
 
-function Bill({ id, memberName, impUid, orderNumber, orderDate, trackingNumber, noGutter }) {
+function Bill({
+  id,
+  memberName,
+  impUid,
+  orderNumber,
+  orderDate,
+  trackingNumber,
+  mid,
+  status,
+  noGutter,
+}) {
   const [showDetail, setShowDetail] = useState(false);
   const [showAllItems, setShowAllItems] = useState(false);
+
+  const storeId = "store-a49dfa1c-73fe-40b5-996f-363d0b0fa9af";
 
   const toggleDetail = () => {
     setShowDetail(!showDetail);
@@ -34,6 +48,11 @@ function Bill({ id, memberName, impUid, orderNumber, orderDate, trackingNumber, 
 
   const toggleAllItems = () => {
     setShowAllItems(!showAllItems);
+  };
+
+  const handleCancelPayment = () => {
+    const url = `https://admin.portone.io/payments?paymentId=${mid}&storeId=${storeId}&tab=PAYMENT`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const [controller] = useMaterialUIController();
@@ -60,17 +79,35 @@ function Bill({ id, memberName, impUid, orderNumber, orderDate, trackingNumber, 
             flexDirection={{ xs: "column", sm: "row" }}
             mb={2}
           >
-            <MDTypography variant="button" fontWeight="medium">
-              {id}:&nbsp;&nbsp;&nbsp;
-              {memberName}
-            </MDTypography>
+            <MDBox>
+              <MDTypography variant="button" fontWeight="medium">
+                {id}:&nbsp;&nbsp;&nbsp;
+                {memberName}
+              </MDTypography>
+              <MDBox
+                paddingX={1}
+                marginX={2}
+                borderRadius="lg"
+                display={"inline-block"}
+                bgColor={statusStyles[status].backgroundColor}
+              >
+                <MDTypography
+                  variant="caption"
+                  color={statusStyles[status].color}
+                  fontWeight="bold"
+                  verticalAlign="middle"
+                >
+                  {statusText[status]}
+                </MDTypography>
+              </MDBox>
+            </MDBox>
             <MDBox
               display="flex"
               alignItems="center"
               mt={{ xs: 2, sm: 0 }}
               ml={{ xs: -1.5, sm: 0 }}
             >
-              {!trackingNumber && (
+              {!trackingNumber && status === "paid" && (
                 <MDBox mr={1}>
                   <MDButton variant="text" color="info">
                     <Icon>local_shipping</Icon>&nbsp;운송장 번호 등록
@@ -81,7 +118,7 @@ function Bill({ id, memberName, impUid, orderNumber, orderDate, trackingNumber, 
                 <Icon>edit</Icon>&nbsp;상세 정보 보기
               </MDButton>
               <MDBox mr={1}>
-                <MDButton variant="text" color="error">
+                <MDButton variant="text" color="error" onClick={handleCancelPayment}>
                   <Icon>delete</Icon>&nbsp;결제 취소
                 </MDButton>
               </MDBox>
@@ -123,11 +160,9 @@ function Bill({ id, memberName, impUid, orderNumber, orderDate, trackingNumber, 
           )}
         </MDBox>
       </MDBox>
-      <BillingInfoModal
-        showDetail={showDetail}
-        toggleDetail={toggleDetail}
-        orderNumber={orderNumber}
-      />
+      {showDetail && (
+        <BillingInfoPanel showDetail={showDetail} toggleDetail={toggleDetail} impUid={impUid} />
+      )}
     </>
   );
 }
@@ -142,7 +177,9 @@ Bill.propTypes = {
   impUid: PropTypes.string.isRequired,
   orderNumber: PropTypes.string.isRequired,
   orderDate: PropTypes.string.isRequired,
-  trackingNumber: PropTypes.string.isRequired,
+  trackingNumber: PropTypes.string,
+  mid: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
   noGutter: PropTypes.bool,
 };
 

@@ -17,4 +17,6 @@ public class PaymentDetailDto {
     private LocalDateTime orderDate;
     private boolean isCancel;
     private Integer trackingNumber;
+    private String mid;
+    private String status;
 }

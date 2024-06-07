@@ -46,4 +46,10 @@ public class PaymentDetailEntity {
 
     @Column(name = "tracking_number")
     private Integer trackingNumber;
+
+    @Column(name = "mid")
+    private String mid;
+
+    @Column(name = "status")
+    private String status;
 }
