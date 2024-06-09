@@ -33,8 +33,22 @@ import team1 from "assets/images/team-1.jpg";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
+import { useEffect, useState } from "react";
 
 export default function data() {
+  const [rowDatas, setRowDatas] = useState([]);
+  useEffect(() => {
+    // API 호출 및 데이터 가져오기
+    fetch(
+      "http://localhost:8081/api/logs/orderStatistics?excelStatisticsFilePath=C:/Users/jang/Desktop/Seafood_WebSite/Jang/logs/statistics.xlsx"
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setRowDatas(data);
+      })
+      .catch((error) => console.error("Error fetching order statistics data:", error));
+  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때만 호출
+
   const avatars = (members) =>
     members.map(([image, name]) => (
       <Tooltip key={name} title={name} placeholder="bottom">
@@ -72,130 +86,24 @@ export default function data() {
   return {
     columns: [
       { Header: "상품", accessor: "product", width: "45%", align: "left" },
-      { Header: "판매량", accessor: "members", width: "10%", align: "left" },
+      { Header: "판매량", accessor: "quantity", width: "10%", align: "left" },
       { Header: "수익", accessor: "budget", align: "center" },
       { Header: "판매 비중", accessor: "completion", align: "center" },
     ],
 
-    rows: [
-      {
-        product: <Company image={logoXD} name="국내산 고등어(중대)10팩(120~140gx10팩)  " />,
-        members: 3,
-        budget: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            670,000원
-          </MDTypography>
-        ),
-        completion: (
-          <MDBox width="8rem" textAlign="left">
-            <MDProgress value={60} color="info" variant="gradient" label={false} />
-          </MDBox>
-        ),
-      },
-      {
-        product: <Company image={logoAtlassian} name="Add Progress Track" />,
-        members: (
-          <MDBox display="flex" py={1}>
-            {avatars([
-              [team2, "Romina Hadid"],
-              [team4, "Jessica Doe"],
-            ])}
-          </MDBox>
-        ),
-        budget: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            $3,000
-          </MDTypography>
-        ),
-        completion: (
-          <MDBox width="8rem" textAlign="left">
-            <MDProgress value={10} color="info" variant="gradient" label={false} />
-          </MDBox>
-        ),
-      },
-      {
-        product: <Company image={logoSlack} name="Fix Platform Errors" />,
-        members: (
-          <MDBox display="flex" py={1}>
-            {avatars([
-              [team1, "Ryan Tompson"],
-              [team3, "Alexander Smith"],
-            ])}
-          </MDBox>
-        ),
-        budget: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            Not set
-          </MDTypography>
-        ),
-        completion: (
-          <MDBox width="8rem" textAlign="left">
-            <MDProgress value={100} color="success" variant="gradient" label={false} />
-          </MDBox>
-        ),
-      },
-      {
-        product: <Company image={logoSpotify} name="Launch our Mobile App" />,
-        members: (
-          <MDBox display="flex" py={1}>
-            {avatars([
-              [team4, "Jessica Doe"],
-              [team3, "Alexander Smith"],
-              [team2, "Romina Hadid"],
-              [team1, "Ryan Tompson"],
-            ])}
-          </MDBox>
-        ),
-        budget: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            $20,500
-          </MDTypography>
-        ),
-        completion: (
-          <MDBox width="8rem" textAlign="left">
-            <MDProgress value={100} color="success" variant="gradient" label={false} />
-          </MDBox>
-        ),
-      },
-      {
-        product: <Company image={logoJira} name="Add the New Pricing Page" />,
-        members: (
-          <MDBox display="flex" py={1}>
-            {avatars([[team4, "Jessica Doe"]])}
-          </MDBox>
-        ),
-        budget: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            $500
-          </MDTypography>
-        ),
-        completion: (
-          <MDBox width="8rem" textAlign="left">
-            <MDProgress value={25} color="info" variant="gradient" label={false} />
-          </MDBox>
-        ),
-      },
-      {
-        product: <Company image={logoInvesion} name="Redesign New Online Shop" />,
-        members: (
-          <MDBox display="flex" py={1}>
-            {avatars([
-              [team1, "Ryan Tompson"],
-              [team4, "Jessica Doe"],
-            ])}
-          </MDBox>
-        ),
-        budget: (
-          <MDTypography variant="caption" color="text" fontWeight="medium">
-            $2,000
-          </MDTypography>
-        ),
-        completion: (
-          <MDBox width="8rem" textAlign="left">
-            <MDProgress value={40} color="info" variant="gradient" label={false} />
-          </MDBox>
-        ),
-      },
-    ],
+    rows: rowDatas.map((rowData) => ({
+      product: <Company image={logoXD} name={rowData.productName} />,
+      quantity: rowData.quantity,
+      budget: (
+        <MDTypography variant="caption" color="text" fontWeight="medium">
+          {rowData.amount.toLocaleString()}원
+        </MDTypography>
+      ),
+      completion: (
+        <MDBox width="8rem" textAlign="left">
+          <MDProgress value={rowData.quantity} color="info" variant="gradient" label={false} />
+        </MDBox>
+      ),
+    })),
   };
 }

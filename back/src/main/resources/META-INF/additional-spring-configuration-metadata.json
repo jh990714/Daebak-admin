@@ -28,5 +28,25 @@
     "name": "aws.cloudfront.url",
     "type": "java.lang.String",
     "description": "A description for 'aws.cloudfront.url'"
+  },
+  {
+    "name": "iamport.api.url",
+    "type": "java.lang.String",
+    "description": "A description for 'iamport.api.url'"
+  },
+  {
+    "name": "iamport.api.key",
+    "type": "java.lang.String",
+    "description": "A description for 'iamport.api.key'"
+  },
+  {
+    "name": "iamport.api.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'iamport.api.secret'"
+  },
+  {
+    "name": "log.directory.path",
+    "type": "java.lang.String",
+    "description": "A description for 'log.directory.path'"
   }
 ]}
