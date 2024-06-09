@@ -78,8 +78,8 @@ public class LoginLogServiceImpl implements LoginLogService{
 
     @Override
     public void updateLoginStatistics(Workbook workbook, Workbook workbookMonthlyStatistic, List<LoginData> logins, String sheetName) {
-        Sheet dailySheet = getOrCreateSheet(workbook, sheetName + "_Daily", loginStatisticsHeaders);
-        Sheet monthlySheet = getOrCreateSheet(workbookMonthlyStatistic, sheetName + "_Monthly", loginStatisticsHeaders);
+        Sheet dailySheet = getOrCreateSheet(workbook, sheetName, loginStatisticsHeaders);
+        Sheet monthlySheet = getOrCreateSheet(workbookMonthlyStatistic, sheetName, loginStatisticsHeaders);
 
         Map<String, Integer> loginDailyCounts = new HashMap<>();
         Map<String, Integer> loginMonthlyCounts = new HashMap<>();

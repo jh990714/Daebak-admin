@@ -8,11 +8,15 @@ import com.admin.back.logger.dto.LoginData;
 import com.admin.back.logger.dto.OrderData;
 import com.admin.back.logger.dto.OrderItemData;
 import com.admin.back.logger.dto.PointData;
+import com.admin.back.logger.dto.ProductData;
+import com.admin.back.logger.dto.SearchData;
 import com.admin.back.logger.service.CouponLogService;
 import com.admin.back.logger.service.LoginLogService;
 import com.admin.back.logger.service.OrderItemLogService;
 import com.admin.back.logger.service.OrderLogService;
 import com.admin.back.logger.service.PointLogService;
+import com.admin.back.logger.service.ProductLogService;
+import com.admin.back.logger.service.SearchLogService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +36,8 @@ public class LogInfoParser {
     private final OrderLogService orderLogService;
     private final CouponLogService couponLogService;
     private final PointLogService pointLogService;
+    private final ProductLogService productLogService;
+    private final SearchLogService searchLogService;
 
     public void reset() {
         dataContainer = new LogDataContainer();
@@ -117,6 +123,27 @@ public class LogInfoParser {
     
         if (pointData != null) {
             dataContainer.getPoints().add(pointData);
+            return;
+        }
+
+        ProductData productData = productLogService.findInfo(logMessage, "Product");
+    
+        if (productData != null) {
+            dataContainer.getProductClicks().add(productData);
+            return;
+        }
+
+        SearchData searchData = searchLogService.findInfo(logMessage, "Search");
+    
+        if (searchData != null) {
+            dataContainer.getSearchs().add(searchData);
+            return;
+        }
+
+        SearchData categoryData = searchLogService.findInfo(logMessage, "Category");
+    
+        if (categoryData != null) {
+            dataContainer.getCategories().add(categoryData);
             return;
         }
     }

@@ -22,6 +22,8 @@ import com.admin.back.logger.service.LoginLogService;
 import com.admin.back.logger.service.OrderItemLogService;
 import com.admin.back.logger.service.OrderLogService;
 import com.admin.back.logger.service.PointLogService;
+import com.admin.back.logger.service.ProductLogService;
+import com.admin.back.logger.service.SearchLogService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +42,8 @@ public class ExcelServiceImpl implements ExcelService {;
     private final OrderLogService orderLogService;
     private final CouponLogService couponLogService;
     private final PointLogService pointLogService;
+    private final ProductLogService productLogService;
+    private final SearchLogService searchLogService;
 
     private final LogInfoParser logInfoParser;
     private final LogErrorParser logErrorParser;
@@ -92,8 +96,7 @@ public class ExcelServiceImpl implements ExcelService {;
 
                 if (status.equals("info")) {
                     processLogInfos(file, status, fileDateStr);
-                } else if (status.equals("error")) {
-                    System.out.println(status);
+                } else if (status.equals("error") || status.equals("warn")) {
                     processLogErrors(file, status, fileDateStr);
                 }
                
@@ -213,6 +216,9 @@ public class ExcelServiceImpl implements ExcelService {;
         loginLogService.updateLoginStatistics(workbook, workbookMonthlyStatistics, logData.getRegistrations(), "RegistrationsStatistics");
         orderItemLogService.updateOrderStatistics(workbook, workbookMonthlyStatistics, logData.getOrderItems(), "OrderItemStatistics");
         orderItemLogService.updateOrderStatistics(workbook, workbookMonthlyStatistics, logData.getCancelItems(), "CancelItemStatistics");
+        productLogService.updateProductStatistics(workbook, workbookMonthlyStatistics, logData.getProductClicks(), "ProductClickStatistics");
+        searchLogService.updateSearchStatistics(workbook, workbookMonthlyStatistics, logData.getSearchs(), "SearchStatistics");
+        searchLogService.updateSearchStatistics(workbook, workbookMonthlyStatistics, logData.getCategories(), "CategoryStatistics");
     }
 
     @Override
@@ -225,6 +231,9 @@ public class ExcelServiceImpl implements ExcelService {;
         orderLogService.appendInfoOrderData(workbook, logData.getCancels(), "CancelData");
         couponLogService.appendInfoCouponData(workbook, logData.getCoupns(), "CouponData");
         pointLogService.appendInfoPointData(workbook, logData.getPoints(), "PointData");
+        productLogService.appendInfoProductData(workbook, logData.getProductClicks(), "ProductData");
+        searchLogService.appendInfoSearchData(workbook, logData.getSearchs(), "SearchData");
+        searchLogService.appendInfoSearchData(workbook, logData.getCategories(), "CategoryData");
     }
 
     public void appendErrorDataToSheet(Workbook workbook, LogDataErrorContainer logData) {

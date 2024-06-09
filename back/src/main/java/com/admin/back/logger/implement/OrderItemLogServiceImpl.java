@@ -118,8 +118,8 @@ public class OrderItemLogServiceImpl implements OrderItemLogService {
 
     @Override
     public void updateOrderStatistics(Workbook workbook, Workbook workbookMonthlyStatistic, List<OrderItemData> orders, String sheetName) {
-        Sheet dailySheet = getOrCreateSheet(workbook, sheetName + "_Daily", orderItemStatisticsHeaders);
-        Sheet monthlySheet = getOrCreateSheet(workbookMonthlyStatistic, sheetName + "_Monthly", orderItemStatisticsHeaders);
+        Sheet dailySheet = getOrCreateSheet(workbook, sheetName, orderItemStatisticsHeaders);
+        Sheet monthlySheet = getOrCreateSheet(workbookMonthlyStatistic, sheetName, orderItemStatisticsHeaders);
 
         Map<String, Map<String, List<OrderItemData>>> orderDailyCounts = new HashMap<>();
         Map<String, Map<String, List<OrderItemData>>> orderMonthlyCounts = new HashMap<>();
