@@ -21,6 +21,7 @@ import com.admin.back.logger.service.ExcelService;
 import com.admin.back.logger.service.LoginLogService;
 import com.admin.back.logger.service.OrderItemLogService;
 import com.admin.back.logger.service.OrderLogService;
+import com.admin.back.logger.service.PointLogService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +39,7 @@ public class ExcelServiceImpl implements ExcelService {;
     private final OrderItemLogService orderItemLogService;
     private final OrderLogService orderLogService;
     private final CouponLogService couponLogService;
+    private final PointLogService pointLogService;
 
     private final LogInfoParser logInfoParser;
     private final LogErrorParser logErrorParser;
@@ -188,89 +190,6 @@ public class ExcelServiceImpl implements ExcelService {;
         return null;
     }
 
-    @Override
-    public List<LoginStatisticsData> getLoginStatisticsData(String excelStatisticsFilePath) {
-        List<LoginStatisticsData> loginStatistics = new ArrayList<>();
-
-        try (FileInputStream fis = new FileInputStream(excelStatisticsFilePath);
-                Workbook workbook = new XSSFWorkbook(fis)) {
-            Sheet sheet = workbook.getSheet("LoginStatistics");
-            if (sheet != null) {
-                int rowCount = sheet.getLastRowNum();
-                for (int i = 0; i <= rowCount; i++) { // Skip header row
-                    Row row = sheet.getRow(i);
-                    if (row != null) {
-                        String date = row.getCell(0).getStringCellValue();
-                        int count = (int) row.getCell(1).getNumericCellValue();
-                        LoginStatisticsData data = new LoginStatisticsData(date, count);
-                        loginStatistics.add(data);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            // 예외 처리를 위해 필요한 작업 수행
-        }
-
-        return loginStatistics;
-    }
-
-    @Override
-    public List<RegistrationStatisticsData> getRegistrationStatisticsData(String excelStatisticsFilePath) {
-        List<RegistrationStatisticsData> registrationStatistics = new ArrayList<>();
-
-        try (FileInputStream fis = new FileInputStream(excelStatisticsFilePath);
-                Workbook workbook = new XSSFWorkbook(fis)) {
-            Sheet sheet = workbook.getSheet("RegistrationStatistics");
-            if (sheet != null) {
-            int rowCount = sheet.getLastRowNum();
-                for (int i = 0; i <= rowCount; i++) { // Skip header row
-                    Row row = sheet.getRow(i);
-                    if (row != null) {
-                        String date = row.getCell(0).getStringCellValue();
-                        int count = (int) row.getCell(1).getNumericCellValue();
-                        RegistrationStatisticsData data = new RegistrationStatisticsData(date, count);
-                        registrationStatistics.add(data);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            // 예외 처리를 위해 필요한 작업 수행
-        }
-
-        return registrationStatistics;
-    }
-
-    @Override
-    public List<OrderStatisticsData> getOrderStatisticsData(String excelStatisticsFilePath) {
-        List<OrderStatisticsData> orderStatistics = new ArrayList<>();
-
-        try (FileInputStream fis = new FileInputStream(excelStatisticsFilePath);
-                Workbook workbook = new XSSFWorkbook(fis)) {
-            Sheet sheet = workbook.getSheet("OrderStatistics");
-            if (sheet != null) {
-                int rowCount = sheet.getLastRowNum();
-                for (int i = 0; i <= rowCount; i++) { // Skip header row
-                    Row row = sheet.getRow(i);
-                    if (row != null) {
-                        String date = row.getCell(0).getStringCellValue();
-                        String productName = row.getCell(1).getStringCellValue();
-                        int quantity = (int) row.getCell(2).getNumericCellValue();
-                        double amount = row.getCell(3).getNumericCellValue();
-                        OrderStatisticsData data = new OrderStatisticsData(date, productName, quantity, amount);
-                        orderStatistics.add(data);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            // 예외 처리를 위해 필요한 작업 수행
-        }
-
-        return orderStatistics;
-    }
-
     private void processLogFile(File file, File combinedLog, Workbook workbook, Workbook workbookStatistics, Workbook workbookMonthlyStatistics,
             int startLine)
             throws IOException {
@@ -305,6 +224,7 @@ public class ExcelServiceImpl implements ExcelService {;
         orderLogService.appendInfoOrderData(workbook, logData.getOrders(), "OrderData");
         orderLogService.appendInfoOrderData(workbook, logData.getCancels(), "CancelData");
         couponLogService.appendInfoCouponData(workbook, logData.getCoupns(), "CouponData");
+        pointLogService.appendInfoPointData(workbook, logData.getPoints(), "PointData");
     }
 
     public void appendErrorDataToSheet(Workbook workbook, LogDataErrorContainer logData) {
@@ -314,18 +234,7 @@ public class ExcelServiceImpl implements ExcelService {;
         orderItemLogService.appendErrorOrderItemData(workbook, logData.getOrderItems(), "OrderItemData");
         orderLogService.appendErrorOrderData(workbook, logData.getOrders(), "OrderData");
         orderLogService.appendErrorOrderData(workbook, logData.getCancels(), "CancelData");
-    }
-
-
-    @Override
-    public List<LoginData> getLoginData(String excelFilePath) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getLoginData'");
-    }
-
-    @Override
-    public List<RegistrationData> getRegistrationData(String excelFilePath) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRegistrationData'");
+        couponLogService.appendErrorCouponData(workbook, logData.getCoupns(), "CouponData");
+        pointLogService.appendErrorPointData(workbook, logData.getPoints(), "PointData");
     }
 }

@@ -13,4 +13,6 @@ public class LogDataErrorContainer {
     private List<OrderItemErrorData> cancelItems = new ArrayList<>();
     private List<OrderErrorData> orders = new ArrayList<>();
     private List<OrderErrorData> cancels = new ArrayList<>();
+    private List<CouponErrorData> coupns = new ArrayList<>();
+    private List<PointErrorData> points = new ArrayList<>();
 }

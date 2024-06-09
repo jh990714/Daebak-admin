@@ -2,6 +2,7 @@ package com.admin.back.logger.handler;
 
 import org.springframework.stereotype.Component;
 
+import com.admin.back.logger.dto.CouponErrorData;
 import com.admin.back.logger.dto.LogDataErrorContainer;
 import com.admin.back.logger.dto.LoginData;
 import com.admin.back.logger.dto.LoginErrorData;
@@ -9,9 +10,12 @@ import com.admin.back.logger.dto.OrderData;
 import com.admin.back.logger.dto.OrderErrorData;
 import com.admin.back.logger.dto.OrderItemData;
 import com.admin.back.logger.dto.OrderItemErrorData;
+import com.admin.back.logger.dto.PointErrorData;
+import com.admin.back.logger.service.CouponLogService;
 import com.admin.back.logger.service.LoginLogService;
 import com.admin.back.logger.service.OrderItemLogService;
 import com.admin.back.logger.service.OrderLogService;
+import com.admin.back.logger.service.PointLogService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +35,8 @@ public class LogErrorParser {
     private final LoginLogService loginLogService;
     private final OrderItemLogService orderItemLogService;
     private final OrderLogService orderLogService;
+    private final CouponLogService couponLogService;
+    private final PointLogService pointLogService;
 
     private void reset() {
         logDataErrorContainer = new LogDataErrorContainer();
@@ -67,24 +73,28 @@ public class LogErrorParser {
         
         if (loginErrorData != null) {
             logDataErrorContainer.getLogins().add(loginErrorData);
+            return;
         }
 
         LoginErrorData registrationErrorData = loginLogService.findError(logMessage, "Register");
         
         if (registrationErrorData != null) {
             logDataErrorContainer.getRegistrations().add(registrationErrorData);
+            return;
         }
 
         OrderItemErrorData orderItemErrorData = orderItemLogService.findError(logMessage, "Order Item");
 
         if (orderItemErrorData != null) {
             logDataErrorContainer.getOrderItems().add(orderItemErrorData);
+            return;
         }
 
         OrderItemErrorData cancelItemErrorData = orderItemLogService.findError(logMessage, "Cancel Item");
 
         if (cancelItemErrorData != null) {
             logDataErrorContainer.getCancelItems().add(cancelItemErrorData);
+            return;
         }
 
         
@@ -92,12 +102,29 @@ public class LogErrorParser {
     
         if (orderErrorData != null) {
             logDataErrorContainer.getOrders().add(orderErrorData);
+            return;
         }
 
         OrderErrorData cancelErrorData = orderLogService.findError(logMessage, "Cancel");
     
         if (cancelErrorData != null) {
             logDataErrorContainer.getCancels().add(cancelErrorData);
+            return;
+        }
+
+        
+        CouponErrorData couponErrorData = couponLogService.findError(logMessage, "Point");
+    
+        if (couponErrorData != null) {
+            logDataErrorContainer.getCoupns().add(couponErrorData);
+            return;
+        }
+
+        PointErrorData pointErrorData = pointLogService.findError(logMessage, "Point");
+    
+        if (pointErrorData != null) {
+            logDataErrorContainer.getPoints().add(pointErrorData);
+            return;
         }
     }
 

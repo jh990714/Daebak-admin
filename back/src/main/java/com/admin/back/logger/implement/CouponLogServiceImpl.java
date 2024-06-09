@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import com.admin.back.logger.dto.CouponData;
+import com.admin.back.logger.dto.CouponErrorData;
 import com.admin.back.logger.dto.OrderItemData;
 import com.admin.back.logger.service.CouponLogService;
 
@@ -27,7 +28,7 @@ public class CouponLogServiceImpl implements CouponLogService {
     private static final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("yyyy-MM");
 
     private String[] couponLogHeaders = {"Date", "Message", "Member ID", "ID", "Coupon ID", "Coupon Name", "Amount"};
-    private String[] couponErrorLogHeaders = {"Date", "Message", "ID", "Type"};
+    private String[] couponErrorLogHeaders = {"Date", "Message", "Member ID", "ID", "Coupon ID", "Coupon Name"};
 
 
     private Pattern createInfoLogPattern(String messageIdentifier) {
@@ -77,15 +78,55 @@ public class CouponLogServiceImpl implements CouponLogService {
     }
 
     @Override
+    public void appendErrorCouponData(Workbook workbook, List<CouponErrorData> coupons, String sheetName) {
+        Sheet sheet = getOrCreateSheet(workbook, sheetName, couponErrorLogHeaders);
+
+        int rowNum = sheet.getLastRowNum() + 1;
+        for (CouponErrorData coupon : coupons) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(coupon.getDate());
+            row.createCell(1).setCellValue(coupon.getMessage());
+            row.createCell(2).setCellValue(coupon.getMemberId().longValue());
+            row.createCell(3).setCellValue(coupon.getId());
+            row.createCell(4).setCellValue(coupon.getCouponId());
+            row.createCell(5).setCellValue(coupon.getCouponName());
+        }
+    }
+    @Override
     public CouponData findInfo(String logMessage, String messageIdentifier) {
         Pattern pattern = createInfoLogPattern(messageIdentifier);
         Matcher matcher = pattern.matcher(logMessage);
 
         if (matcher.find()) {
-            BigDecimal amount = new BigDecimal(matcher.group(7));
+            BigDecimal amount = null;
+            String group7 = matcher.group(7);
+            if (group7.equals("null")) {
+                amount = BigDecimal.ZERO;
+            } else {
+
+                try {
+                    amount = new BigDecimal(group7);
+                } catch (NumberFormatException e) {
+
+                }
+            }
             return new CouponData(
                     matcher.group(1), matcher.group(2), Long.parseLong(matcher.group(3)), 
                     matcher.group(4), matcher.group(5),matcher.group(6), amount);
+        }
+
+        return null;
+    }
+
+    @Override
+    public CouponErrorData findError(String logMessage, String messageIdentifier) {
+        Pattern pattern = createErrorLogPattern(messageIdentifier);
+        Matcher matcher = pattern.matcher(logMessage);
+
+        if (matcher.find()) {
+            return new CouponErrorData(
+                    matcher.group(1), matcher.group(2), Long.parseLong(matcher.group(3)), 
+                    matcher.group(4), matcher.group(5),matcher.group(6));
         }
 
         return null;

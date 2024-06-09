@@ -35,29 +35,4 @@ public class LogController {
         }
         return "Logs processed successfully!";
     }
-
-    @GetMapping("/loginData")
-    public List<LoginData> loginData(@RequestParam String excelFilePath) {
-        return excelService.getLoginData(excelFilePath);
-    }
-
-    @GetMapping("/registrationData")
-    public List<RegistrationData> registrationData(@RequestParam String excelFilePath) {
-        return excelService.getRegistrationData(excelFilePath);
-    }
-
-    @GetMapping("/loginStatistics")
-    public List<LoginStatisticsData> loginStatisticsData(@RequestParam String excelStatisticsFilePath) {
-        return excelService.getLoginStatisticsData(excelStatisticsFilePath);
-    }
-
-    @GetMapping("/registrationStatistics")
-    public List<RegistrationStatisticsData> registrationStatisticsData(@RequestParam String excelStatisticsFilePath) {
-        return excelService.getRegistrationStatisticsData(excelStatisticsFilePath);
-    }
-
-    @GetMapping("/orderStatistics")
-    public List<OrderStatisticsData> orderStatisticsData(@RequestParam String excelStatisticsFilePath) {
-        return excelService.getOrderStatisticsData(excelStatisticsFilePath);
-    }
 }

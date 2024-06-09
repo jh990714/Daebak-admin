@@ -17,4 +17,5 @@ public class LogDataContainer {
     private List<OrderData> orders = new ArrayList<>();
     private List<OrderData> cancels = new ArrayList<>();
     private List<CouponData> coupns = new ArrayList<>();
+    private List<PointData> points = new ArrayList<>();
 }

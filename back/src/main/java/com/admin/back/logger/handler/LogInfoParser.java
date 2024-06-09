@@ -7,10 +7,12 @@ import com.admin.back.logger.dto.LogDataContainer;
 import com.admin.back.logger.dto.LoginData;
 import com.admin.back.logger.dto.OrderData;
 import com.admin.back.logger.dto.OrderItemData;
+import com.admin.back.logger.dto.PointData;
 import com.admin.back.logger.service.CouponLogService;
 import com.admin.back.logger.service.LoginLogService;
 import com.admin.back.logger.service.OrderItemLogService;
 import com.admin.back.logger.service.OrderLogService;
+import com.admin.back.logger.service.PointLogService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +31,7 @@ public class LogInfoParser {
     private final OrderItemLogService orderItemLogService;
     private final OrderLogService orderLogService;
     private final CouponLogService couponLogService;
+    private final PointLogService pointLogService;
 
     public void reset() {
         dataContainer = new LogDataContainer();
@@ -65,42 +68,56 @@ public class LogInfoParser {
     
         if (loginData != null) {
             dataContainer.getLogins().add(loginData);
+            return;
         }
 
         LoginData registrationData = loginLogService.find(logMessage, "Register");
     
         if (registrationData != null) {
             dataContainer.getRegistrations().add(registrationData);
+            return;
         }
 
         OrderItemData orderItemData = orderItemLogService.findInfo(logMessage, "Order Item");
     
         if (orderItemData != null) {
             dataContainer.getOrderItems().add(orderItemData);
+            return;
         }
 
         OrderItemData cancelItemData = orderItemLogService.findInfo(logMessage, "Cancel Item");
     
         if (cancelItemData != null) {
             dataContainer.getCancelItems().add(cancelItemData);
+            return;
         }
 
         OrderData orderData = orderLogService.find(logMessage, "Order");
     
         if (orderData != null) {
             dataContainer.getOrders().add(orderData);
+            return;
         }
 
         OrderData cancelData = orderLogService.find(logMessage, "Cancel");
     
         if (cancelData != null) {
             dataContainer.getCancels().add(cancelData);
+            return;
         }
 
         CouponData couponData = couponLogService.findInfo(logMessage, "Coupon");
     
         if (couponData != null) {
             dataContainer.getCoupns().add(couponData);
+            return;
+        }
+
+        PointData pointData = pointLogService.findInfo(logMessage, "Point");
+    
+        if (pointData != null) {
+            dataContainer.getPoints().add(pointData);
+            return;
         }
     }
 
