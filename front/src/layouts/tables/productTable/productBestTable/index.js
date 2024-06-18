@@ -1,31 +1,30 @@
 import { React, useState } from "react";
-
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
-import MDTypography from "components/MDTypography";
+// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
+import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { IconButton } from "@mui/material";
 
-import reviewMissingData from "./data/reviewMissingData";
-import { ExpandedContent } from "../expanded/expandedContent";
-import { fetchReviews } from "reducers/slices/reviewSlice";
-import { useDispatch } from "react-redux";
+import productBestData from "./data/productBestData";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "reducers/slices/productSlice";
 
-export const ReviewMissingTable = () => {
+export const ProductBestTable = () => {
   const dispatch = useDispatch();
   const [pageIndex, setPageIndex] = useState(0);
 
-  const { columns: missingReviewColumns, rows: missingReviewRows } = reviewMissingData();
+  const { columns: bestProductsColumns, rows: bestProductsRows } = productBestData();
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
   };
 
   const handleRefresh = () => {
-    dispatch(fetchReviews())
+    dispatch(fetchProducts())
       .then(() => {
         console.log("저장 성공");
       })
@@ -43,9 +42,9 @@ export const ReviewMissingTable = () => {
           py={3}
           px={2}
           variant="gradient"
-          bgColor="warning"
+          bgColor="error"
           borderRadius="lg"
-          coloredShadow="warning"
+          coloredShadow="error"
         >
           <MDTypography variant="h5" color="white">
             <div
@@ -55,7 +54,7 @@ export const ReviewMissingTable = () => {
                 alignItems: "center",
               }}
             >
-              <span>상품 후기 (답변 미등록)</span>
+              <span>인기상품</span>
               <IconButton color="white" onClick={handleRefresh}>
                 <RefreshIcon />
               </IconButton>
@@ -64,15 +63,13 @@ export const ReviewMissingTable = () => {
         </MDBox>
         <MDBox pt={3}>
           <DataTable
-            canSearch={true}
-            table={{ columns: missingReviewColumns, rows: missingReviewRows }}
-            isSorted={true}
-            entriesPerPage={true}
-            showTotalEntries={true}
+            table={{ columns: bestProductsColumns, rows: bestProductsRows }}
+            isSorted={false}
+            entriesPerPage={false}
+            showTotalEntries={false}
             noEndBorder
             defaultPage={pageIndex}
             onPageChange={handlePageChange}
-            expanded={(rowData) => <ExpandedContent rowData={rowData} />}
           />
         </MDBox>
       </Card>

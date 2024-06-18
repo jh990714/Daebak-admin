@@ -15,7 +15,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "reviews")
@@ -53,11 +54,11 @@ public class ReviewEntity {
     @JoinColumn(name = "option_id", insertable = false, updatable = false)
     private OptionEntity option;
 
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
-    private List<ReviewResponseEntity> responses;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ReviewResponseEntity> responses = new HashSet<>();
 
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
-    private List<ReviewImageEntity> images;
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ReviewImageEntity> images = new HashSet<>();
 
     public void addResponse(ReviewResponseEntity reviewResponseEntity) {
         this.responses.add(reviewResponseEntity);

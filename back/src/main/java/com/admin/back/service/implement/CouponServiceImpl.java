@@ -53,7 +53,13 @@ public class CouponServiceImpl implements CouponService {
             if (couponEntity.getExpirationPeriod() != null) {
                 LocalDate currentDate = LocalDate.now();
                 LocalDate expirationDate = currentDate.plusDays(couponEntity.getExpirationPeriod());
-                memberCoupon.setValidUntil(expirationDate.atStartOfDay());
+                LocalDateTime calculatedValidUntil = expirationDate.atStartOfDay();
+                
+                if (calculatedValidUntil.isAfter(couponEntity.getValidUntil())) {
+                    memberCoupon.setValidUntil(couponEntity.getValidUntil().toLocalDate().atStartOfDay());
+                } else {
+                    memberCoupon.setValidUntil(calculatedValidUntil);
+                }
             } else {
                 memberCoupon.setValidUntil(couponEntity.getValidUntil().toLocalDate().atStartOfDay());
             }

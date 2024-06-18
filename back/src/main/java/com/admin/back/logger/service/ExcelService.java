@@ -11,5 +11,5 @@ public interface ExcelService {
     public Workbook readWorkbook(String filePath) throws IOException;
     public void writeWorkbook(Workbook workbook, String filePath) throws IOException;
     public void appendDataToSheet(Workbook workbook, LogDataContainer logData);
-    public void processLogs(String logDirectoryPath, String path) throws IOException;
+    public void processLogs(String path) throws IOException;
 }

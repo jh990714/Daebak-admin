@@ -92,7 +92,7 @@ export const ProductInfo = ({ rowData, setRowData }) => {
                     label="할인"
                     value={rowData.salePrice}
                     onChange={(e) => {
-                      let salePrice = e.target.value;
+                      let salePrice = parseFloat(e.target.value);
                       if (rowData.regularPrice === null) return;
                       if (salePrice > rowData.regularPrice) {
                         salePrice = rowData.regularPrice;

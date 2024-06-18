@@ -40,7 +40,7 @@ public class CouponController {
     }
 
     @DeleteMapping("/{couponId}")
-    public ResponseEntity<?> deleteCoupon(@PathVariable Long couponId) {
+    public ResponseEntity<?> deleteCoupon(@PathVariable("couponId") Long couponId) {
         couponService.deleteCoupon(couponId);
 
         return new ResponseEntity<>(couponId, HttpStatus.OK);

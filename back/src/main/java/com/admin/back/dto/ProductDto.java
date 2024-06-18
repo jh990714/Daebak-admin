@@ -25,6 +25,7 @@ public class ProductDto {
     private String description;
     private LocalDateTime arrivalDate;
     private Boolean recommended;
+    private Boolean popularity;
     private Integer maxQuantityPerDelivery;
     private List<OptionDto> options = new ArrayList<>();;
 
@@ -42,6 +43,7 @@ public class ProductDto {
         productDto.setDescription(productEntity.getDescription());
         productDto.setArrivalDate(productEntity.getArrivalDate());
         productDto.setRecommended(productEntity.getRecommended());
+        productDto.setPopularity(productEntity.getPopularity());
         productDto.setMaxQuantityPerDelivery(productEntity.getMaxQuantityPerDelivery());
         
         productDto.setOptions(
@@ -71,6 +73,7 @@ public class ProductDto {
         productEntity.setDescription(productDto.getDescription());
         productEntity.setArrivalDate(productDto.getArrivalDate());
         productEntity.setRecommended(productDto.getRecommended());
+        productEntity.setPopularity(productDto.getPopularity());
         productEntity.setMaxQuantityPerDelivery(productDto.getMaxQuantityPerDelivery());
        
         productEntity.setOptions(
@@ -100,6 +103,7 @@ public class ProductDto {
                 ", description='" + description + '\'' +
                 ", arrivalDate=" + arrivalDate +
                 ", recommended=" + recommended +
+                ", popularity=" + popularity +
                 ", maxQuantityPerDelivery=" + maxQuantityPerDelivery +
                 ", option=" + options +
                 '}';

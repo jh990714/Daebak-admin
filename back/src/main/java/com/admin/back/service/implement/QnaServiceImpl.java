@@ -14,6 +14,7 @@ import com.admin.back.service.service.QnaService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class QnaServiceImpl implements QnaService {
 
     @Override
     public List<QuestionDto> getAllQna() {
-        List<QuestionEntity> questions = questionRepository.findAll();
+        List<QuestionEntity> questions = questionRepository.findAllWithAnswersAndMemberAndProduct();
 
         return questions.stream().map(question -> {
             QuestionDto dto = new QuestionDto();
@@ -60,7 +61,8 @@ public class QnaServiceImpl implements QnaService {
 
             AnswerEntity answerEntity = new AnswerEntity();
             answerEntity.setContent(answer.getResponseText());
-
+            answerEntity.setCreatedAt(LocalDateTime.now());
+            
             questionEntity.addAnswer(answerEntity);
 
             QuestionEntity updateQuestionEntity = questionRepository.save(questionEntity);

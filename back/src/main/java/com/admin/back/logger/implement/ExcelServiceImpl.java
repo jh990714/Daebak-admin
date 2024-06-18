@@ -24,6 +24,11 @@ import com.admin.back.logger.service.OrderLogService;
 import com.admin.back.logger.service.PointLogService;
 import com.admin.back.logger.service.ProductLogService;
 import com.admin.back.logger.service.SearchLogService;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ListObjectsV2Request;
+import com.amazonaws.services.s3.model.ListObjectsV2Result;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,8 +53,14 @@ public class ExcelServiceImpl implements ExcelService {;
     private final LogInfoParser logInfoParser;
     private final LogErrorParser logErrorParser;
 
+    private final AmazonS3 amazonS3;
+
     @Value("${log.directory.path}")
     private String saveLogDirectoryPath;
+
+    @Value("${aws.s3.bucket}")
+    private String s3BucketName;
+
 
     @Override
     public Workbook readWorkbook(String filePath) throws IOException {
@@ -60,6 +71,7 @@ public class ExcelServiceImpl implements ExcelService {;
         FileInputStream fis = new FileInputStream(filePath);
         return new XSSFWorkbook(fis);
     }
+    
 
     @Override
     public void writeWorkbook(Workbook workbook, String filePath) throws IOException {
@@ -72,37 +84,74 @@ public class ExcelServiceImpl implements ExcelService {;
 
 
     @Override
-    public void processLogs(String logDirectoryPath, String status) throws IOException {
-        System.out.println(status);
-        File logDirectory = new File(logDirectoryPath);
-        File[] logFiles = logDirectory.listFiles();
+    public void processLogs(String status) throws IOException {
+     String logPrefix = "logs/" + status + "/";
+        ListObjectsV2Request listObjectsRequest = new ListObjectsV2Request()
+                .withBucketName(s3BucketName)
+                .withPrefix(logPrefix);
 
-        if (logFiles != null) {
-            Arrays.sort(logFiles, Comparator.comparingLong(File::lastModified));
-            for (File file : logFiles) {
-                String fileName = file.getName();
-                System.out.println(fileName);
-                String fileDateStr = extractDateFromFileName(fileName);
+        ListObjectsV2Result result = amazonS3.listObjectsV2(listObjectsRequest);
+        List<S3ObjectSummary> objectSummaries = result.getObjectSummaries();
 
-                if (fileDateStr == null) {
-                    continue;
-                }
-                // String directoryDateStr = fileDateStr.substring(0, 7);
-                String savePath = saveLogDirectoryPath + status + "/";
-                File saveLogDirectory = new File(savePath);
-                if (!saveLogDirectory.exists()) {
-                    saveLogDirectory.mkdirs(); // 디렉토리 생성
-                }
+        for (S3ObjectSummary objectSummary : objectSummaries) {
+
+            String fileName = objectSummary.getKey();
+            String fileDateStr = extractDateFromFileName(fileName);
+
+            if (fileDateStr == null) {
+                continue;
+            }
+            // String directoryDateStr = fileDateStr.substring(0, 7);
+            String savePath = saveLogDirectoryPath + status + "/";
+            File saveLogDirectory = new File(savePath);
+            if (!saveLogDirectory.exists()) {
+                saveLogDirectory.mkdirs(); // 디렉토리 생성
+            }
+
+            try (S3Object s3Object = amazonS3.getObject(s3BucketName, fileName);
+                InputStream inputStream = s3Object.getObjectContent()) {
+
+                File file = convertInputStreamToFile(inputStream, fileName);
 
                 if (status.equals("info")) {
                     processLogInfos(file, status, fileDateStr);
                 } else if (status.equals("error") || status.equals("warn")) {
                     processLogErrors(file, status, fileDateStr);
                 }
-               
+
+                amazonS3.deleteObject(s3BucketName, fileName);
+            } catch (IOException e) {
+                e.printStackTrace(); // Handle error
             }
+            
+            
         }
+    
     }
+
+    private File convertInputStreamToFile(InputStream inputStream, String fileName) throws IOException {
+        File tempFile = new File(System.getProperty("java.io.tmpdir"), fileName);
+
+        // 디렉토리가 존재하지 않으면 생성
+        File parentDir = tempFile.getParentFile();
+        if (!parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        } finally {
+            // InputStream을 닫아 S3 연결을 종료
+            inputStream.close();
+        }
+
+        return tempFile;
+    }
+
     private void processLogInfos(File file, String status, String fileDateStr) throws IOException {
         String savePath = saveLogDirectoryPath + status + "/";
 

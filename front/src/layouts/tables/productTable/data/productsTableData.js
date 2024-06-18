@@ -1,15 +1,11 @@
 import PropTypes from "prop-types";
-
 import { Menu, MenuItem, IconButton, Button } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
-
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import MDProgress from "components/MDProgress";
-
 import LogoAsana from "assets/images/small-logos/logo-asana.svg";
-
 import { useEffect, useState } from "react";
 import { ProductEditDialog } from "../dialog/productEditDialog";
 import { ProductByCategoryEditDialog } from "../dialog/productByCategoryEditDialog";
@@ -19,6 +15,7 @@ import { fetchUpdateProduct } from "reducers/slices/productSlice";
 import { ProductImageEditDialog } from "../dialog/productImageEditDialog";
 import { OptionEditDialog } from "../dialog/optionEditDialog";
 import CheckIcon from "@mui/icons-material/Check";
+import { ProductSubInfo } from "layouts/productAdd/component/productSubInfo";
 
 const ProductsTableData = ({ customDatas }) => {
   const dispatch = useDispatch();
@@ -31,6 +28,7 @@ const ProductsTableData = ({ customDatas }) => {
     { Header: "재고", accessor: "stockQuantity", align: "center" },
     { Header: "재고 위험도", accessor: "risk", align: "center" },
     { Header: "추천 상품 여부", accessor: "recommended", align: "center" },
+    { Header: "인기 상품 여부", accessor: "popularity", align: "center" },
     { Header: "배송비 당 최대 허용 수", accessor: "maxQuantityPerDelivery", align: "center" },
     { Header: "action", accessor: "action", align: "center" },
   ];
@@ -72,8 +70,8 @@ const ProductsTableData = ({ customDatas }) => {
     setDialogAnchorEl(null);
   };
 
-  const handleRecommendedToggle = () => {
-    const updateRowData = { ...rowData, recommended: !rowData.recommended };
+  const handleToggle = (type) => {
+    const updateRowData = { ...rowData, [type]: !rowData[type] };
     dispatch(fetchUpdateProduct(updateRowData))
       .then(() => {
         console.log("저장 성공");
@@ -147,6 +145,7 @@ const ProductsTableData = ({ customDatas }) => {
       stockQuantity: data.stockQuantity,
       risk: <Progress value={(data.stockQuantity / 100) * 100} />,
       recommended: Boolean(data.recommended) ? <CheckIcon /> : null,
+      popularity: Boolean(data.popularity) ? <CheckIcon /> : null,
       shippingCost: data.shippingCost,
       maxQuantityPerDelivery: data.maxQuantityPerDelivery,
       action: (
@@ -169,8 +168,11 @@ const ProductsTableData = ({ customDatas }) => {
             <MenuItem onClick={() => handleDialog("categoryEdit")}>카테고리 수정</MenuItem>
             <MenuItem onClick={() => handleDialog("imageEdit")}>이미지 수정</MenuItem>
             <MenuItem onClick={() => handleDialog("optionEdit")}>상품 옵션 수정</MenuItem>
-            <MenuItem onClick={handleRecommendedToggle}>
+            <MenuItem onClick={() => handleToggle("recommended")}>
               {rowData?.recommended ? "추천 상품 해제" : "추천 상품 등록"}
+            </MenuItem>
+            <MenuItem onClick={() => handleToggle("popularity")}>
+              {rowData?.popularity ? "인기 상품 해제" : "인기 상품 등록"}
             </MenuItem>
             <MenuItem onClick={handleDelete}>삭제</MenuItem>
           </Menu>
@@ -210,7 +212,6 @@ const ProductsTableData = ({ customDatas }) => {
 
   return {
     columns: dataColumns,
-
     rows: transformDataForProduct(customDatas),
   };
 };

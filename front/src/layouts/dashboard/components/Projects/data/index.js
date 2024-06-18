@@ -44,7 +44,7 @@ export default function data() {
     )
       .then((response) => response.json())
       .then((data) => {
-        setRowDatas(data);
+        setRowDatas([]);
       })
       .catch((error) => console.error("Error fetching order statistics data:", error));
   }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때만 호출

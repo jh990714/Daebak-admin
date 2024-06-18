@@ -33,14 +33,14 @@ public class QnaController {
     }
 
     @PutMapping("/{questionId}")
-    public ResponseEntity<?> addAnswer(@PathVariable Long questionId, @RequestBody AnswerDto answer) {
+    public ResponseEntity<?> addAnswer(@PathVariable("questionId") Long questionId, @RequestBody AnswerDto answer) {
         QuestionDto questionDto = qnaService.addAnswer(questionId, answer);
         
         return ResponseEntity.ok().body(questionDto);
     }
 
     @DeleteMapping("/{questionId}/answer/{answerId}")
-    public ResponseEntity<?> deleteAnswer(@PathVariable Long questionId, @PathVariable Long answerId) {
+    public ResponseEntity<?> deleteAnswer(@PathVariable("questionId") Long questionId, @PathVariable("answerId") Long answerId) {
         QuestionDto questionDto = qnaService.deleteAnswer(questionId, answerId);
         
         return ResponseEntity.ok().body(questionDto);

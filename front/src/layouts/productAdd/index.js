@@ -40,6 +40,10 @@ export const ProductAdd = ({ isOpen, onClose }) => {
       formData.append(`options[${index}].addPrice`, option.addPrice);
     });
 
+    formData.append("detailImage", productSubInfo);
+    console.log(productSubInfo);
+    console.log(productInfo.image);
+
     dispatch(fetchAddProduct(formData))
       .then(() => {
         console.log("저장 성공");

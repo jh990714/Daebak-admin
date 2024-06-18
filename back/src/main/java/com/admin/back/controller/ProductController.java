@@ -43,10 +43,11 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addProduct(@RequestParam("image") MultipartFile image, 
+    public ResponseEntity<?> addProduct(@RequestParam("image") MultipartFile image,
+                                        @RequestParam("detailImage") MultipartFile detailImage,
                                         @ModelAttribute ProductDto product) {
-        System.out.println(product);
-        ProductDto updateProductDto = productService.addProduct(product, image);
+
+        ProductDto updateProductDto = productService.addProduct(product, image, detailImage);
         
         return ResponseEntity.ok().body(updateProductDto);
     }
@@ -98,7 +99,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("productId") Long productId) {
         productService.deleteProduct(productId);
 
         return ResponseEntity.ok().body(productId);
@@ -106,7 +107,7 @@ public class ProductController {
 
     
     @PostMapping("option/{productId}")
-    public ResponseEntity<?> updateProductOption(@PathVariable Long productId, @RequestBody List<OptionDto> options) {
+    public ResponseEntity<?> updateProductOption(@PathVariable("productId") Long productId, @RequestBody List<OptionDto> options) {
         ProductDto updateProductDto = productService.updateProductOption(productId, options);
 
         return ResponseEntity.ok().body(updateProductDto);

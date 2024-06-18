@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,11 +57,17 @@ public class ProductEntity {
     @Column(name = "recommended")
     private Boolean recommended;
 
+    @Column(name = "popularity")
+    private Boolean popularity;
+
     @Column(name = "max_quantity_per_delivery")
     private Integer maxQuantityPerDelivery;
     
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "product")
     private List<OptionEntity> options;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "product")
+    private ProductDetailEntity productDetail;
     // @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     // private List<ReviewEntity> reviews;
 }

@@ -43,7 +43,7 @@ public class CarouselController {
     }
 
     @DeleteMapping("/{carouselId}")
-    public ResponseEntity<?> deleteCarousel(@PathVariable Long carouselId) {
+    public ResponseEntity<?> deleteCarousel(@PathVariable("carouselId") Long carouselId) {
         carouselService.deleteCarousel(carouselId);
         return ResponseEntity.ok().body(carouselId);
     }

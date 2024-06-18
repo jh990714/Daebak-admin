@@ -31,21 +31,21 @@ public class ReviewController {
     }
 
     @PutMapping("/{reviewId}")
-    public ResponseEntity<?> saveReviewResponse(@PathVariable Long reviewId, @RequestBody ReviewResponseDto reviewResponse) {
+    public ResponseEntity<?> saveReviewResponse(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewResponseDto reviewResponse) {
         ReviewDto reviewDto = reviewService.saveReviewResponse(reviewId, reviewResponse);
         
         return ResponseEntity.ok().body(reviewDto);
     }
 
     @PutMapping("best/{reviewId}")
-    public ResponseEntity<?> updateBestReivew(@PathVariable Long reviewId) {
+    public ResponseEntity<?> updateBestReivew(@PathVariable("reviewId") Long reviewId) {
         ReviewDto reviewDto = reviewService.updateBestReivew(reviewId);
         
         return ResponseEntity.ok().body(reviewDto);
     }
 
     @DeleteMapping("/{reviewId}/response/{responseId}")
-    public ResponseEntity<?> deleteResponse(@PathVariable Long reviewId, @PathVariable Long responseId) {
+    public ResponseEntity<?> deleteResponse(@PathVariable("reviewId") Long reviewId, @PathVariable("responseId") Long responseId) {
         ReviewDto reviewDto = reviewService.deleteResponse(reviewId, responseId);
         
         return ResponseEntity.ok().body(reviewDto);

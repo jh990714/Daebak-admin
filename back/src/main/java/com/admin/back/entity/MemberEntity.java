@@ -8,6 +8,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -64,10 +65,10 @@ public class MemberEntity {
     @Column(name = "create_at")
     private LocalDateTime createAt;
     
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<MemberCouponEntity> memberCoupons = new HashSet<>();
 
-    @OneToOne(mappedBy="member")
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private MemberPointsEntity memberPoints;
 
     public void updateMemberCoupons(Set<MemberCouponEntity> newMemberCoupons) {

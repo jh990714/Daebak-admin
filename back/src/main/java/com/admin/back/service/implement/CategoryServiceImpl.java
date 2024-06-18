@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public List<CategoryDto> getCategories() {
         List<CategoryDto> categoryDTOs = new ArrayList<>();
-        List<CategoryEntity> categoryEntities = categoryRepository.findAll();
+        List<CategoryEntity> categoryEntities = categoryRepository.findAllWithSubcategories();
         for (CategoryEntity categoryEntity : categoryEntities) {
             if (categoryEntity.getParentCategory() == null) {
                 CategoryDto categoryDTO = CategoryDto.fromEntity(categoryEntity);

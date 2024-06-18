@@ -29,7 +29,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     @Override
     public List<ReviewDto> getAllReviews() {
-        List<ReviewEntity> reviews = reviewRepository.findAll();
+        List<ReviewEntity> reviews = reviewRepository.findAllReviewsWithDetails();
 
         return reviews.stream().map(review -> {
             ReviewDto dto = new ReviewDto();

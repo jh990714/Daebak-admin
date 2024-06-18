@@ -22,7 +22,7 @@ public interface ProductService {
 
     public ProductDealDto deleteDealProducts(ProductDealDto productDeal);
 
-    public ProductDto addProduct(ProductDto product, MultipartFile image);
+    public ProductDto addProduct(ProductDto product, MultipartFile image, MultipartFile detailImage);
 
     public void deleteProduct(Long productId);
 

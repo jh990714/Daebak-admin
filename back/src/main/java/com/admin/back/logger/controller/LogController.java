@@ -1,7 +1,10 @@
 package com.admin.back.logger.controller;
 
+import org.apache.poi.hpsf.Date;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.admin.back.logger.dto.LogDataContainer;
@@ -27,12 +30,13 @@ public class LogController {
     private final ExcelService excelService;
 
     @GetMapping("/load")
-    public String loadLogData(@RequestParam String logDirectoryPath, @RequestParam String path) {
+    public String loadLogData(@RequestParam String path) {
         try {
-            excelService.processLogs(logDirectoryPath, path);
+            excelService.processLogs(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return "Logs processed successfully!";
     }
+
 }

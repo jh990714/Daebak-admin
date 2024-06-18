@@ -18,6 +18,7 @@ import com.admin.back.dto.ProductDealDto;
 import com.admin.back.dto.ProductDto;
 import com.admin.back.entity.OptionEntity;
 import com.admin.back.entity.ProductDealEntity;
+import com.admin.back.entity.ProductDetailEntity;
 import com.admin.back.entity.ProductEntity;
 import com.admin.back.repository.OptionRepository;
 import com.admin.back.repository.ProductDealRepository;
@@ -39,7 +40,7 @@ public class ProductServiceImpl implements ProductService  {
 
     @Override
     public List<ProductDto> getProducts() {
-        List<ProductEntity> productEntities = productRepository.findAll();
+        List<ProductEntity> productEntities = productRepository.findAllWithDetails();
 
         List<ProductDto> productDTOs = productEntities.stream()
             .map(ProductDto::fromEntity)
@@ -63,6 +64,7 @@ public class ProductServiceImpl implements ProductService  {
             productEntity.setDescription(productDto.getDescription());
             productEntity.setArrivalDate(productDto.getArrivalDate());
             productEntity.setRecommended(productDto.getRecommended());
+            productEntity.setPopularity(productDto.getPopularity());
             productEntity.setMaxQuantityPerDelivery(productDto.getMaxQuantityPerDelivery());
 
             // if (image != null) {
@@ -149,7 +151,7 @@ public class ProductServiceImpl implements ProductService  {
     }
 
     @Override
-    public ProductDto addProduct(ProductDto product, MultipartFile image) {
+    public ProductDto addProduct(ProductDto product, MultipartFile image, MultipartFile detailImage) {
         ProductEntity productEntity = new ProductEntity();
         productEntity.setCategory(product.getCategory());
         productEntity.setName(product.getName());
@@ -172,11 +174,18 @@ public class ProductServiceImpl implements ProductService  {
             }).collect(Collectors.toList());
 
         productEntity.setOptions(optionEntities);
-
-        String imageUrl;
+        
+        ProductDetailEntity productDetailEntity = new ProductDetailEntity();
         try {
-            imageUrl = s3Service.saveImageToS3(image, "product/");
+            String imageUrl = s3Service.saveImageToS3(image, "product/");
             productEntity.setImageUrl(imageUrl);
+
+            String detailImageUrl = s3Service.saveImageToS3(detailImage, "detail/");
+            productDetailEntity.setImageUrl(detailImageUrl);
+
+
+            productDetailEntity.setProduct(productEntity);
+            productEntity.setProductDetail(productDetailEntity);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save image to S3", e);
         }
@@ -198,6 +207,7 @@ public class ProductServiceImpl implements ProductService  {
 
             try {
                 s3Service.deleteImageFromS3(productEntity.getImageUrl());
+                s3Service.deleteImageFromS3(productEntity.getProductDetail().getImageUrl());
             } catch (IOException e) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete image to S3", e);
             }
