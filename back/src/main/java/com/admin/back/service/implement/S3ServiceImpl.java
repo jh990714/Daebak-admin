@@ -75,7 +75,6 @@ public class S3ServiceImpl implements S3Service {
     @Override
     public void deleteImageFromS3(String key) throws IOException {
 
-
         try {
             if (key == null) {
                 return;
