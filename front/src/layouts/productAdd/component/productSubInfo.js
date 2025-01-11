@@ -1,7 +1,5 @@
 import React from "react";
-
 import PropTypes from "prop-types";
-
 import MDInput from "components/MDInput";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
@@ -10,6 +8,17 @@ import DataTable from "examples/Tables/DataTable";
 
 export const ProductSubInfo = ({ rowData, setRowData }) => {
   const dataColumns = [{ Header: "세부정보 이미지", accessor: "image", align: "left" }];
+
+  const handleFileChange = (e) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      // 첫 번째 파일만 사용
+      const file = files[0];
+      const newData = { ...rowData, image: file };
+      setRowData(newData);
+    }
+  };
+
   return (
     <Card>
       <MDBox
@@ -33,18 +42,7 @@ export const ProductSubInfo = ({ rowData, setRowData }) => {
               {
                 image: (
                   <>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          const newData = { ...rowData, image: file };
-                          setRowData(newData);
-                        }
-                      }}
-                    />
+                    <input type="file" accept="image/*" onChange={handleFileChange} />
                     {rowData?.image && (
                       <img src={URL.createObjectURL(rowData?.image)} alt="Selected Image" />
                     )}

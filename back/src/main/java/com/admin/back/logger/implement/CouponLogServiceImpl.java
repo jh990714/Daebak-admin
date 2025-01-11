@@ -9,12 +9,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import com.admin.back.logger.dto.CouponData;
 import com.admin.back.logger.dto.CouponErrorData;
-import com.admin.back.logger.dto.OrderItemData;
 import com.admin.back.logger.service.CouponLogService;
 
 
@@ -24,9 +20,6 @@ import java.util.regex.Pattern;
 
 @Service
 public class CouponLogServiceImpl implements CouponLogService {
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("yyyy-MM");
-
     private String[] couponLogHeaders = {"Date", "Message", "Member ID", "ID", "Coupon ID", "Coupon Name", "Amount"};
     private String[] couponErrorLogHeaders = {"Date", "Message", "Member ID", "ID", "Coupon ID", "Coupon Name"};
 

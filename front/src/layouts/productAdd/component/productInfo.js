@@ -107,7 +107,7 @@ export const ProductInfo = ({ rowData, setRowData }) => {
                   <MDInput
                     type="text"
                     label="설명"
-                    value={rowData.description}
+                    value={rowData.description || ""}
                     onChange={(e) => {
                       const newData = { ...rowData, description: e.target.value };
                       setRowData(newData);

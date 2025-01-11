@@ -1,6 +1,8 @@
 package com.admin.back.logger.implement;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.math.BigDecimal;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -9,38 +11,31 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import com.admin.back.logger.dto.OrderItemData;
 import com.admin.back.logger.dto.OrderItemErrorData;
 import com.admin.back.logger.service.OrderItemLogService;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.admin.back.logger.dto.OrderKey;
+import com.admin.back.logger.dto.OrderStatistics;
+import com.admin.back.logger.dto.ProductSalesStatistics;
 
 @Service
 public class OrderItemLogServiceImpl implements OrderItemLogService {
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("yyyy-MM");
-
-    private String[] orderItemLogHeaders = { "Date", "Message", "OrderNumber", "Product ID", "Product Name", "Quantity", "Amount" };
+    private String[] orderItemLogHeaders = { "Date", "Message", "Member ID", "ID", "OrderNumber", "Product ID", "Product Name", "Quantity", "Amount" };
     private String[] orderItemErrorLogHeaders = { "Date", "Message", "Product ID", "Product Name" };
-    private String[] orderItemStatisticsHeaders = { "Date", "Product ID", "Product Name", "Quantity", "Amount" };
-
-    private Pattern createInfoLogPattern(String messageIdentifier) {
+    private String[] orderItemStatisticsHeaders = { "Member ID", "ID", "Product ID", "Product Name", "Quantity", "Total Amount" };
+    private String[] productStatisticsHeaders = { "Product ID", "Product Name", "Total Quantity", "Total Amount" };
+    
+    private Pattern createLogPattern(String messageIdentifier) {
         String patternString = String.format(
-            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - %s - Message: (.*), OrderNumber: (.*), ProductId: (.*), ProductName: (.*), Quantity: (\\d+), Amount: (\\d+)",
-            messageIdentifier
-        );
+                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - %s - Message: (.*), MemberId: (.*), ID: (.*), OrderNumber: (.*), ProductId: (.*), ProductName: (.*), Quantity: (\\d+), Amount: (\\d+)",
+                messageIdentifier);
         return Pattern.compile(patternString);
     }
-
+    
     private Pattern createErrorLogPattern(String messageIdentifier) {
         String patternString = String.format(
-            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) ERROR .* - %s - Message: (.*), ProductId: (.*), ProductName: (.*)",
-            messageIdentifier
-        );
+                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) ERROR .* - %s - Message: (.*), ProductId: (.*), ProductName: (.*)",
+                messageIdentifier);
         return Pattern.compile(patternString);
     }
 
@@ -58,46 +53,182 @@ public class OrderItemLogServiceImpl implements OrderItemLogService {
     }
 
     @Override
-    public void appendInfoOrderItemData(Workbook workbook, List<OrderItemData> orderItems, String sheetName) {
+    public void appendInfoOrderItemData(Workbook workbook, List<OrderItemData> orders, String sheetName) {
         Sheet sheet = getOrCreateSheet(workbook, sheetName, orderItemLogHeaders);
 
         int rowNum = sheet.getLastRowNum() + 1;
-        for (OrderItemData orderItem : orderItems) {
+        for (OrderItemData order : orders) {
             Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(orderItem.getDate());
-            row.createCell(1).setCellValue(orderItem.getMessage());
-            row.createCell(2).setCellValue(orderItem.getOrderNumber());
-            row.createCell(3).setCellValue(orderItem.getProductId());
-            row.createCell(4).setCellValue(orderItem.getProductName());
-            row.createCell(5).setCellValue(orderItem.getQuantity());
-            row.createCell(6).setCellValue(orderItem.getAmount().doubleValue());
+            row.createCell(0).setCellValue(order.getDate());
+            row.createCell(1).setCellValue(order.getMessage());
+            row.createCell(2).setCellValue(order.getMemberId());
+            row.createCell(3).setCellValue(order.getId());
+            row.createCell(4).setCellValue(order.getOrderNumber());
+            row.createCell(5).setCellValue(order.getProductId());
+            row.createCell(6).setCellValue(order.getProductName());
+            row.createCell(7).setCellValue(order.getQuantity());
+            row.createCell(8).setCellValue(order.getAmount().doubleValue());
         }
     }
 
     @Override
-    public void appendErrorOrderItemData(Workbook workbook, List<OrderItemErrorData> orderItems, String sheetName) {
-        Sheet sheet = getOrCreateSheet(workbook, sheetName, orderItemErrorLogHeaders);
+    public void updateOrderStatistics(Workbook workbook, Workbook workbookMonthlyStatistic, List<OrderItemData> orders, String sheetName) {
+        Sheet dailySheet = getOrCreateSheet(workbook, sheetName, orderItemStatisticsHeaders);
+        Sheet monthlySheet = getOrCreateSheet(workbookMonthlyStatistic, sheetName, orderItemStatisticsHeaders);
 
-        int rowNum = sheet.getLastRowNum() + 1;
-        for (OrderItemErrorData orderItem : orderItems) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(orderItem.getDate());
-            row.createCell(1).setCellValue(orderItem.getMessage());
-            row.createCell(2).setCellValue(orderItem.getProductId());
-            row.createCell(3).setCellValue(orderItem.getProductName());
-        }
+        Map<OrderKey, OrderStatistics> dailyGroupedCounts = calculateGroupedStatistics(orders);
+        Map<OrderKey, OrderStatistics> monthlyGroupedCounts = calculateGroupedStatistics(orders);
+
+        updateSheetWithGroupedCounts(dailySheet, dailyGroupedCounts);
+        updateSheetWithGroupedCounts(monthlySheet, monthlyGroupedCounts);
     }
 
+
+    private Map<OrderKey, OrderStatistics> calculateGroupedStatistics(List<OrderItemData> orders) {
+        Map<OrderKey, OrderStatistics> groupedStatistics = new HashMap<>();
+    
+        for (OrderItemData order : orders) {
+            OrderKey key = new OrderKey(
+                    order.getMemberId(),
+                    order.getId(),
+                    order.getProductId(),
+                    order.getProductName());
+   
+            // 그룹화된 통계 객체를 가져와서 업데이트
+            OrderStatistics statistics = groupedStatistics.computeIfAbsent(key, k -> new OrderStatistics());
+
+            statistics.incrementCount(order.getQuantity());
+            statistics.addAmount(order.getAmount());
+        }
+    
+        return groupedStatistics;
+    }
+
+    private void updateSheetWithGroupedCounts(Sheet sheet, Map<OrderKey, OrderStatistics> groupedStatistics) {
+        Map<OrderKey, Row> existingRowsMap = new HashMap<>();
+    
+        // 기존 행을 맵에 저장
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            OrderKey key = new OrderKey(
+                    row.getCell(0).getStringCellValue(), // memberId
+                    row.getCell(1).getStringCellValue(), // id
+                    row.getCell(2).getStringCellValue(), // productId
+                    row.getCell(3).getStringCellValue()  // productName
+            );
+            existingRowsMap.put(key, row);
+        }
+     
+        int rowNum = sheet.getLastRowNum() + 1;
+    
+        // 통계 값을 시트에 업데이트
+        for (Map.Entry<OrderKey, OrderStatistics> entry : groupedStatistics.entrySet()) {
+            OrderKey key = entry.getKey();
+            Integer quantity = entry.getValue().getQuantity(); // getCount()로 수량 가져오기
+
+            BigDecimal amount = entry.getValue().getAmount(); // getAmount()로 금액 가져오기
+    
+            Row row = existingRowsMap.get(key);
+    
+            if (row != null) {
+                // 기존 행이 있을 경우 수량과 금액을 업데이트
+                int existingQuantity = (int) row.getCell(4).getNumericCellValue();
+
+                row.getCell(4).setCellValue(existingQuantity + quantity);
+
+                BigDecimal existingAmount = new BigDecimal(row.getCell(5).getNumericCellValue());
+                row.getCell(5).setCellValue(existingAmount.add(amount).doubleValue());
+            } else {
+                row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(key.getMemberId());
+                row.createCell(1).setCellValue(key.getId());
+                row.createCell(2).setCellValue(key.getProductId());
+                row.createCell(3).setCellValue(key.getProductName());
+                row.createCell(4).setCellValue(quantity);
+                row.createCell(5).setCellValue(amount.doubleValue());
+            }
+        }
+    }
+    
+    @Override
+    public void updateProductStatistics(Workbook workbook, Workbook workbookMonthlyStatistic, List<OrderItemData> orders, String sheetName) {
+        Sheet dailySheet = getOrCreateSheet(workbook, sheetName, productStatisticsHeaders);
+        Sheet monthlySheet = getOrCreateSheet(workbookMonthlyStatistic, sheetName, productStatisticsHeaders);
+
+        Map<String, ProductSalesStatistics> dailyProductStatistics = calculateProductStatistics(orders);
+        Map<String, ProductSalesStatistics> monthlyProductStatistics = calculateProductStatistics(orders);
+
+        updateSheetWithProductStatistics(dailySheet, dailyProductStatistics);
+        updateSheetWithProductStatistics(monthlySheet, monthlyProductStatistics);
+    }
+
+    private Map<String, ProductSalesStatistics> calculateProductStatistics(List<OrderItemData> orders) {
+        Map<String, ProductSalesStatistics> productStatisticsMap = new HashMap<>();
+    
+        for (OrderItemData order : orders) {
+            String productId = order.getProductId();
+            String productName = order.getProductName();
+    
+            // Map에서 기존 통계 객체를 가져오거나 새로 생성
+            ProductSalesStatistics stats = productStatisticsMap.computeIfAbsent(
+                productId, 
+                id -> new ProductSalesStatistics(productId, productName)
+            );
+    
+            // 통계 업데이트
+            stats.incrementQuantity(order.getQuantity());
+            stats.addAmount(order.getAmount());
+        }
+    
+        return productStatisticsMap;
+    }
+
+    private void updateSheetWithProductStatistics(Sheet sheet, Map<String, ProductSalesStatistics> productStatistics) {
+        Map<String, Row> existingRowsMap = new HashMap<>();
+    
+        // 기존 시트 데이터를 맵으로 저장 (Product ID를 기준으로)
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            if (row == null) continue;
+    
+            String productId = row.getCell(0).getStringCellValue(); // Product ID
+            existingRowsMap.put(productId, row);
+        }
+    
+        int rowNum = sheet.getLastRowNum() + 1;
+    
+        // 통계 데이터를 시트에 업데이트
+        for (Map.Entry<String, ProductSalesStatistics> entry : productStatistics.entrySet()) {
+            String productId = entry.getKey();
+            ProductSalesStatistics stats = entry.getValue();
+    
+            Row row = existingRowsMap.get(productId);
+    
+            if (row != null) {
+                // 기존 행이 있는 경우 업데이트
+                int existingQuantity = (int) row.getCell(2).getNumericCellValue(); // Quantity
+                row.getCell(2).setCellValue(existingQuantity + stats.getTotalQuantity());
+    
+                BigDecimal existingAmount = new BigDecimal(row.getCell(3).getNumericCellValue()); // Amount
+                row.getCell(3).setCellValue(existingAmount.add(stats.getTotalAmount()).doubleValue());
+            } else {
+                // 기존 행이 없는 경우 새로 추가
+                row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(stats.getProductId()); // Product ID
+                row.createCell(1).setCellValue(stats.getProductName()); // Product Name
+                row.createCell(2).setCellValue(stats.getTotalQuantity()); // Quantity
+                row.createCell(3).setCellValue(stats.getTotalAmount().doubleValue()); // Amount
+            }
+        }
+    }
+    
     @Override
     public OrderItemData findInfo(String logMessage, String messageIdentifier) {
-        Pattern pattern = createInfoLogPattern(messageIdentifier);
+        Pattern pattern = createLogPattern(messageIdentifier);
         Matcher matcher = pattern.matcher(logMessage);
 
         if (matcher.find()) {
-            BigDecimal amount = new BigDecimal(matcher.group(7));
-            return new OrderItemData(
-                    matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5),
-                    Integer.parseInt(matcher.group(6)), amount);
+            return new OrderItemData(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6), matcher.group(7), Integer.parseInt(matcher.group(8)), new BigDecimal(matcher.group(9)));
         }
 
         return null;
@@ -117,75 +248,16 @@ public class OrderItemLogServiceImpl implements OrderItemLogService {
     }
 
     @Override
-    public void updateOrderStatistics(Workbook workbook, Workbook workbookMonthlyStatistic, List<OrderItemData> orders, String sheetName) {
-        Sheet dailySheet = getOrCreateSheet(workbook, sheetName, orderItemStatisticsHeaders);
-        Sheet monthlySheet = getOrCreateSheet(workbookMonthlyStatistic, sheetName, orderItemStatisticsHeaders);
+    public void appendErrorOrderItemData(Workbook workbook, List<OrderItemErrorData> errors, String sheetName) {
+        Sheet sheet = getOrCreateSheet(workbook, sheetName, orderItemErrorLogHeaders);
 
-        Map<String, Map<String, List<OrderItemData>>> orderDailyCounts = new HashMap<>();
-        Map<String, Map<String, List<OrderItemData>>> orderMonthlyCounts = new HashMap<>();
-
-        for (OrderItemData order : orders) {
-            try {
-                Date date = DATE_FORMAT.parse(order.getDate());
-                
-                String formattedDate = DATE_FORMAT.format(date);
-                String formattedMonth = MONTH_FORMAT.format(date);
-                String productId = order.getProductId();
-
-                Map<String, List<OrderItemData>> innerDailyMap = orderDailyCounts.computeIfAbsent(formattedDate, k -> new HashMap<>());
-                List<OrderItemData> dailyProductList = innerDailyMap.computeIfAbsent(productId, k -> new ArrayList<>());
-
-
-                Map<String, List<OrderItemData>> innerMap = orderMonthlyCounts.computeIfAbsent(formattedMonth, k -> new HashMap<>());
-                List<OrderItemData> monthlyProductList = innerMap.computeIfAbsent(productId, k -> new ArrayList<>());
-
-                dailyProductList.add(order);
-                monthlyProductList.add(order);
-
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+        int rowNum = sheet.getLastRowNum() + 1;
+        for (OrderItemErrorData error : errors) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(error.getDate());
+            row.createCell(1).setCellValue(error.getMessage());
+            row.createCell(2).setCellValue(error.getProductId());
+            row.createCell(3).setCellValue(error.getProductName());
         }
-
-        updateSheetWithCounts(dailySheet, orderDailyCounts);
-        updateSheetWithCounts(monthlySheet, orderMonthlyCounts);
     }
-
-    private void updateSheetWithCounts(Sheet sheet, Map<String, Map<String, List<OrderItemData>>> orderCounts) {
-        for (Map.Entry<String, Map<String, List<OrderItemData>>> entry : orderCounts.entrySet()) {
-            String dateOrMonth = entry.getKey();
-            Map<String, List<OrderItemData>> productMap = entry.getValue();
-            for (Map.Entry<String, List<OrderItemData>> productEntry : productMap.entrySet()) {
-                String productId = productEntry.getKey();
-                List<OrderItemData> orders = productEntry.getValue();
-                int totalQuantity = 0;
-                BigDecimal totalAmount = BigDecimal.ZERO;
-                for (OrderItemData order : orders) {
-                    totalQuantity += order.getQuantity();
-                    totalAmount = totalAmount.add(order.getAmount());
-                }
-                boolean found = false;
-                for (Row row : sheet) {
-                    if (row.getCell(0).getStringCellValue().equals(dateOrMonth)
-                            && row.getCell(1).getStringCellValue().equals(productId)) {
-                        int existingQuantity = (int) row.getCell(3).getNumericCellValue();
-                        BigDecimal existingAmount = BigDecimal.valueOf(row.getCell(4).getNumericCellValue());
-                        row.getCell(3).setCellValue(existingQuantity + totalQuantity);
-                        row.getCell(4).setCellValue(existingAmount.add(totalAmount).doubleValue());
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    int rowNum = sheet.getLastRowNum() + 1;
-                    Row newRow = sheet.createRow(rowNum);
-                    newRow.createCell(0).setCellValue(dateOrMonth);
-                    newRow.createCell(1).setCellValue(productId);
-                    newRow.createCell(2).setCellValue(orders.get(0).getProductName());
-                    newRow.createCell(3).setCellValue(totalQuantity);
-                    newRow.createCell(4).setCellValue(totalAmount.doubleValue());
-                }
-            }
-        }
-    }    
 }
