@@ -11,9 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.admin.back.logger.dto.OrderData;
-import com.admin.back.logger.dto.OrderErrorData;
-
+import com.admin.back.logger.dto.Order.OrderData;
+import com.admin.back.logger.dto.Order.OrderErrorData;
 import com.admin.back.logger.service.OrderLogService;
 
 @Service

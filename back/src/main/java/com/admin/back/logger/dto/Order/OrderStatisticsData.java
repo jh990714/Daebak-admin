@@ -1,4 +1,4 @@
-package com.admin.back.logger.dto;
+package com.admin.back.logger.dto.Order;
 
 import lombok.Getter;
 import lombok.Setter;

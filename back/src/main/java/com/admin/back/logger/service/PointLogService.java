@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.admin.back.logger.dto.PointData;
-import com.admin.back.logger.dto.PointErrorData;
+import com.admin.back.logger.dto.Point.PointData;
+import com.admin.back.logger.dto.Point.PointErrorData;
 
 public interface PointLogService {
     public void appendInfoPointData(Workbook workbook, List<PointData> points, String sheetName);

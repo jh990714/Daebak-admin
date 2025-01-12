@@ -9,8 +9,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 
-import com.admin.back.logger.dto.CouponData;
-import com.admin.back.logger.dto.CouponErrorData;
+import com.admin.back.logger.dto.Coupon.CouponData;
+import com.admin.back.logger.dto.Coupon.CouponErrorData;
 import com.admin.back.logger.service.CouponLogService;
 
 

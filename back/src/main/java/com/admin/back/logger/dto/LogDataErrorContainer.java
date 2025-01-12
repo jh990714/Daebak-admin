@@ -2,6 +2,12 @@ package com.admin.back.logger.dto;
 
 import java.util.*;
 
+import com.admin.back.logger.dto.Coupon.CouponErrorData;
+import com.admin.back.logger.dto.Login.LoginErrorData;
+import com.admin.back.logger.dto.Order.OrderErrorData;
+import com.admin.back.logger.dto.Order.OrderItemErrorData;
+import com.admin.back.logger.dto.Point.PointErrorData;
+
 import lombok.Getter;
 import lombok.Setter;
 

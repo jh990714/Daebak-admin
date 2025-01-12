@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 
 import com.admin.back.logger.dto.LogDataContainer;
 import com.admin.back.logger.dto.LogDataErrorContainer;
-import com.admin.back.logger.dto.LoginData;
-import com.admin.back.logger.dto.LoginStatisticsData;
-import com.admin.back.logger.dto.OrderItemData;
-import com.admin.back.logger.dto.OrderStatisticsData;
 import com.admin.back.logger.dto.RegistrationData;
 import com.admin.back.logger.dto.RegistrationStatisticsData;
+import com.admin.back.logger.dto.Login.LoginData;
+import com.admin.back.logger.dto.Login.LoginStatisticsData;
+import com.admin.back.logger.dto.Order.OrderItemData;
+import com.admin.back.logger.dto.Order.OrderStatisticsData;
 import com.admin.back.logger.handler.LogErrorParser;
 import com.admin.back.logger.handler.LogInfoParser;
 import com.admin.back.logger.service.CouponLogService;

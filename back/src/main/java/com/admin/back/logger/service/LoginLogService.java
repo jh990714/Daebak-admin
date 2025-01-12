@@ -3,8 +3,8 @@ package com.admin.back.logger.service;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.admin.back.logger.dto.LoginData;
-import com.admin.back.logger.dto.LoginErrorData;
+import com.admin.back.logger.dto.Login.LoginData;
+import com.admin.back.logger.dto.Login.LoginErrorData;
 
 public interface LoginLogService {
     public void appendInfoLoginData(Workbook workbook, List<LoginData> logins, String sheetName);

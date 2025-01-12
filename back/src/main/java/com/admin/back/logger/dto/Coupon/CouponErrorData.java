@@ -1,4 +1,4 @@
-package com.admin.back.logger.dto;
+package com.admin.back.logger.dto.Coupon;
 
 import lombok.Getter;
 import lombok.Setter;

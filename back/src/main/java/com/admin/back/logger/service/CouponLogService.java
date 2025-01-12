@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.admin.back.logger.dto.CouponData;
-import com.admin.back.logger.dto.CouponErrorData;
+import com.admin.back.logger.dto.Coupon.CouponData;
+import com.admin.back.logger.dto.Coupon.CouponErrorData;
 
 public interface CouponLogService {
     public void appendInfoCouponData(Workbook workbook, List<CouponData> coupons, String sheetName);
