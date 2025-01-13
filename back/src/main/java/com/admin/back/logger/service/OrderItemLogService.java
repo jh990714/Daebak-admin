@@ -3,8 +3,8 @@ package com.admin.back.logger.service;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.admin.back.logger.dto.OrderItemData;
-import com.admin.back.logger.dto.OrderItemErrorData;
+import com.admin.back.logger.dto.Order.OrderItemData;
+import com.admin.back.logger.dto.Order.OrderItemErrorData;
 
 public interface OrderItemLogService {
     public void appendInfoOrderItemData(Workbook workbook, List<OrderItemData> orderItems, String sheetName);

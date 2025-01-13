@@ -9,8 +9,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 
-import com.admin.back.logger.dto.ProductData;
-import com.admin.back.logger.dto.ProductKey;
+import com.admin.back.logger.dto.Product.ProductData;
+import com.admin.back.logger.dto.Product.ProductKey;
 import com.admin.back.logger.service.ProductLogService;
 
 @Service

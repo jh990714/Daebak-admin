@@ -11,12 +11,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Service;
 
-import com.admin.back.logger.dto.OrderItemData;
-import com.admin.back.logger.dto.OrderItemErrorData;
 import com.admin.back.logger.service.OrderItemLogService;
-import com.admin.back.logger.dto.OrderKey;
-import com.admin.back.logger.dto.OrderStatistics;
-import com.admin.back.logger.dto.ProductSalesStatistics;
+import com.admin.back.logger.dto.Order.OrderItemData;
+import com.admin.back.logger.dto.Order.OrderItemErrorData;
+import com.admin.back.logger.dto.Order.OrderKey;
+import com.admin.back.logger.dto.Order.OrderStatistics;
+import com.admin.back.logger.dto.Product.ProductSalesStatistics;
 
 @Service
 public class OrderItemLogServiceImpl implements OrderItemLogService {
@@ -111,9 +111,9 @@ public class OrderItemLogServiceImpl implements OrderItemLogService {
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             OrderKey key = new OrderKey(
-                    row.getCell(0).getStringCellValue(), // memberId
+                    (long) row.getCell(0).getNumericCellValue(), // memberId
                     row.getCell(1).getStringCellValue(), // id
-                    row.getCell(2).getStringCellValue(), // productId
+                    (long) row.getCell(2).getNumericCellValue(), // productId
                     row.getCell(3).getStringCellValue()  // productName
             );
             existingRowsMap.put(key, row);
@@ -155,18 +155,18 @@ public class OrderItemLogServiceImpl implements OrderItemLogService {
         Sheet dailySheet = getOrCreateSheet(workbook, sheetName, productStatisticsHeaders);
         Sheet monthlySheet = getOrCreateSheet(workbookMonthlyStatistic, sheetName, productStatisticsHeaders);
 
-        Map<String, ProductSalesStatistics> dailyProductStatistics = calculateProductStatistics(orders);
-        Map<String, ProductSalesStatistics> monthlyProductStatistics = calculateProductStatistics(orders);
+        Map<Long, ProductSalesStatistics> dailyProductStatistics = calculateProductStatistics(orders);
+        Map<Long, ProductSalesStatistics> monthlyProductStatistics = calculateProductStatistics(orders);
 
         updateSheetWithProductStatistics(dailySheet, dailyProductStatistics);
         updateSheetWithProductStatistics(monthlySheet, monthlyProductStatistics);
     }
 
-    private Map<String, ProductSalesStatistics> calculateProductStatistics(List<OrderItemData> orders) {
-        Map<String, ProductSalesStatistics> productStatisticsMap = new HashMap<>();
+    private Map<Long, ProductSalesStatistics> calculateProductStatistics(List<OrderItemData> orders) {
+        Map<Long, ProductSalesStatistics> productStatisticsMap = new HashMap<>();
     
         for (OrderItemData order : orders) {
-            String productId = order.getProductId();
+            Long productId = order.getProductId();
             String productName = order.getProductName();
     
             // Map에서 기존 통계 객체를 가져오거나 새로 생성
@@ -183,23 +183,23 @@ public class OrderItemLogServiceImpl implements OrderItemLogService {
         return productStatisticsMap;
     }
 
-    private void updateSheetWithProductStatistics(Sheet sheet, Map<String, ProductSalesStatistics> productStatistics) {
-        Map<String, Row> existingRowsMap = new HashMap<>();
+    private void updateSheetWithProductStatistics(Sheet sheet, Map<Long, ProductSalesStatistics> productStatistics) {
+        Map<Long, Row> existingRowsMap = new HashMap<>();
     
         // 기존 시트 데이터를 맵으로 저장 (Product ID를 기준으로)
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row == null) continue;
     
-            String productId = row.getCell(0).getStringCellValue(); // Product ID
+            Long productId = (long) row.getCell(0).getNumericCellValue(); // Product ID
             existingRowsMap.put(productId, row);
         }
     
         int rowNum = sheet.getLastRowNum() + 1;
     
         // 통계 데이터를 시트에 업데이트
-        for (Map.Entry<String, ProductSalesStatistics> entry : productStatistics.entrySet()) {
-            String productId = entry.getKey();
+        for (Map.Entry<Long, ProductSalesStatistics> entry : productStatistics.entrySet()) {
+            Long productId = entry.getKey();
             ProductSalesStatistics stats = entry.getValue();
     
             Row row = existingRowsMap.get(productId);
@@ -228,7 +228,7 @@ public class OrderItemLogServiceImpl implements OrderItemLogService {
         Matcher matcher = pattern.matcher(logMessage);
 
         if (matcher.find()) {
-            return new OrderItemData(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6), matcher.group(7), Integer.parseInt(matcher.group(8)), new BigDecimal(matcher.group(9)));
+            return new OrderItemData(matcher.group(1), matcher.group(2), Long.parseLong(matcher.group(3)), matcher.group(4), matcher.group(5), Long.parseLong(matcher.group(6)), matcher.group(7), Integer.parseInt(matcher.group(8)), new BigDecimal(matcher.group(9)));
         }
 
         return null;

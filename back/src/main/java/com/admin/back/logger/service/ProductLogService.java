@@ -3,7 +3,7 @@ package com.admin.back.logger.service;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.admin.back.logger.dto.ProductData;
+import com.admin.back.logger.dto.Product.ProductData;
 
 public interface ProductLogService {
     public void appendInfoProductData(Workbook workbook, List<ProductData> products, String sheetName);

@@ -11,9 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.admin.back.logger.dto.OrderData;
-import com.admin.back.logger.dto.OrderErrorData;
-
+import com.admin.back.logger.dto.Order.OrderData;
+import com.admin.back.logger.dto.Order.OrderErrorData;
 import com.admin.back.logger.service.OrderLogService;
 
 @Service
@@ -93,7 +92,7 @@ public class OrderLogServiceImpl implements OrderLogService {
             return new OrderData(
                 matcher.group(1),  // Date
                 matcher.group(2),  // Message
-                matcher.group(3),  // MemberId
+                Long.parseLong(matcher.group(3)),  // MemberId
                 matcher.group(4),  // Id
                 matcher.group(5),  // OrderNumber
                 matcher.group(6)   // ImpUid
@@ -112,7 +111,7 @@ public class OrderLogServiceImpl implements OrderLogService {
             return new OrderErrorData(
                 matcher.group(1),  // Date
                 matcher.group(2),  // Message
-                matcher.group(3),  // MemberId
+                Long.parseLong(matcher.group(3)),  // MemberId
                 matcher.group(4),  // Id
                 matcher.group(5)   // ImpUid
             );

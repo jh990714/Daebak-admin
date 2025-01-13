@@ -1,4 +1,4 @@
-package com.admin.back.logger.dto;
+package com.admin.back.logger.dto.Order;
 
 import java.math.BigDecimal;
 
@@ -9,12 +9,12 @@ import lombok.Setter;
 public class OrderData {
     private String date;
     private String message;
-    private String memberId;
+    private Long memberId;
     private String id;
     private String orderNumber;
     private String impUid;
 
-    public OrderData(String date, String message, String memberId, String id, String orderNumber, String impUid) {
+    public OrderData(String date, String message, Long memberId, String id, String orderNumber, String impUid) {
         this.date = date;
         this.message = message;
         this.memberId = memberId;

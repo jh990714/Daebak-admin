@@ -1,4 +1,4 @@
-package com.admin.back.logger.dto;
+package com.admin.back.logger.dto.Point;
 
 import java.math.BigDecimal;
 

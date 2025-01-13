@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.admin.back.logger.dto.OrderData;
-import com.admin.back.logger.dto.OrderErrorData;
+import com.admin.back.logger.dto.Order.OrderData;
+import com.admin.back.logger.dto.Order.OrderErrorData;
 
 public interface OrderLogService {
     public void appendInfoOrderData(Workbook workbook, List<OrderData> orderItems, String sheetName);

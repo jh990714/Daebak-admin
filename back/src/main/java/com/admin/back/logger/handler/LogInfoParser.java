@@ -2,20 +2,22 @@ package com.admin.back.logger.handler;
 
 import org.springframework.stereotype.Component;
 
-import com.admin.back.logger.dto.CouponData;
 import com.admin.back.logger.dto.LogDataContainer;
-import com.admin.back.logger.dto.LoginData;
-import com.admin.back.logger.dto.OrderData;
-import com.admin.back.logger.dto.OrderItemData;
-import com.admin.back.logger.dto.PointData;
-import com.admin.back.logger.dto.ProductData;
+import com.admin.back.logger.dto.RegistrationData;
 import com.admin.back.logger.dto.SearchData;
+import com.admin.back.logger.dto.Coupon.CouponData;
+import com.admin.back.logger.dto.Login.LoginData;
+import com.admin.back.logger.dto.Order.OrderData;
+import com.admin.back.logger.dto.Order.OrderItemData;
+import com.admin.back.logger.dto.Point.PointData;
+import com.admin.back.logger.dto.Product.ProductData;
 import com.admin.back.logger.service.CouponLogService;
 import com.admin.back.logger.service.LoginLogService;
 import com.admin.back.logger.service.OrderItemLogService;
 import com.admin.back.logger.service.OrderLogService;
 import com.admin.back.logger.service.PointLogService;
 import com.admin.back.logger.service.ProductLogService;
+import com.admin.back.logger.service.RegistrationService;
 import com.admin.back.logger.service.SearchLogService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ import java.io.IOException;
 public class LogInfoParser {
     private LogDataContainer dataContainer = new LogDataContainer();
     private final LoginLogService loginLogService;
+    private final RegistrationService registrationService;
     private final OrderItemLogService orderItemLogService;
     private final OrderLogService orderLogService;
     private final CouponLogService couponLogService;
@@ -77,7 +80,7 @@ public class LogInfoParser {
             return;
         }
 
-        LoginData registrationData = loginLogService.find(logMessage, "Register");
+        RegistrationData registrationData = registrationService.find(logMessage, "Register");
     
         if (registrationData != null) {
             dataContainer.getRegistrations().add(registrationData);

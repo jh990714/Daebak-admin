@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.admin.back.logger.dto.PointData;
-import com.admin.back.logger.dto.PointErrorData;
+import com.admin.back.logger.dto.Point.PointData;
+import com.admin.back.logger.dto.Point.PointErrorData;
 import com.admin.back.logger.service.PointLogService;
 
 @Service
