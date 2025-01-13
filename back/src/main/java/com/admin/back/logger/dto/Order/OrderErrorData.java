@@ -7,11 +7,11 @@ import lombok.Setter;
 public class OrderErrorData {
     private String date;
     private String message;
-    private String memberId;
+    private Long memberId;
     private String id;
     private String impUid;
 
-    public OrderErrorData(String date, String message, String memberId, String id, String impUid) {
+    public OrderErrorData(String date, String message, Long memberId, String id, String impUid) {
         this.date = date;
         this.message = message;
         this.memberId = memberId;

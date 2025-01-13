@@ -7,12 +7,12 @@ import lombok.Setter;
 
 @Getter @Setter
 public class ProductSalesStatistics {
-    private String productId;
+    private Long productId;
     private String productName;
     private int totalQuantity;
     private BigDecimal totalAmount;
 
-    public ProductSalesStatistics(String productId, String productName) {
+    public ProductSalesStatistics(Long productId, String productName) {
         this.productId = productId;
         this.productName = productName;
         this.totalQuantity = 0;

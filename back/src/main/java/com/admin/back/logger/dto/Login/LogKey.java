@@ -7,11 +7,11 @@ import lombok.Setter;
 
 @Getter @Setter
 public class LogKey {
-    private String memberId;
+    private Long memberId;
     private String id;
     private String type;
 
-    public LogKey(String memberId, String id, String type) {
+    public LogKey(Long memberId, String id, String type) {
         this.memberId = memberId;
         this.id = id;
         this.type = type;

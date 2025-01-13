@@ -8,12 +8,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderKey {
-    private String memberId;
+    private Long memberId;
     private String id;
-    private String productId;
+    private Long productId;
     private String productName;
 
-    public OrderKey(String memberId, String id, String productId, String productName) {
+    public OrderKey(Long memberId, String id, Long productId, String productName) {
         this.memberId = memberId;
         this.id = id;
         this.productId = productId;

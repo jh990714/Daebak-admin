@@ -23,6 +23,7 @@ import com.admin.back.logger.service.OrderItemLogService;
 import com.admin.back.logger.service.OrderLogService;
 import com.admin.back.logger.service.PointLogService;
 import com.admin.back.logger.service.ProductLogService;
+import com.admin.back.logger.service.RegistrationService;
 import com.admin.back.logger.service.SearchLogService;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
@@ -41,9 +42,9 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class ExcelServiceImpl implements ExcelService {
-    ;
 
     private final LoginLogService loginLogService;
+     private final RegistrationService registrationService;
     private final OrderItemLogService orderItemLogService;
     private final OrderLogService orderLogService;
     private final CouponLogService couponLogService;
@@ -226,6 +227,7 @@ public class ExcelServiceImpl implements ExcelService {
         // 엑셀 파일 저장 경로
         String combinedLogFilePath = combinedLogDirecoryPath + "combined_logs_" + fileDateStr + ".log";
         String excelFilePath = excelLogDirectoryPath + "log_" + fileDateStr + ".xlsx";
+        String excelMonthlyFilePath = excelLogDirectoryPath + "log_" + fileDateStr.substring(0, 7) + ".xlsx";
         String excelStatisticsFilePath = excelStatisticsDirectoryPath + "log_statistics_" + fileDateStr + ".xlsx";
         String excelMonthlyStatisticsFilePath = excelStatisticsDirectoryPath + "log_statistics_"
                 + fileDateStr.substring(0, 7) + ".xlsx";
@@ -233,14 +235,15 @@ public class ExcelServiceImpl implements ExcelService {
         File combinedLog = new File(combinedLogFilePath);
 
         Workbook workbook = readWorkbook(excelFilePath); // 엑셀 파일 읽기
+        Workbook workbookMonthly = readWorkbook(excelMonthlyFilePath);
         Workbook workbookStatistics = readWorkbook(excelStatisticsFilePath);
         Workbook workbookMonthlyStatistics = readWorkbook(excelMonthlyStatisticsFilePath);
 
         // 로그 파일 처리
-        processLogFile(file, combinedLog, workbook, workbookStatistics, workbookMonthlyStatistics, 0);
+        processLogFile(file, combinedLog, workbook, workbookMonthly, workbookStatistics, workbookMonthlyStatistics);
 
         // 파일 저장
-        writeWorkbook(workbook, excelFilePath);
+        writeWorkbook(workbookMonthly, excelMonthlyFilePath);
         writeWorkbook(workbookStatistics, excelStatisticsFilePath);
         writeWorkbook(workbookMonthlyStatistics, excelMonthlyStatisticsFilePath);
     }
@@ -290,15 +293,12 @@ public class ExcelServiceImpl implements ExcelService {
         return null;
     }
 
-    private void processLogFile(File file, File combinedLog, Workbook workbook, Workbook workbookStatistics,
-            Workbook workbookMonthlyStatistics,
-            int startLine)
-            throws IOException {
+    private void processLogFile(File file, File combinedLog, Workbook workbook, Workbook workbookMonthly, Workbook workbookStatistics, Workbook workbookMonthlyStatistics) throws IOException {
 
         logInfoParser.parseLog(file, combinedLog);
 
         LogDataContainer logData = logInfoParser.getLogData();
-        appendDataToSheet(workbook, logData);
+        appendDataToSheet(workbookMonthly, logData);
         appendStatistics(workbookStatistics, workbookMonthlyStatistics, logData);
     }
 
@@ -312,7 +312,7 @@ public class ExcelServiceImpl implements ExcelService {
     private void appendStatistics(Workbook workbook, Workbook workbookMonthlyStatistics, LogDataContainer logData) {
         loginLogService.updateLoginStatistics(workbook, workbookMonthlyStatistics, logData.getLogins(),
                 "LoginStatistics");
-        loginLogService.updateLoginStatistics(workbook, workbookMonthlyStatistics, logData.getRegistrations(),
+        registrationService.updateRegistrationStatistics(workbook, workbookMonthlyStatistics, logData.getRegistrations(),
                 "RegistrationsStatistics");
         orderItemLogService.updateOrderStatistics(workbook, workbookMonthlyStatistics, logData.getOrderItems(),
                 "OrderItemStatistics");
@@ -320,6 +320,8 @@ public class ExcelServiceImpl implements ExcelService {
                 "CancelItemStatistics");
         orderItemLogService.updateProductStatistics(workbook, workbookMonthlyStatistics, logData.getOrderItems(),
                 "ProductOrderStatistics");
+        orderItemLogService.updateProductStatistics(workbook, workbookMonthlyStatistics, logData.getCancelItems(),
+                "ProductCancelStatistics");
         productLogService.updateProductStatistics(workbook, workbookMonthlyStatistics, logData.getProductClicks(),
                 "ProductClickStatistics");
         searchLogService.updateSearchStatistics(workbook, workbookMonthlyStatistics, logData.getSearchs(),
@@ -330,7 +332,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void appendDataToSheet(Workbook workbook, LogDataContainer logData) {
         loginLogService.appendInfoLoginData(workbook, logData.getLogins(), "LoginData");
-        loginLogService.appendInfoLoginData(workbook, logData.getRegistrations(), "RegistrationsData");
+        registrationService.appendInfoRegistrationData(workbook, logData.getRegistrations(), "RegistrationsData");
         orderItemLogService.appendInfoOrderItemData(workbook, logData.getOrderItems(), "OrderItemData");
         orderItemLogService.appendInfoOrderItemData(workbook, logData.getCancelItems(), "CancelItemData");
         orderLogService.appendInfoOrderData(workbook, logData.getOrders(), "OrderData");
@@ -344,7 +346,7 @@ public class ExcelServiceImpl implements ExcelService {
 
     private void appendErrorDataToSheet(Workbook workbook, LogDataErrorContainer logData) {
         loginLogService.appendErrorLoginErrorData(workbook, logData.getLogins(), "LoginData");
-        loginLogService.appendErrorLoginErrorData(workbook, logData.getRegistrations(), "RegistrationsData");
+        registrationService.appendErrorRegistrationErrorData(workbook, logData.getRegistrations(), "RegistrationsData");
         orderItemLogService.appendErrorOrderItemData(workbook, logData.getCancelItems(), "CancelItemData");
         orderItemLogService.appendErrorOrderItemData(workbook, logData.getOrderItems(), "OrderItemData");
         orderLogService.appendErrorOrderData(workbook, logData.getOrders(), "OrderData");

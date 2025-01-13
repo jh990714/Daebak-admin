@@ -64,7 +64,7 @@ public class CouponLogServiceImpl implements CouponLogService {
             row.createCell(1).setCellValue(coupon.getMessage());
             row.createCell(2).setCellValue(coupon.getMemberId().longValue());
             row.createCell(3).setCellValue(coupon.getId());
-            row.createCell(4).setCellValue(coupon.getCouponId());
+            row.createCell(4).setCellValue(coupon.getCouponId().longValue());
             row.createCell(5).setCellValue(coupon.getCouponName());
             row.createCell(6).setCellValue(coupon.getAmount().doubleValue());
         }
@@ -81,7 +81,7 @@ public class CouponLogServiceImpl implements CouponLogService {
             row.createCell(1).setCellValue(coupon.getMessage());
             row.createCell(2).setCellValue(coupon.getMemberId().longValue());
             row.createCell(3).setCellValue(coupon.getId());
-            row.createCell(4).setCellValue(coupon.getCouponId());
+            row.createCell(4).setCellValue(coupon.getCouponId().longValue());
             row.createCell(5).setCellValue(coupon.getCouponName());
         }
     }
@@ -105,7 +105,7 @@ public class CouponLogServiceImpl implements CouponLogService {
             }
             return new CouponData(
                     matcher.group(1), matcher.group(2), Long.parseLong(matcher.group(3)), 
-                    matcher.group(4), matcher.group(5),matcher.group(6), amount);
+                    matcher.group(4), Long.parseLong(matcher.group(5)),matcher.group(6), amount);
         }
 
         return null;
@@ -119,7 +119,7 @@ public class CouponLogServiceImpl implements CouponLogService {
         if (matcher.find()) {
             return new CouponErrorData(
                     matcher.group(1), matcher.group(2), Long.parseLong(matcher.group(3)), 
-                    matcher.group(4), matcher.group(5),matcher.group(6));
+                    matcher.group(4), Long.parseLong(matcher.group(5)),matcher.group(6));
         }
 
         return null;

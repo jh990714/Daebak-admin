@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter @Setter
 public class LogDataErrorContainer {
     private List<LoginErrorData> logins = new ArrayList<>();
-    private List<LoginErrorData> registrations = new ArrayList<>();
+    private List<RegistrationErrorData> registrations = new ArrayList<>();
     private List<OrderItemErrorData> orderItems = new ArrayList<>();
     private List<OrderItemErrorData> cancelItems = new ArrayList<>();
     private List<OrderErrorData> orders = new ArrayList<>();

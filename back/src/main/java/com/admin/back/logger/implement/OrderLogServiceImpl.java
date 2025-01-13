@@ -92,7 +92,7 @@ public class OrderLogServiceImpl implements OrderLogService {
             return new OrderData(
                 matcher.group(1),  // Date
                 matcher.group(2),  // Message
-                matcher.group(3),  // MemberId
+                Long.parseLong(matcher.group(3)),  // MemberId
                 matcher.group(4),  // Id
                 matcher.group(5),  // OrderNumber
                 matcher.group(6)   // ImpUid
@@ -111,7 +111,7 @@ public class OrderLogServiceImpl implements OrderLogService {
             return new OrderErrorData(
                 matcher.group(1),  // Date
                 matcher.group(2),  // Message
-                matcher.group(3),  // MemberId
+                Long.parseLong(matcher.group(3)),  // MemberId
                 matcher.group(4),  // Id
                 matcher.group(5)   // ImpUid
             );

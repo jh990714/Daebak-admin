@@ -59,7 +59,7 @@ public class LoginLogServiceImpl implements LoginLogService {
             Row row = sheet.createRow(rowNum++);
             row.createCell(0).setCellValue(login.getDate());
             row.createCell(1).setCellValue(login.getMessage());
-            row.createCell(2).setCellValue(login.getMemberId());
+            row.createCell(2).setCellValue(login.getMemberId().longValue());
             row.createCell(3).setCellValue(login.getId());
             row.createCell(4).setCellValue(login.getType());
 
@@ -101,7 +101,7 @@ public class LoginLogServiceImpl implements LoginLogService {
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             LogKey key = new LogKey(
-                row.getCell(0).getStringCellValue(),
+                (long) row.getCell(0).getNumericCellValue(),
                 row.getCell(1).getStringCellValue(),
                 row.getCell(2).getStringCellValue()
             );
@@ -139,7 +139,7 @@ public class LoginLogServiceImpl implements LoginLogService {
         Matcher matcher = pattern.matcher(logMessage);
 
         if (matcher.find()) {
-            return new LoginData(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4),
+            return new LoginData(matcher.group(1), matcher.group(2), Long.parseLong(matcher.group(3)), matcher.group(4),
                     matcher.group(5));
         }
 

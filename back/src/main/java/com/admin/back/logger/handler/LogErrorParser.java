@@ -3,6 +3,7 @@ package com.admin.back.logger.handler;
 import org.springframework.stereotype.Component;
 
 import com.admin.back.logger.dto.LogDataErrorContainer;
+import com.admin.back.logger.dto.RegistrationErrorData;
 import com.admin.back.logger.dto.Coupon.CouponErrorData;
 import com.admin.back.logger.dto.Login.LoginData;
 import com.admin.back.logger.dto.Login.LoginErrorData;
@@ -16,6 +17,7 @@ import com.admin.back.logger.service.LoginLogService;
 import com.admin.back.logger.service.OrderItemLogService;
 import com.admin.back.logger.service.OrderLogService;
 import com.admin.back.logger.service.PointLogService;
+import com.admin.back.logger.service.RegistrationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +35,7 @@ public class LogErrorParser {
     private LogDataErrorContainer logDataErrorContainer = new LogDataErrorContainer();
 
     private final LoginLogService loginLogService;
+    private final RegistrationService registrationService;
     private final OrderItemLogService orderItemLogService;
     private final OrderLogService orderLogService;
     private final CouponLogService couponLogService;
@@ -76,7 +79,7 @@ public class LogErrorParser {
             return;
         }
 
-        LoginErrorData registrationErrorData = loginLogService.findError(logMessage, "Register");
+        RegistrationErrorData registrationErrorData = registrationService.findError(logMessage, "Register");
         
         if (registrationErrorData != null) {
             logDataErrorContainer.getRegistrations().add(registrationErrorData);

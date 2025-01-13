@@ -9,10 +9,10 @@ public class CouponErrorData {
     private String message;
     private Long memberId;
     private String id;
-    private String couponId;
+    private Long couponId;
     private String couponName;
 
-    public CouponErrorData(String date, String message, Long memberId, String id, String couponId, String couponName) {
+    public CouponErrorData(String date, String message, Long memberId, String id, Long couponId, String couponName) {
         this.date = date;
         this.message = message;
         this.memberId = memberId;
