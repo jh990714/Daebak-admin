@@ -1,23 +1,11 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // @mui material components
 import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import { IconButton } from "@mui/material";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -40,6 +28,9 @@ import { fetchVisitCount } from "api/visitCount";
 import { fetchSalesAmount } from "api/salesAmount";
 import { fetchSalesCount } from "api/salesCount";
 
+// API 함수
+import { refreshStatus } from "api/dashboard"; // refreshStatus 함수 import
+
 function Dashboard() {
   const [visitCount, setVisitCount] = useState(0);
   const [salesAmount, setSalesAmount] = useState(0);
@@ -61,46 +52,78 @@ function Dashboard() {
     datasets: { label: "판매량", data: [] },
   });
 
+  // 데이터 가져오는 함수
+  const fetchData = async () => {
+    const visitCountDatas = await dailyVisitCountData(startDate, endDate);
+    setDailyVisitCount(visitCountDatas);
+
+    const salesAmountDatas = await dailySalesAmountData(startDate, endDate);
+    setDailySalesAmount(salesAmountDatas);
+
+    const salesCountDatas = await dailySalesCountData(startDate, endDate);
+    setDailySalesCount(salesCountDatas);
+  };
+
+  // 방문자, 수익, 판매량 데이터 가져오는 함수
+  const fetchVisitData = async () => {
+    const today = new Date();
+    const count = await fetchVisitCount(today);
+    setVisitCount(count);
+  };
+
+  const fetchSalesData = async () => {
+    const today = new Date();
+    const amount = await fetchSalesAmount(today);
+    setSalesAmount(amount);
+
+    const count = await fetchSalesCount(today);
+    setSalesCount(count);
+  };
+
+  // 페이지 로드 시 데이터 가져오기
   useEffect(() => {
-    const fetchData = async () => {
-      const visitCountDatas = await dailyVisitCountData(startDate, endDate);
-      setDailyVisitCount(visitCountDatas);
-
-      const salesAmountDatas = await dailySalesAmountData(startDate, endDate);
-      setDailySalesAmount(salesAmountDatas);
-
-      const salesCountDatas = await dailySalesCountData(startDate, endDate);
-      setDailySalesCount(salesCountDatas);
-    };
     fetchData();
+    fetchVisitData();
+    fetchSalesData();
   }, [startDate, endDate]);
 
-  useEffect(() => {
-    const fetchVisitData = async () => {
-      const today = new Date();
-      const count = await fetchVisitCount(today); // 오늘 날짜로 방문자 수 요청
-      setVisitCount(count); // 상태 업데이트
-    };
-    fetchVisitData();
-  }, []);
+  // 새로고침 버튼 클릭 시 데이터 다시 가져오기
+  const handleRefresh = async () => {
+    try {
+      await refreshStatus();
 
-  useEffect(() => {
-    const fetchSalesData = async () => {
-      const today = new Date();
-
-      const amount = await fetchSalesAmount(today); // 오늘의 수익 요청
-      setSalesAmount(amount); // 상태 업데이트
-
-      const count = await fetchSalesCount(today);
-      setSalesCount(count);
-    };
-    fetchSalesData();
-  }, []);
+      fetchData();
+      fetchVisitData();
+      fetchSalesData();
+    } catch (error) {
+      console.error("새로고침 실패:", error);
+    }
+  };
 
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
+        {/* 새로고침 버튼 추가 */}
+        <IconButton
+          color="primary"
+          onClick={handleRefresh}
+          sx={{
+            marginBottom: "20px",
+            backgroundColor: "white", // 버튼 배경색
+            color: "primary.main", // 아이콘 색상
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // 그림자 효과
+            "&:hover": {
+              backgroundColor: "rgba(0, 123, 255, 0.1)", // 호버 상태 배경색
+              transform: "scale(1.1)", // 약간 확대 효과
+            },
+            borderRadius: "50%", // 동그란 모양 유지
+            transition: "all 0.3s ease", // 부드러운 애니메이션
+          }}
+        >
+          <RefreshIcon sx={{ fontSize: 24 }} />
+        </IconButton>
+
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
@@ -141,7 +164,7 @@ function Dashboard() {
                 percentage={{
                   color: "success",
                   amount: "+55%",
-                  label: "than lask week",
+                  label: "than last week",
                 }}
               />
             </MDBox>

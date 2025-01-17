@@ -20,7 +20,7 @@ public class ProductLogServiceImpl implements ProductLogService {
 
     private Pattern createInfoLogPattern(String messageIdentifier) {
         String patternString = String.format(
-                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - %s - Message: (.*), Product Id: (\\d+), Product Name: (.*)",
+                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - %s - Message: (.*), ProductId: (\\d+), Product Name: (.*)",
                 messageIdentifier);
         return Pattern.compile(patternString);
     }

@@ -24,7 +24,7 @@ public class PointLogServiceImpl implements PointLogService{
 
     private Pattern createPointInfoLogPattern(String messageIdentifier) {
         String patternString = String.format(
-            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - Point - Message: (.*), Deduction Amount: (.*), Current Points: (.*), Updated Points: (.*), Member ID: (.*), Id: (.*)",
+            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - Point - Message: (.*), Deduction Amount: (.*), Current Points: (.*), Updated Points: (.*), MemberId: (.*), Id: (.*)",
             messageIdentifier
         );
 
@@ -33,7 +33,7 @@ public class PointLogServiceImpl implements PointLogService{
 
     private Pattern createPointErrorLogPattern(String messageIdentifier) {
         String patternString = String.format(
-            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) ERROR .* - Point - Message: (.*), Deduction Amount: (.*), Current Points: (.*), Member ID: (.*), Id: (.*)",
+            "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) ERROR .* - Point - Message: (.*), Deduction Amount: (.*), Current Points: (.*), MemberId: (.*), Id: (.*)",
             messageIdentifier
         );
 

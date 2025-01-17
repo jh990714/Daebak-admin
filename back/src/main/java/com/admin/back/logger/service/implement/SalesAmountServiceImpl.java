@@ -32,7 +32,6 @@ public class SalesAmountServiceImpl implements SalesAmountService {
 
     @Override
     public int getSalesAmountForDate(Date date) {
-
         String filePath = loggingPath + "/info/statistics/"
                 + formatDate(date, "yyyy/MM")
                 + "/log_statistics_"

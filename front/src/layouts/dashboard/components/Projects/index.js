@@ -1,25 +1,12 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchProductSales } from "api/productSales";
 
 // @mui material components
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -32,11 +19,16 @@ import DataTable from "examples/Tables/DataTable";
 import data from "layouts/dashboard/components/Projects/data";
 
 function Projects() {
-  const { columns, rows } = data();
   const [menu, setMenu] = useState(null);
+  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7)); // 시작 날짜 상태
+  const { columns, rows, totalAmount } = data(startDate); // startDate를 이용하여 데이터 호출
 
   const openMenu = ({ currentTarget }) => setMenu(currentTarget);
   const closeMenu = () => setMenu(null);
+
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value); // 시작 날짜 변경
+  };
 
   const renderMenu = (
     <Menu
@@ -66,19 +58,36 @@ function Projects() {
           <MDTypography variant="h6" gutterBottom>
             상품 판매 현황
           </MDTypography>
-          <MDBox display="flex" alignItems="center" lineHeight={0}>
+
+          {/* 날짜 선택과 판매 금액을 가로로 배치 */}
+          <MDBox display="flex" alignItems="center" gap={2}>
             <Icon
               sx={{
                 fontWeight: "bold",
                 color: ({ palette: { info } }) => info.main,
                 mt: -0.5,
+                mr: 1,
               }}
             >
               done
             </Icon>
-            <MDTypography variant="button" fontWeight="regular" color="text">
-              &nbsp; 이번달<strong> 300개 </strong>판매 완료
-            </MDTypography>
+
+            <TextField
+              margin="dense"
+              type="month"
+              fullWidth
+              value={startDate}
+              onChange={handleStartDateChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <MDBox display="flex" alignItems="center">
+              <MDTypography variant="button" fontWeight="regular" whiteSpace="nowrap" color="text">
+                <strong>{totalAmount.toLocaleString()}원</strong> 판매 완료
+              </MDTypography>
+            </MDBox>
           </MDBox>
         </MDBox>
         <MDBox color="text" px={2}>

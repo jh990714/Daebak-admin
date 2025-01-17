@@ -27,7 +27,7 @@ public class OrderItemLogServiceImpl implements OrderItemLogService {
     
     private Pattern createLogPattern(String messageIdentifier) {
         String patternString = String.format(
-                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - %s - Message: (.*), MemberId: (.*), ID: (.*), OrderNumber: (.*), ProductId: (.*), ProductName: (.*), Quantity: (\\d+), Amount: (\\d+)",
+                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - %s - Message: (.*), MemberId: (.*), Id: (.*), OrderNumber: (.*), ProductId: (.*), ProductName: (.*), Quantity: (\\d+), Amount: (\\d+)",
                 messageIdentifier);
         return Pattern.compile(patternString);
     }

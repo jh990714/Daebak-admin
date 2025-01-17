@@ -24,14 +24,14 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private Pattern createLogPattern(String messageIdentifier) {
         String patternString = String.format(
-                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - %s - Message: (.*), MemberId: (.*), ID: (.*), Type: (.*)",
+                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) INFO .* - %s - Message: (.*), MemberId: (.*), Id: (.*), Type: (.*)",
                 messageIdentifier);
         return Pattern.compile(patternString);
     }
 
     private Pattern createErrorLogPattern(String messageIdentifier) {
         String patternString = String.format(
-                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) ERROR .* - %s - Message: (.*), ID: (.*), Type: (.*)",
+                "(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}) ERROR .* - %s - Message: (.*), Id: (.*), Type: (.*)",
                 messageIdentifier);
         return Pattern.compile(patternString);
     }
