@@ -5,15 +5,21 @@ import lombok.Setter;
 
 @Getter @Setter
 public class OrderStatisticsData {
-    public OrderStatisticsData(String date, String productName, int quantity, double amount) {
-        this.date = date;
+    private Long productId;
+    private String productName;
+    private int quantity;
+    private double amount;
+    private String imageUrl;
+
+
+    public OrderStatisticsData(Long productId, String productName, int quantity, double amount) {
+        this.productId = productId;
         this.productName = productName;
         this.quantity = quantity;
         this.amount = amount;
     }
-    private String date;
-    private String productName;
-    private int quantity;
-    private double amount;
 
+    public OrderStatisticsData() {
+        //TODO Auto-generated constructor stub
+    }
 }

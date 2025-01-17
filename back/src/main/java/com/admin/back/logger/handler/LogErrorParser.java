@@ -12,12 +12,12 @@ import com.admin.back.logger.dto.Order.OrderErrorData;
 import com.admin.back.logger.dto.Order.OrderItemData;
 import com.admin.back.logger.dto.Order.OrderItemErrorData;
 import com.admin.back.logger.dto.Point.PointErrorData;
-import com.admin.back.logger.service.CouponLogService;
-import com.admin.back.logger.service.LoginLogService;
-import com.admin.back.logger.service.OrderItemLogService;
-import com.admin.back.logger.service.OrderLogService;
-import com.admin.back.logger.service.PointLogService;
-import com.admin.back.logger.service.RegistrationService;
+import com.admin.back.logger.service.service.CouponLogService;
+import com.admin.back.logger.service.service.LoginLogService;
+import com.admin.back.logger.service.service.OrderItemLogService;
+import com.admin.back.logger.service.service.OrderLogService;
+import com.admin.back.logger.service.service.PointLogService;
+import com.admin.back.logger.service.service.RegistrationService;
 
 import lombok.RequiredArgsConstructor;
 
