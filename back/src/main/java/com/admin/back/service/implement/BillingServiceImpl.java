@@ -19,6 +19,7 @@ import com.admin.back.entity.BillingInfoResponse;
 import com.admin.back.entity.BillingInfosEntity;
 import com.admin.back.service.service.BillingService;
 import com.admin.back.util.IamportUtil;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -109,6 +110,7 @@ public class BillingServiceImpl implements BillingService {
         dto.setCancelledTime(billingInfoResponse.getCancelledAt());
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             CustomData customData = objectMapper.readValue(billingInfoResponse.getCustomData(), CustomData.class);
             dto.setCustomData(customData);
         } catch (Exception e) {

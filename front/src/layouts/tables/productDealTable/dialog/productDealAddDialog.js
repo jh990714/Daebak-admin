@@ -77,6 +77,11 @@ export const ProductDealAddDialog = ({ isOpen, onClose }) => {
         value={data.product}
         onChange={handleProductChange}
         renderInput={(params) => <TextField {...params} label="상품" />}
+        renderOption={(props, option) => (
+          <li {...props} key={option.productId}>
+            {option.name}
+          </li>
+        )}
       />
     ),
     regularPrice: data.product ? data.product?.regularPrice - data.product?.salePrice : "",

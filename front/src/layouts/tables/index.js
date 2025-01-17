@@ -44,6 +44,7 @@ import { ProductDealTable } from "./productDealTable";
 import { BannerTable } from "./bannerTable";
 import { CarouselTable } from "./bannerTable/carouselTable";
 import { VideoTable } from "./bannerTable/videoTable";
+import { AdsTable } from "./adTable";
 
 const items = [
   { key: "users", label: "사용자", component: <AuthorsTable /> },
@@ -55,9 +56,9 @@ const items = [
   { key: "coupons", label: "쿠폰", component: <CouponTable /> },
   { key: "carousel", label: "캐러샐", component: <CarouselTable /> },
   { key: "video", label: "홍보 영상", component: <VideoTable /> },
+  { key: "ad", label: "광고 팝업", component: <AdsTable /> },
 ];
 
-const slice = ["categories", "coupons", "dealProducts", "members", "products", "qnas", "reviews"];
 function Tables() {
   const categoriesStatus = useSelector((state) => state.categories.status);
   const couponsStatus = useSelector((state) => state.coupons.status);
@@ -68,6 +69,7 @@ function Tables() {
   const reviewsStatus = useSelector((state) => state.reviews.status);
   const carouselStatus = useSelector((state) => state.carousel.status);
   const promotionalVideoStatus = useSelector((state) => state.promotionalVideo.status);
+  const adStatus = useSelector((state) => state.ads.status);
 
   const statusMap = {
     users: membersStatus,
@@ -79,6 +81,7 @@ function Tables() {
     coupons: couponsStatus,
     carousel: carouselStatus,
     video: promotionalVideoStatus,
+    ad: adStatus,
   };
 
   const [selectedItems, setSelectedItems] = useState(items.map((item) => item.key));

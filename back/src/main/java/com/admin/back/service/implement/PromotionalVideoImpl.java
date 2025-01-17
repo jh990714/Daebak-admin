@@ -26,6 +26,8 @@ import com.admin.back.service.service.S3Service;
 
 import lombok.RequiredArgsConstructor;
 
+
+    
 @Service
 @RequiredArgsConstructor
 public class PromotionalVideoImpl implements PromotionalVideoService {
@@ -47,7 +49,7 @@ public class PromotionalVideoImpl implements PromotionalVideoService {
     @Override
     public PromotionalVideoDto updatePromotionalVideo(MultipartFile image, PromotionalVideoDto promotionalVideo) {
         PromotionalVideoEntity promotionalVideoEntity;
-    
+
         if (promotionalVideo.getVideoId() == null) {
             promotionalVideoEntity = new PromotionalVideoEntity();
         } else {
@@ -55,9 +57,9 @@ public class PromotionalVideoImpl implements PromotionalVideoService {
                     .orElseThrow(() -> new IllegalArgumentException(
                             "PromotionalVideo with id " + promotionalVideo.getVideoId() + " not found"));
         }
-    
+
         promotionalVideoEntity.setLink(promotionalVideo.getLink());
-    
+
         if (image != null) {
             try {
                 if (promotionalVideoEntity.getVideoUrl() != null) {
@@ -69,13 +71,12 @@ public class PromotionalVideoImpl implements PromotionalVideoService {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save image to S3", e);
             }
         }
-        
+
         List<PromotionalProductEntity> productsToDelete = promotionalVideoEntity.getPromotionalProducts();
 
         promotionalProductRepository.deleteAll(productsToDelete);
         promotionalVideoEntity.getPromotionalProducts().removeAll(productsToDelete);
-       
-       // 새로운 promotionalProducts 추가
+
         for (ProductDto productDto : promotionalVideo.getProducts()) {
             if (productDto.getName() == null || productDto.getName().isEmpty()) continue;
 
@@ -89,9 +90,58 @@ public class PromotionalVideoImpl implements PromotionalVideoService {
             promotionalProductRepository.save(promotionalProductEntity);
             promotionalVideoEntity.addPromotionalProduct(promotionalProductEntity);
         }
-    
+
         PromotionalVideoEntity updatedPromotionalVideoEntity = promotionalVideoRepository.save(promotionalVideoEntity);
         return PromotionalVideoDto.fromEntity(updatedPromotionalVideoEntity);
     }
-    
+
+    @Transactional
+    @Override
+    public PromotionalVideoDto createPromotionalVideo(MultipartFile video, PromotionalVideoDto promotionalVideo) {
+        PromotionalVideoEntity promotionalVideoEntity = new PromotionalVideoEntity();
+        promotionalVideoEntity.setLink(promotionalVideo.getLink());
+
+        if (video != null) {
+            try {
+                String fileUrl = s3Service.saveImageToS3(video, "video/");
+                promotionalVideoEntity.setVideoUrl(fileUrl);
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to save video to S3", e);
+            }
+        }
+
+        promotionalVideoRepository.save(promotionalVideoEntity);
+
+        for (ProductDto productDto : promotionalVideo.getProducts()) {
+            if (productDto.getName() == null || productDto.getName().isEmpty()) continue;
+
+            ProductEntity productEntity = productRepository.findById(productDto.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Product with id " + productDto.getProductId() + " not found"));
+
+            PromotionalProductEntity promotionalProductEntity = new PromotionalProductEntity();
+            promotionalProductEntity.setProduct(productEntity);
+            promotionalProductEntity.setVideo(promotionalVideoEntity);
+            promotionalProductRepository.save(promotionalProductEntity);
+            promotionalVideoEntity.addPromotionalProduct(promotionalProductEntity);
+        }
+
+        PromotionalVideoEntity savedEntity = promotionalVideoRepository.save(promotionalVideoEntity);
+        return PromotionalVideoDto.fromEntity(savedEntity);
+    }
+
+    @Transactional
+    @Override
+    public void deletePromotionalVideo(Long id) throws IOException {
+        PromotionalVideoEntity promotionalVideoEntity = promotionalVideoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("PromotionalVideo with id " + id + " not found"));
+
+        if (promotionalVideoEntity.getVideoUrl() != null) {
+            s3Service.deleteImageFromS3(promotionalVideoEntity.getVideoUrl());
+        }
+
+        promotionalProductRepository.deleteAll(promotionalVideoEntity.getPromotionalProducts());
+        promotionalVideoRepository.deleteById(id);
+    }
 }
+

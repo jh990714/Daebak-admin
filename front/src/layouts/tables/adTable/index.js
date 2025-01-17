@@ -1,42 +1,44 @@
 import React, { useState } from "react";
 
+import DataTable from "examples/Tables/DataTable";
+
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 
+import MDButton from "components/MDButton";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { IconButton } from "@mui/material";
 
-import DataTable from "examples/Tables/DataTable";
-import { promotionalVideoTableData } from "./data/promotionalVideoTableData";
 import { useDispatch } from "react-redux";
-import { fetchPromotionalVideo } from "reducers/slices/promotionalVidoeSlice";
-import { PromotionalVideoEditDialog } from "./dialog/promotionalVideoEditDialog";
-import MDButton from "components/MDButton";
+import { adTableData } from "./data/adTableData";
+import { fetchAd } from "reducers/slices/adSlice";
+import { AdEditDialog } from "./dialog/adEditDialog";
 
-export const VideoTable = () => {
+export const AdsTable = () => {
   const dispatch = useDispatch();
   const rowData = {
-    videoId: null,
-    videoUrlUrl: null,
-    link: null,
-    products: [],
+    adId: null,
+    imageUrl: null,
+    linkUrl: null,
+    startDate: null,
+    endDate: null,
   };
-  const { dataColumns: columns, dataRows: rows } = promotionalVideoTableData();
-  const [addVideo, setAddVideo] = useState(false);
+  const { dataColumns: columns, dataRows: rows } = adTableData();
+  const [addAd, setAddAD] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
 
   const handlePageChange = (newPageIndex) => {
     setPageIndex(newPageIndex);
   };
 
-  const handleShowAddVideo = () => {
-    setAddVideo(!addVideo);
+  const handleShowAddAd = () => {
+    setAddAD(!addAd);
   };
 
   const handleRefresh = () => {
-    dispatch(fetchPromotionalVideo())
+    dispatch(fetchAd())
       .then(() => {
         console.log("저장 성공");
       })
@@ -66,9 +68,9 @@ export const VideoTable = () => {
                 alignItems: "center",
               }}
             >
-              <span>홍보 영상</span>
+              <span>광고 팝업</span>
               <div>
-                <MDButton variant="h2" color="white" onClick={handleShowAddVideo}>
+                <MDButton variant="h2" color="white" onClick={handleShowAddAd}>
                   추가
                 </MDButton>
                 <IconButton color="white" onClick={handleRefresh}>
@@ -92,12 +94,7 @@ export const VideoTable = () => {
           />
         </MDBox>
       </Card>
-      <PromotionalVideoEditDialog
-        rowData={rowData}
-        mode="create"
-        isOpen={addVideo}
-        onClose={handleShowAddVideo}
-      />
+      <AdEditDialog rowData={rowData} mode="create" isOpen={addAd} onClose={handleShowAddAd} />
     </Grid>
   );
 };

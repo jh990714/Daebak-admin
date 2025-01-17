@@ -42,6 +42,7 @@ public class CustomData {
         private int shippingCost;
         private String description;
         private String arrivalDate;
+        private Boolean popularity;
         private Boolean recommended;
         private int maxQuantityPerDelivery;
         private String startDate;

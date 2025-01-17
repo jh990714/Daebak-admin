@@ -17,6 +17,7 @@ import { fetchPaymentDetails } from "reducers/slices/paymentDetailSlice";
 import { fetchDealProducts } from "reducers/slices/dealProductSlice";
 import { fetchCarousel } from "reducers/slices/carouselSlice";
 import { fetchPromotionalVideo } from "reducers/slices/promotionalVidoeSlice";
+import { fetchAd } from "reducers/slices/adSlice";
 
 const container = document.getElementById("app");
 const root = createRoot(container);
@@ -31,6 +32,7 @@ store.dispatch(fetchPaymentDetails());
 store.dispatch(fetchDealProducts());
 store.dispatch(fetchCarousel());
 store.dispatch(fetchPromotionalVideo());
+store.dispatch(fetchAd());
 
 root.render(
   <BrowserRouter>

@@ -28,15 +28,74 @@ import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 
 // Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
+import dailySalesAmountData from "./data/reportsLineChartData/dailySalesAmountData";
+import dailySalesCountData from "./data/reportsLineChartData/dailySalesCountData";
+import dailyVisitCountData from "./data/reportsBarChartData/dailyVisitCountData";
 
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import { useEffect, useState } from "react";
+import { fetchVisitCount } from "api/visitCount";
+import { fetchSalesAmount } from "api/salesAmount";
+import { fetchSalesCount } from "api/salesCount";
 
 function Dashboard() {
-  const { dailySalesAmount, dailySalesCount } = reportsLineChartData;
+  const [visitCount, setVisitCount] = useState(0);
+  const [salesAmount, setSalesAmount] = useState(0);
+  const [salesCount, setSalesCount] = useState(0);
+  const [startDate, setStartDate] = useState(
+    new Date(new Date().setDate(new Date().getDate() - 7))
+  );
+  const [endDate, setEndDate] = useState(new Date());
+  const [dailyVisitCount, setDailyVisitCount] = useState({
+    labels: [],
+    datasets: { label: "방문자", data: [] },
+  });
+  const [dailySalesAmount, setDailySalesAmount] = useState({
+    labels: [],
+    datasets: { label: "판매 수익", data: [] },
+  });
+  const [dailySalesCount, setDailySalesCount] = useState({
+    labels: [],
+    datasets: { label: "판매량", data: [] },
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const visitCountDatas = await dailyVisitCountData(startDate, endDate);
+      setDailyVisitCount(visitCountDatas);
+
+      const salesAmountDatas = await dailySalesAmountData(startDate, endDate);
+      setDailySalesAmount(salesAmountDatas);
+
+      const salesCountDatas = await dailySalesCountData(startDate, endDate);
+      setDailySalesCount(salesCountDatas);
+    };
+    fetchData();
+  }, [startDate, endDate]);
+
+  useEffect(() => {
+    const fetchVisitData = async () => {
+      const today = new Date();
+      const count = await fetchVisitCount(today); // 오늘 날짜로 방문자 수 요청
+      setVisitCount(count); // 상태 업데이트
+    };
+    fetchVisitData();
+  }, []);
+
+  useEffect(() => {
+    const fetchSalesData = async () => {
+      const today = new Date();
+
+      const amount = await fetchSalesAmount(today); // 오늘의 수익 요청
+      setSalesAmount(amount); // 상태 업데이트
+
+      const count = await fetchSalesCount(today);
+      setSalesCount(count);
+    };
+    fetchSalesData();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -46,24 +105,9 @@ function Dashboard() {
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
-                color="dark"
-                icon="weekend"
-                title="Bookings"
-                count={281}
-                percentage={{
-                  color: "success",
-                  amount: "+55%",
-                  label: "than lask week",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
                 icon="leaderboard"
                 title="오늘의 방문자"
-                count="2,300"
+                count={visitCount}
                 percentage={{
                   color: "success",
                   amount: "+3%",
@@ -78,11 +122,26 @@ function Dashboard() {
                 color="success"
                 icon="store"
                 title="오늘의 수익"
-                count="1,200,400 원"
+                count={salesAmount.toLocaleString()}
                 percentage={{
                   color: "error",
                   amount: "-1%",
                   label: "than yesterday",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="dark"
+                icon="weekend"
+                title="오늘의 판매량"
+                count={salesCount}
+                percentage={{
+                  color: "success",
+                  amount: "+55%",
+                  label: "than lask week",
                 }}
               />
             </MDBox>
@@ -112,7 +171,7 @@ function Dashboard() {
                   title="방문자 수"
                   description="지난 주 데이터입니다."
                   date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
+                  chart={dailyVisitCount}
                 />
               </MDBox>
             </Grid>
