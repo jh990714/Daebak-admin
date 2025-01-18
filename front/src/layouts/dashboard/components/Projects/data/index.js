@@ -77,10 +77,10 @@ export default function data(startDate, endDate, refreshKey) {
         </MDTypography>
       ),
       completion: (
-        <MDBox width="8rem" textAlign="left">
+        <MDBox width="8rem" textAlign="right">
           <MDProgress
-            value={calculateCompletion(rowData.amount)}
-            color="info"
+            value={Math.abs(calculateCompletion(rowData.amount))} // 절대값으로 표현
+            color={rowData.amount < 0 ? "error" : "info"} // 음수면 빨간색
             variant="gradient"
             label={false}
           />
