@@ -1,5 +1,6 @@
 package com.admin.back.logger.service.implement;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -28,47 +29,83 @@ public class ProductSalesServiceImpl implements ProductSalesService {
     private final ProductRepository productRepository;
 
     @Override
-    public List<OrderStatisticsData> getProductSales(Date date) {
+public List<OrderStatisticsData> getProductSalesInRange(Date startDate, Date endDate) {
+    List<OrderStatisticsData> result = new ArrayList<>();
+    
+    // 날짜 범위 내의 각 월을 처리
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(startDate);
+    
+    while (!calendar.getTime().after(endDate)) {
         String filePath = loggingPath + "/info/statistics/"
-                + formatDate(date, "yyyy/MM")
+                + formatDate(calendar.getTime(), "yyyy/MM")
                 + "/log_statistics_"
-                + formatDate(date, "yyyy-MM")
+                + formatDate(calendar.getTime(), "yyyy-MM")
                 + ".xlsx";
 
-        try (FileInputStream fileInputStream = new FileInputStream(filePath);
-                Workbook workbook = WorkbookFactory.create(fileInputStream)) { // Apache POI 최신 방식
-
-            // 판매 통계 시트와 취소 통계 시트
-            Sheet orderSheet = workbook.getSheet("상품별 주문 횟수 통계");
-            Sheet cancelSheet = workbook.getSheet("상품별 취소 횟수 통계");
-
-            if (orderSheet == null || cancelSheet == null) {
-                throw new RuntimeException("통계 시트를 찾을 수 없습니다.");
+        try {
+            // 파일이 존재하는지 확인
+            File file = new File(filePath);
+            if (!file.exists()) {
+                System.out.println("파일이 존재하지 않음: " + filePath); // 파일 없을 때 건너뛰기
+                calendar.add(Calendar.MONTH, 1);
+                continue; // 파일이 없으면 다음 월로 이동
             }
 
-            // 상품별 주문 데이터를 저장할 Map
-            Map<Long, OrderStatisticsData> statisticsDataMap = parseOrderData(orderSheet);
+            try (FileInputStream fileInputStream = new FileInputStream(filePath);
+                 Workbook workbook = WorkbookFactory.create(fileInputStream)) {
+                
+                // 판매 통계 시트와 취소 통계 시트
+                Sheet orderSheet = workbook.getSheet("상품별 주문 횟수 통계");
+                Sheet cancelSheet = workbook.getSheet("상품별 취소 횟수 통계");
 
-            // 취소 데이터로 기존 주문 데이터 수정
-            adjustDataWithCancelData(cancelSheet, statisticsDataMap);
+                if (orderSheet == null || cancelSheet == null) {
+                    throw new RuntimeException("통계 시트를 찾을 수 없습니다.");
+                }
 
-            // 상품 이미지 정보 가져오기
-            Map<Long, String> productImages = fetchProductImages(new ArrayList<>(statisticsDataMap.values()));
+                // 상품별 주문 데이터를 저장할 Map
+                Map<Long, OrderStatisticsData> statisticsDataMap = parseOrderData(orderSheet);
 
-            // 각 상품에 대해 이미지를 추가
-            statisticsDataMap.values().forEach(data -> {
-                String imageUrl = productImages.getOrDefault(data.getProductId(), null);
-                data.setImageUrl(imageUrl); // 상품 이미지 추가
-            });
+                // 취소 데이터로 기존 주문 데이터 수정
+                adjustDataWithCancelData(cancelSheet, statisticsDataMap);
 
-            return statisticsDataMap.values().stream()
-                .sorted(Comparator.comparingDouble(OrderStatisticsData::getAmount).reversed())
-                .collect(Collectors.toList());
+                // 상품 이미지 정보 가져오기
+                Map<Long, String> productImages = fetchProductImages(new ArrayList<>(statisticsDataMap.values()));
 
-        } catch (IOException e) {
-            throw new RuntimeException("로그 파일을 읽어오는 중 오류가 발생하였습니다.", e);
+                // 각 상품에 대해 이미지를 추가
+                statisticsDataMap.values().forEach(data -> {
+                    String imageUrl = productImages.getOrDefault(data.getProductId(), null);
+                    data.setImageUrl(imageUrl); // 상품 이미지 추가
+                });
+
+                // 결과에 합산된 데이터 추가
+                result.addAll(statisticsDataMap.values());
+
+            } catch (IOException e) {
+                throw new RuntimeException("로그 파일을 읽어오는 중 오류가 발생하였습니다.", e);
+            }
+        } catch (Exception e) {
+            // 예외가 발생하더라도 로그파일이 없을 경우 건너뛰는 방식으로 처리
+            System.out.println("파일 처리 중 오류 발생: " + filePath + " -> 건너뜁니다.");
         }
+        
+        // 한 달 뒤로 이동
+        calendar.add(Calendar.MONTH, 1);
     }
+
+    // 상품별로 합산된 데이터를 정렬하여 반환
+    Map<Long, OrderStatisticsData> finalDataMap = result.stream()
+            .collect(Collectors.toMap(OrderStatisticsData::getProductId, data -> data, (existing, replacement) -> {
+                existing.setAmount(existing.getAmount() + replacement.getAmount());
+                existing.setQuantity(existing.getQuantity() + replacement.getQuantity());
+                return existing;
+            }));
+
+    return finalDataMap.values().stream()
+            .sorted(Comparator.comparingDouble(OrderStatisticsData::getAmount).reversed())
+            .collect(Collectors.toList());
+}
+
 
     private Map<Long, OrderStatisticsData> parseOrderData(Sheet sheet) {
         Map<Long, OrderStatisticsData> statisticsDataMap = new HashMap<>();
