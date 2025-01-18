@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { IconButton } from "@mui/material";
+import { IconButton, TextField, InputAdornment } from "@mui/material";
 
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -36,9 +36,9 @@ function Dashboard() {
   const [salesAmount, setSalesAmount] = useState(0);
   const [salesCount, setSalesCount] = useState(0);
   const [startDate, setStartDate] = useState(
-    new Date(new Date().setDate(new Date().getDate() - 7))
+    new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split("T")[0]
   );
-  const [endDate, setEndDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date().toISOString().split("T")[0]);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [dailyVisitCount, setDailyVisitCount] = useState({
@@ -105,6 +105,11 @@ function Dashboard() {
     }
   };
 
+  // 날짜 입력값 처리 함수
+  const handleDateChange = (e, setDateFunction) => {
+    setDateFunction(e.target.value);
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -128,6 +133,44 @@ function Dashboard() {
         >
           <RefreshIcon sx={{ fontSize: 24 }} />
         </IconButton>
+
+        {/* 날짜 입력 필드 */}
+        <Grid container spacing={3} mb={3}>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <TextField
+                label="시작 날짜"
+                type="date"
+                value={startDate}
+                onChange={(e) => handleDateChange(e, setStartDate)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">📅</InputAdornment>,
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <TextField
+                label="끝 날짜"
+                type="date"
+                value={endDate}
+                onChange={(e) => handleDateChange(e, setEndDate)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">📅</InputAdornment>,
+                }}
+              />
+            </MDBox>
+          </Grid>
+        </Grid>
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={3}>
@@ -190,6 +233,7 @@ function Dashboard() {
             </MDBox>
           </Grid>
         </Grid>
+
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={4}>
@@ -210,7 +254,7 @@ function Dashboard() {
                   title="일일 판매 수익"
                   description={
                     <>
-                      (<strong>+15%</strong>) 매출이 증가하였습니다.
+                      <strong>+15%</strong> 매출이 증가하였습니다.
                     </>
                   }
                   date="updated 4 min ago"
@@ -246,5 +290,4 @@ function Dashboard() {
     </DashboardLayout>
   );
 }
-
 export default Dashboard;

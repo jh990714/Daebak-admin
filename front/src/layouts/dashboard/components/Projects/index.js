@@ -18,6 +18,7 @@ import DataTable from "examples/Tables/DataTable";
 // Data
 import data from "layouts/dashboard/components/Projects/data";
 import PropTypes from "prop-types";
+import { InputAdornment } from "@mui/material";
 
 function Projects({ refreshKey }) {
   const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7));
@@ -47,18 +48,9 @@ function Projects({ refreshKey }) {
 
           {/* 날짜 선택과 판매 금액을 가로로 배치 */}
           <MDBox display="flex" alignItems="center" gap={2}>
-            <Icon
-              sx={{
-                fontWeight: "bold",
-                color: ({ palette: { info } }) => info.main,
-                mt: -0.5,
-                mr: 1,
-              }}
-            >
-              done
-            </Icon>
             <TextField
               margin="dense"
+              label="시작 날짜"
               type="month"
               fullWidth
               value={startDate}
@@ -66,16 +58,22 @@ function Projects({ refreshKey }) {
               InputLabelProps={{
                 shrink: true,
               }}
+              InputProps={{
+                startAdornment: <InputAdornment position="start">📅</InputAdornment>,
+              }}
             />
-            ~
             <TextField
               margin="dense"
               type="month"
+              label="끝 날짜"
               fullWidth
               value={endDate}
               onChange={handleEndDateChange}
               InputLabelProps={{
                 shrink: true,
+              }}
+              InputProps={{
+                startAdornment: <InputAdornment position="start">📅</InputAdornment>,
               }}
             />
             <MDBox display="flex" alignItems="center">
