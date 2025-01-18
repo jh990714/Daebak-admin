@@ -17,39 +17,20 @@ import DataTable from "examples/Tables/DataTable";
 
 // Data
 import data from "layouts/dashboard/components/Projects/data";
+import PropTypes from "prop-types";
 
-function Projects() {
-  const [menu, setMenu] = useState(null);
-  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7)); // 시작 날짜 상태
-  const { columns, rows, totalAmount } = data(startDate); // startDate를 이용하여 데이터 호출
+function Projects({ refreshKey }) {
+  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7));
+  const { columns, rows, totalAmount } = data(startDate, refreshKey);
+  const [pageIndex, setPageIndex] = useState(0);
 
-  const openMenu = ({ currentTarget }) => setMenu(currentTarget);
-  const closeMenu = () => setMenu(null);
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
+  };
 
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value); // 시작 날짜 변경
   };
-
-  const renderMenu = (
-    <Menu
-      id="simple-menu"
-      anchorEl={menu}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "left",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={Boolean(menu)}
-      onClose={closeMenu}
-    >
-      <MenuItem onClick={closeMenu}>Action</MenuItem>
-      <MenuItem onClick={closeMenu}>Another action</MenuItem>
-      <MenuItem onClick={closeMenu}>Something else</MenuItem>
-    </Menu>
-  );
 
   return (
     <Card>
@@ -90,20 +71,17 @@ function Projects() {
             </MDBox>
           </MDBox>
         </MDBox>
-        <MDBox color="text" px={2}>
-          <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>
-            more_vert
-          </Icon>
-        </MDBox>
-        {renderMenu}
       </MDBox>
       <MDBox>
         <DataTable
           table={{ columns, rows }}
-          showTotalEntries={false}
-          isSorted={false}
+          isSorted={true}
+          entriesPerPage={true}
+          pagination={{ variant: "gradient", color: "info" }}
+          showTotalEntries={true}
           noEndBorder
-          entriesPerPage={false}
+          defaultPage={pageIndex}
+          onPageChange={handlePageChange}
         />
       </MDBox>
     </Card>
@@ -111,3 +89,7 @@ function Projects() {
 }
 
 export default Projects;
+
+Projects.propTypes = {
+  refreshKey: PropTypes.number.isRequired, // refreshKey는 숫자형이고 필수값입니다.
+};

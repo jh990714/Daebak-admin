@@ -12,9 +12,24 @@ import MDProgress from "components/MDProgress";
 import logoXD from "assets/images/small-logos/logo-xd.svg";
 import PropTypes from "prop-types";
 
-export default function data(date) {
+// 상품과 관련된 컴포넌트
+const Company = ({ image, name }) => (
+  <MDBox display="flex" alignItems="center" lineHeight={1}>
+    <MDAvatar src={image} name={name} size="md" sx={{ borderRadius: 2 }} />
+    <MDTypography variant="button" fontWeight="medium" ml={1} lineHeight={1}>
+      {name}
+    </MDTypography>
+  </MDBox>
+);
+
+Company.propTypes = {
+  image: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+};
+
+export default function data(date, refreshKey) {
   const [rowDatas, setRowDatas] = useState([]);
-  const [totalAmount, setTotalAmount] = useState(0); // 총 판매액 상태 추가
+  const [totalAmount, setTotalAmount] = useState(0);
 
   const calculateCompletion = (amount) => {
     if (totalAmount === 0) return 0; // 총 판매액이 0일 때 비중은 0
@@ -36,7 +51,6 @@ export default function data(date) {
           amount: rowData.amount,
         }));
 
-        console.log(processedData);
         setRowDatas(processedData); // 상태 업데이트
       } catch (error) {
         console.error("Failed to fetch product sales", error);
@@ -46,46 +60,8 @@ export default function data(date) {
     if (date) {
       fetchData(); // date가 있을 때만 데이터를 요청
     }
-  }, [date]); // date가 변경될 때마다 fetchData 호출
-
-  const avatars = (members) =>
-    members.map(([image, name]) => (
-      <Tooltip key={name} title={name} placeholder="bottom">
-        <MDAvatar
-          src={image}
-          alt="name"
-          size="xs"
-          sx={{
-            border: ({ borders: { borderWidth }, palette: { white } }) =>
-              `${borderWidth[2]} solid ${white.main}`,
-            cursor: "pointer",
-            position: "relative",
-
-            "&:not(:first-of-type)": {
-              ml: -1.25,
-            },
-
-            "&:hover, &:focus": {
-              zIndex: "10",
-            },
-          }}
-        />
-      </Tooltip>
-    ));
-
-  const Company = ({ image, name }) => (
-    <MDBox display="flex" alignItems="center" lineHeight={1}>
-      <MDAvatar src={image} name={name} size="md" sx={{ borderRadius: 2 }} />
-      <MDTypography variant="button" fontWeight="medium" ml={1} lineHeight={1}>
-        {name}
-      </MDTypography>
-    </MDBox>
-  );
-
-  Company.propTypes = {
-    image: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-  };
+    console.log("rrrrr");
+  }, [date, refreshKey]);
 
   return {
     columns: [
@@ -94,7 +70,6 @@ export default function data(date) {
       { Header: "수익", accessor: "budget", align: "center" },
       { Header: "판매 비중", accessor: "completion", align: "center" },
     ],
-
     rows: rowDatas.map((rowData) => ({
       product: <Company image={rowData.productImage} name={rowData.productName} />,
       quantity: rowData.quantity,
@@ -115,7 +90,6 @@ export default function data(date) {
         </MDBox>
       ),
     })),
-
     totalAmount: totalAmount,
   };
 }

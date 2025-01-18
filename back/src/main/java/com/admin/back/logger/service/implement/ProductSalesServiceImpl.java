@@ -61,7 +61,9 @@ public class ProductSalesServiceImpl implements ProductSalesService {
                 data.setImageUrl(imageUrl); // 상품 이미지 추가
             });
 
-            return new ArrayList<>(statisticsDataMap.values());
+            return statisticsDataMap.values().stream()
+                .sorted(Comparator.comparingDouble(OrderStatisticsData::getAmount).reversed())
+                .collect(Collectors.toList());
 
         } catch (IOException e) {
             throw new RuntimeException("로그 파일을 읽어오는 중 오류가 발생하였습니다.", e);
