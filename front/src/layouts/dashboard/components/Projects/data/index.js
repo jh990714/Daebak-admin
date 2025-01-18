@@ -27,7 +27,7 @@ Company.propTypes = {
   name: PropTypes.string.isRequired,
 };
 
-export default function data(date, refreshKey) {
+export default function data(startDate, endDate, refreshKey) {
   const [rowDatas, setRowDatas] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
 
@@ -39,7 +39,8 @@ export default function data(date, refreshKey) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchProductSales(date);
+        console.log(startDate, endDate);
+        const response = await fetchProductSales({ startDate: startDate, endDate: endDate });
         const { productStatistics, totalAmount } = response;
 
         setTotalAmount(totalAmount);
@@ -57,11 +58,8 @@ export default function data(date, refreshKey) {
       }
     };
 
-    if (date) {
-      fetchData(); // date가 있을 때만 데이터를 요청
-    }
-    console.log("rrrrr");
-  }, [date, refreshKey]);
+    fetchData();
+  }, [startDate, endDate, refreshKey]);
 
   return {
     columns: [

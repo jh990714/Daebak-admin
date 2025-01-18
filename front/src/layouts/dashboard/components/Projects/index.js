@@ -21,7 +21,8 @@ import PropTypes from "prop-types";
 
 function Projects({ refreshKey }) {
   const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7));
-  const { columns, rows, totalAmount } = data(startDate, refreshKey);
+  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 7));
+  const { columns, rows, totalAmount } = data(startDate, endDate, refreshKey);
   const [pageIndex, setPageIndex] = useState(0);
 
   const handlePageChange = (newPageIndex) => {
@@ -30,6 +31,10 @@ function Projects({ refreshKey }) {
 
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value); // 시작 날짜 변경
+  };
+
+  const handleEndDateChange = (e) => {
+    setEndDate(e.target.value); // 시작 날짜 변경
   };
 
   return (
@@ -52,7 +57,6 @@ function Projects({ refreshKey }) {
             >
               done
             </Icon>
-
             <TextField
               margin="dense"
               type="month"
@@ -63,7 +67,17 @@ function Projects({ refreshKey }) {
                 shrink: true,
               }}
             />
-
+            ~
+            <TextField
+              margin="dense"
+              type="month"
+              fullWidth
+              value={endDate}
+              onChange={handleEndDateChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
             <MDBox display="flex" alignItems="center">
               <MDTypography variant="button" fontWeight="regular" whiteSpace="nowrap" color="text">
                 <strong>{totalAmount.toLocaleString()}원</strong> 판매 완료

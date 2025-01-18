@@ -70,22 +70,24 @@ public class LogController {
     }
 
     @GetMapping("/product-sales")
-    public ResponseEntity<ProductStatisticsResponse > getProductStatisticsForDate(
-            @RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date) {
+    public ResponseEntity<ProductStatisticsResponse> getProductStatisticsForDateRange(
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyyMM") Date startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyyMM") Date endDate) {
         try {
-            List<OrderStatisticsData> productStatistics = productSalesService.getProductSales(date);
-
+            List<OrderStatisticsData> productStatistics = productSalesService.getProductSalesInRange(startDate, endDate);
+    
             ProductStatisticsResponse response = new ProductStatisticsResponse();
             response.setProductStatistics(productStatistics);
-
+    
             response.calculateTotalAmount();
-
+    
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // 에러가 발생하면 적절한 메시지를 로그로 출력하고 500 상태 반환.
+            // 에러 발생 시 로그 출력하고 500 상태 반환
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
     }
+    
 
 }

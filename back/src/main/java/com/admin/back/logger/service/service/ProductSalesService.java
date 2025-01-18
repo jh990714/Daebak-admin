@@ -7,6 +7,6 @@ import com.admin.back.logger.dto.Order.OrderStatisticsData;
 
 public interface ProductSalesService {
 
-    List<OrderStatisticsData> getProductSales(Date date);
+    List<OrderStatisticsData> getProductSalesInRange(Date startDate, Date endDate);
     
 }
