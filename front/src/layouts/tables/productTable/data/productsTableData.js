@@ -6,7 +6,7 @@ import MDTypography from "components/MDTypography";
 import MDAvatar from "components/MDAvatar";
 import MDProgress from "components/MDProgress";
 import LogoAsana from "assets/images/small-logos/logo-asana.svg";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductEditDialog } from "../dialog/productEditDialog";
 import { ProductByCategoryEditDialog } from "../dialog/productByCategoryEditDialog";
 import { useDispatch, useSelector } from "react-redux";
