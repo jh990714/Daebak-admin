@@ -114,7 +114,7 @@ function Tables() {
     <>
       <DashboardLayout>
         <DashboardNavbar />
-        <FormGroup row>
+        <FormGroup row style={{ position: "sticky", top: 88, zIndex: 1 }}>
           <FormControlLabel
             control={
               <Checkbox

@@ -19,7 +19,6 @@ import { useSelector } from "react-redux";
 
 export default function data() {
   const { products } = useSelector((state) => state.products);
-  console.log(products);
   const { customDatas } = products.reduce(
     (acc, data) => {
       if (data.popularity === true) {

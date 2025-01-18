@@ -7,15 +7,18 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { IconButton } from "@mui/material";
+import { IconButton, TextField } from "@mui/material";
 
 import productBestData from "./data/productBestData";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "reducers/slices/productSlice";
+import useDebounce from "util/useDebounce";
 
 export const ProductBestTable = () => {
   const dispatch = useDispatch();
   const [pageIndex, setPageIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // 디바운싱된 검색어
 
   const { columns: bestProductsColumns, rows: bestProductsRows } = productBestData();
 
@@ -33,6 +36,9 @@ export const ProductBestTable = () => {
       });
   };
 
+  const filteredRows = bestProductsRows.filter((row) =>
+    row.product.props.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+  );
   return (
     <Grid item xs={12}>
       <Card>
@@ -62,11 +68,21 @@ export const ProductBestTable = () => {
           </MDTypography>
         </MDBox>
         <MDBox pt={3}>
+          <MDBox display="flex" justifyContent="flex-end" mr={2}>
+            <TextField
+              label="상품 검색"
+              variant="outlined"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // 실시간 입력 시 searchTerm 업데이트
+              style={{ width: "200px" }} // 크기 줄이기
+            />
+          </MDBox>
           <DataTable
-            table={{ columns: bestProductsColumns, rows: bestProductsRows }}
-            isSorted={false}
-            entriesPerPage={false}
-            showTotalEntries={false}
+            table={{ columns: bestProductsColumns, rows: filteredRows }}
+            isSorted={true}
+            entriesPerPage={true}
+            pagination={{ variant: "gradient", color: "info" }}
+            showTotalEntries={true}
             noEndBorder
             defaultPage={pageIndex}
             onPageChange={handlePageChange}

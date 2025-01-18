@@ -135,80 +135,81 @@ const ProductsTableData = ({ customDatas }) => {
     value: PropTypes.number.isRequired,
   };
 
-  const transformDataForProduct = (customDatas) => {
-    return customDatas.map((data, index) => ({
-      product: <Product image={data.imageUrl} name={data.name} />,
-      regularPrice: `${data.regularPrice.toLocaleString()}원`,
-      salePrice: `${data.salePrice.toLocaleString()}원`,
-      finalPrice: `${(data.regularPrice - data.salePrice).toLocaleString()}원`,
-      description: data.description,
-      stockQuantity: data.stockQuantity,
-      risk: <Progress value={(data.stockQuantity / 100) * 100} />,
-      recommended: Boolean(data.recommended) ? <CheckIcon /> : null,
-      popularity: Boolean(data.popularity) ? <CheckIcon /> : null,
-      shippingCost: data.shippingCost,
-      maxQuantityPerDelivery: data.maxQuantityPerDelivery,
-      action: (
-        <>
-          <IconButton
-            aria-label="more"
-            onClick={(e) => {
-              handleClick(e, index);
-            }}
-          >
-            <MoreVert />
-          </IconButton>
-          <Menu
-            // adsf
-            anchorEl={anchorEls[index]}
-            open={Boolean(anchorEls[index])}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={() => handleDialog("edit")}>상품 수정</MenuItem>
-            <MenuItem onClick={() => handleDialog("categoryEdit")}>카테고리 수정</MenuItem>
-            <MenuItem onClick={() => handleDialog("imageEdit")}>이미지 수정</MenuItem>
-            <MenuItem onClick={() => handleDialog("optionEdit")}>상품 옵션 수정</MenuItem>
-            <MenuItem onClick={() => handleToggle("recommended")}>
-              {rowData?.recommended ? "추천 상품 해제" : "추천 상품 등록"}
-            </MenuItem>
-            <MenuItem onClick={() => handleToggle("popularity")}>
-              {rowData?.popularity ? "인기 상품 해제" : "인기 상품 등록"}
-            </MenuItem>
-            <MenuItem onClick={handleDelete}>삭제</MenuItem>
-          </Menu>
-          {dialogType === "edit" && dialogs[index] && rowData && (
-            <ProductEditDialog
-              rowData={rowData}
-              setRowData={setRowData}
-              isOpen={dialogType === "edit" && dialogs[index]}
-              onClose={handleDialogClose}
-            />
-          )}
-          {dialogType === "categoryEdit" && dialogs[index] && rowData && (
-            <ProductByCategoryEditDialog
-              rowData={rowData}
-              isOpen={dialogType === "categoryEdit" && dialogs[index]}
-              onClose={handleDialogClose}
-            />
-          )}
-          {dialogType === "imageEdit" && dialogs[index] && rowData && (
-            <ProductImageEditDialog
-              rowData={rowData}
-              isOpen={dialogType === "imageEdit" && dialogs[index]}
-              onClose={handleDialogClose}
-            />
-          )}
-          {dialogType === "optionEdit" && dialogs[index] && rowData && (
-            <OptionEditDialog
-              rowData={rowData}
-              isOpen={dialogType === "optionEdit" && dialogs[index]}
-              onClose={handleDialogClose}
-            />
-          )}
-        </>
-      ),
-    }));
-  };
+  const transformDataForProduct = useMemo(
+    () => (data) =>
+      data.map((data, index) => ({
+        product: <Product image={data.imageUrl} name={data.name} />,
+        regularPrice: `${data.regularPrice.toLocaleString()}원`,
+        salePrice: `${data.salePrice.toLocaleString()}원`,
+        finalPrice: `${(data.regularPrice - data.salePrice).toLocaleString()}원`,
+        description: data.description,
+        stockQuantity: data.stockQuantity,
+        risk: <Progress value={(data.stockQuantity / 100) * 100} />,
+        recommended: Boolean(data.recommended) ? <CheckIcon /> : null,
+        popularity: Boolean(data.popularity) ? <CheckIcon /> : null,
+        shippingCost: data.shippingCost,
+        maxQuantityPerDelivery: data.maxQuantityPerDelivery,
+        action: (
+          <>
+            <IconButton
+              aria-label="more"
+              onClick={(e) => {
+                handleClick(e, index);
+              }}
+            >
+              <MoreVert />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEls[index]}
+              open={Boolean(anchorEls[index])}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={() => handleDialog("edit")}>상품 수정</MenuItem>
+              <MenuItem onClick={() => handleDialog("categoryEdit")}>카테고리 수정</MenuItem>
+              <MenuItem onClick={() => handleDialog("imageEdit")}>이미지 수정</MenuItem>
+              <MenuItem onClick={() => handleDialog("optionEdit")}>상품 옵션 수정</MenuItem>
+              <MenuItem onClick={() => handleToggle("recommended")}>
+                {rowData?.recommended ? "추천 상품 해제" : "추천 상품 등록"}
+              </MenuItem>
+              <MenuItem onClick={() => handleToggle("popularity")}>
+                {rowData?.popularity ? "인기 상품 해제" : "인기 상품 등록"}
+              </MenuItem>
+              <MenuItem onClick={handleDelete}>삭제</MenuItem>
+            </Menu>
+            {dialogType === "edit" && dialogs[index] && rowData && (
+              <ProductEditDialog
+                rowData={rowData}
+                setRowData={setRowData}
+                isOpen={dialogType === "edit" && dialogs[index]}
+                onClose={handleDialogClose}
+              />
+            )}
+            {dialogType === "categoryEdit" && dialogs[index] && rowData && (
+              <ProductByCategoryEditDialog
+                rowData={rowData}
+                isOpen={dialogType === "categoryEdit" && dialogs[index]}
+                onClose={handleDialogClose}
+              />
+            )}
+            {dialogType === "imageEdit" && dialogs[index] && rowData && (
+              <ProductImageEditDialog
+                rowData={rowData}
+                isOpen={dialogType === "imageEdit" && dialogs[index]}
+                onClose={handleDialogClose}
+              />
+            )}
+            {dialogType === "optionEdit" && dialogs[index] && rowData && (
+              <OptionEditDialog
+                rowData={rowData}
+                isOpen={dialogType === "optionEdit" && dialogs[index]}
+                onClose={handleDialogClose}
+              />
+            )}
+          </>
+        ),
+      })),
+    [anchorEls, dialogs, rowData, dialogType]
+  );
 
   return {
     columns: dataColumns,
