@@ -39,6 +39,8 @@ function Dashboard() {
     new Date(new Date().setDate(new Date().getDate() - 7))
   );
   const [endDate, setEndDate] = useState(new Date());
+  const [refreshKey, setRefreshKey] = useState(0); // refreshKey 상태 추가
+
   const [dailyVisitCount, setDailyVisitCount] = useState({
     labels: [],
     datasets: { label: "방문자", data: [] },
@@ -52,8 +54,9 @@ function Dashboard() {
     datasets: { label: "판매량", data: [] },
   });
 
-  // 데이터 가져오는 함수
   const fetchData = async () => {
+    await refreshStatus();
+
     const visitCountDatas = await dailyVisitCountData(startDate, endDate);
     setDailyVisitCount(visitCountDatas);
 
@@ -92,6 +95,7 @@ function Dashboard() {
     try {
       await refreshStatus();
 
+      setRefreshKey((prevKey) => prevKey + 1); // refreshKey 증가
       fetchData();
       fetchVisitData();
       fetchSalesData();
@@ -229,7 +233,8 @@ function Dashboard() {
         <MDBox>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={8}>
-              <Projects />
+              {/* Projects 컴포넌트에 refreshKey를 전달 */}
+              <Projects refreshKey={refreshKey} />
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
               <OrdersOverview />
