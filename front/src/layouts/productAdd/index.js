@@ -40,8 +40,8 @@ export const ProductAdd = ({ isOpen, onClose }) => {
       formData.append(`options[${index}].addPrice`, option.addPrice);
     });
 
-    formData.append("detailImage", productSubInfo);
-    console.log(productSubInfo);
+    formData.append("detailImage", productSubInfo.image);
+    console.log(productSubInfo.image);
     console.log(productInfo.image);
 
     dispatch(fetchAddProduct(formData))

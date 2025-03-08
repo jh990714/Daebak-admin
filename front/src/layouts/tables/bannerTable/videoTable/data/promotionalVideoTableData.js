@@ -9,6 +9,7 @@ import { PromotionalVideoEditDialog } from "../dialog/promotionalVideoEditDialog
 import MDBox from "components/MDBox";
 import MDAvatar from "components/MDAvatar";
 import MDTypography from "components/MDTypography";
+import { fetchDeletePromotionalVideo } from "reducers/slices/promotionalVidoeSlice";
 
 export const promotionalVideoTableData = () => {
   const dispatch = useDispatch();
@@ -52,8 +53,15 @@ export const promotionalVideoTableData = () => {
   };
 
   const handleDelete = () => {
-    const confirmDelete = window.confirm(`해당 캐러샐을 정말로 삭제하시겠습니까?`);
+    const confirmDelete = window.confirm("해당 비디오를 정말로 삭제하시겠습니까?");
     if (confirmDelete) {
+      dispatch(fetchDeletePromotionalVideo(rowData.videoId))
+        .then(() => {
+          console.log("삭제 성공");
+        })
+        .catch((error) => {
+          console.error("삭제 실패:", error);
+        });
     }
   };
 

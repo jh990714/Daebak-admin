@@ -1,25 +1,12 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchProductSales } from "api/productSales";
 
 // @mui material components
 import Card from "@mui/material/Card";
 import Icon from "@mui/material/Icon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
@@ -30,34 +17,26 @@ import DataTable from "examples/Tables/DataTable";
 
 // Data
 import data from "layouts/dashboard/components/Projects/data";
+import PropTypes from "prop-types";
+import { InputAdornment } from "@mui/material";
 
-function Projects() {
-  const { columns, rows } = data();
-  const [menu, setMenu] = useState(null);
+function Projects({ refreshKey }) {
+  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 7));
+  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 7));
+  const { columns, rows, totalAmount } = data(startDate, endDate, refreshKey);
+  const [pageIndex, setPageIndex] = useState(0);
 
-  const openMenu = ({ currentTarget }) => setMenu(currentTarget);
-  const closeMenu = () => setMenu(null);
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
+  };
 
-  const renderMenu = (
-    <Menu
-      id="simple-menu"
-      anchorEl={menu}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "left",
-      }}
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={Boolean(menu)}
-      onClose={closeMenu}
-    >
-      <MenuItem onClick={closeMenu}>Action</MenuItem>
-      <MenuItem onClick={closeMenu}>Another action</MenuItem>
-      <MenuItem onClick={closeMenu}>Something else</MenuItem>
-    </Menu>
-  );
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value); // 시작 날짜 변경
+  };
+
+  const handleEndDateChange = (e) => {
+    setEndDate(e.target.value); // 시작 날짜 변경
+  };
 
   return (
     <Card>
@@ -66,35 +45,55 @@ function Projects() {
           <MDTypography variant="h6" gutterBottom>
             상품 판매 현황
           </MDTypography>
-          <MDBox display="flex" alignItems="center" lineHeight={0}>
-            <Icon
-              sx={{
-                fontWeight: "bold",
-                color: ({ palette: { info } }) => info.main,
-                mt: -0.5,
+
+          {/* 날짜 선택과 판매 금액을 가로로 배치 */}
+          <MDBox display="flex" alignItems="center" gap={2}>
+            <TextField
+              margin="dense"
+              label="시작 날짜"
+              type="month"
+              fullWidth
+              value={startDate}
+              onChange={handleStartDateChange}
+              InputLabelProps={{
+                shrink: true,
               }}
-            >
-              done
-            </Icon>
-            <MDTypography variant="button" fontWeight="regular" color="text">
-              &nbsp; 이번달<strong> 300개 </strong>판매 완료
-            </MDTypography>
+              InputProps={{
+                startAdornment: <InputAdornment position="start">📅</InputAdornment>,
+              }}
+            />
+            <TextField
+              margin="dense"
+              type="month"
+              label="끝 날짜"
+              fullWidth
+              value={endDate}
+              onChange={handleEndDateChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              InputProps={{
+                startAdornment: <InputAdornment position="start">📅</InputAdornment>,
+              }}
+            />
+            <MDBox display="flex" alignItems="center">
+              <MDTypography variant="button" fontWeight="regular" whiteSpace="nowrap" color="text">
+                <strong>{totalAmount.toLocaleString()}원</strong> 판매 완료
+              </MDTypography>
+            </MDBox>
           </MDBox>
         </MDBox>
-        <MDBox color="text" px={2}>
-          <Icon sx={{ cursor: "pointer", fontWeight: "bold" }} fontSize="small" onClick={openMenu}>
-            more_vert
-          </Icon>
-        </MDBox>
-        {renderMenu}
       </MDBox>
       <MDBox>
         <DataTable
           table={{ columns, rows }}
-          showTotalEntries={false}
-          isSorted={false}
+          isSorted={true}
+          entriesPerPage={true}
+          pagination={{ variant: "gradient", color: "info" }}
+          showTotalEntries={true}
           noEndBorder
-          entriesPerPage={false}
+          defaultPage={pageIndex}
+          onPageChange={handlePageChange}
         />
       </MDBox>
     </Card>
@@ -102,3 +101,7 @@ function Projects() {
 }
 
 export default Projects;
+
+Projects.propTypes = {
+  refreshKey: PropTypes.number.isRequired, // refreshKey는 숫자형이고 필수값입니다.
+};

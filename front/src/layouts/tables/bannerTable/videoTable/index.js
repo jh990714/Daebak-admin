@@ -12,14 +12,17 @@ import DataTable from "examples/Tables/DataTable";
 import { promotionalVideoTableData } from "./data/promotionalVideoTableData";
 import { useDispatch } from "react-redux";
 import { fetchPromotionalVideo } from "reducers/slices/promotionalVidoeSlice";
+import { PromotionalVideoEditDialog } from "./dialog/promotionalVideoEditDialog";
+import MDButton from "components/MDButton";
 
 export const VideoTable = () => {
   const dispatch = useDispatch();
-  const [rowData, setRowData] = useState({
-    carouselId: null,
-    imageUrl: null,
+  const rowData = {
+    videoId: null,
+    videoUrlUrl: null,
     link: null,
-  });
+    products: [],
+  };
   const { dataColumns: columns, dataRows: rows } = promotionalVideoTableData();
   const [addVideo, setAddVideo] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
@@ -29,7 +32,7 @@ export const VideoTable = () => {
   };
 
   const handleShowAddVideo = () => {
-    setAddVideo(!addCarousel);
+    setAddVideo(!addVideo);
   };
 
   const handleRefresh = () => {
@@ -64,9 +67,14 @@ export const VideoTable = () => {
               }}
             >
               <span>홍보 영상</span>
-              <IconButton color="white" onClick={handleRefresh}>
-                <RefreshIcon />
-              </IconButton>
+              <div>
+                <MDButton variant="h2" color="white" onClick={handleShowAddVideo}>
+                  추가
+                </MDButton>
+                <IconButton color="white" onClick={handleRefresh}>
+                  <RefreshIcon />
+                </IconButton>
+              </div>
             </div>
           </MDTypography>
         </MDBox>
@@ -84,6 +92,12 @@ export const VideoTable = () => {
           />
         </MDBox>
       </Card>
+      <PromotionalVideoEditDialog
+        rowData={rowData}
+        mode="create"
+        isOpen={addVideo}
+        onClose={handleShowAddVideo}
+      />
     </Grid>
   );
 };

@@ -6,7 +6,7 @@ import { ProductBestTable } from "./productBestTable";
 function ProductTable() {
   return (
     <>
-      s<ProductBestTable />
+      <ProductBestTable />
       <ProductRecommendedTable />
       <ProductAllTable />
     </>

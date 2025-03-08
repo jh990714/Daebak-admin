@@ -9,6 +9,7 @@ import paymentDetailReducer from "./slices/paymentDetailSlice";
 import dealProductReducer from "./slices/dealProductSlice";
 import carouselReducer from "./slices/carouselSlice";
 import promotionalVideoReducer from "./slices/promotionalVidoeSlice";
+import adReducer from "./slices/adSlice";
 
 const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
     dealProducts: dealProductReducer,
     carousel: carouselReducer,
     promotionalVideo: promotionalVideoReducer,
+    ads: adReducer,
   },
 });
 

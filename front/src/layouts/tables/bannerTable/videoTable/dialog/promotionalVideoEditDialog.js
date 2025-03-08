@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { Autocomplete, Card, Dialog, DialogActions, DialogContent } from "@mui/material";
 import { Button, TextField } from "@mui/material";
-import { fetchUpdatePromotionalVideo } from "reducers/slices/promotionalVidoeSlice";
+
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 
 import { IconButton } from "@mui/material";
 import { RemoveCircle } from "@mui/icons-material";
+import { fetchCreatePromotionalVideo } from "reducers/slices/promotionalVidoeSlice";
+import { fetchUpdatePromotionalVideo } from "reducers/slices/promotionalVidoeSlice";
 
-export const PromotionalVideoEditDialog = ({ rowData, setRowData, isOpen, onClose }) => {
+export const PromotionalVideoEditDialog = ({ rowData, mode = "edit", isOpen, onClose }) => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products.products);
   const [data, setData] = useState(rowData);
   const [promotionalVideo, setPromotionalVideo] = useState(null);
 
   useEffect(() => {
+    console.log(rowData);
     setData(rowData);
   }, [rowData]);
 
@@ -33,20 +36,35 @@ export const PromotionalVideoEditDialog = ({ rowData, setRowData, isOpen, onClos
     formData.append("promotionalVideo", JSON.stringify(updatedData));
 
     console.log(data);
-    dispatch(fetchUpdatePromotionalVideo(formData))
-      .then(() => {
-        console.log("저장 성공");
-      })
-      .catch((error) => {
-        console.error("저장 실패:", error);
-      });
+
+    if (mode === "create") {
+      // 새로운 비디오 추가 처리
+      dispatch(fetchCreatePromotionalVideo(formData))
+        .then(() => {
+          console.log("저장 성공");
+        })
+        .catch((error) => {
+          console.error("저장 실패:", error);
+        });
+    } else if (mode === "edit") {
+      dispatch(fetchUpdatePromotionalVideo(formData))
+        .then(() => {
+          console.log("저장 성공");
+        })
+        .catch((error) => {
+          console.error("저장 실패:", error);
+        });
+    }
 
     onClose();
   };
 
-  const handleInputChange = (e, field) => {
-    setData({ ...data, [field]: e.target.value });
-  };
+  const handleInputChange = useCallback((e, field) => {
+    setData((prevData) => ({
+      ...prevData,
+      [field]: e.target.value,
+    }));
+  }, []);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -131,23 +149,29 @@ export const PromotionalVideoEditDialog = ({ rowData, setRowData, isOpen, onClos
               홍보 상품
             </MDTypography>
           </MDBox>
-          {data.products.map((product, index) => (
-            <MDBox p={3} key={index} sx={{ display: "flex", alignItems: "center" }}>
-              <Autocomplete
-                options={products}
-                sx={{ width: 500 }}
-                getOptionLabel={(option) => option?.name || ""}
-                value={product}
-                onChange={(event, newValue) => {
-                  handleProductChange(event, newValue, index);
-                }}
-                renderInput={(params) => <TextField {...params} label="상품" />}
-              />
-              <IconButton color="error" onClick={() => handleDeleteRow(index)}>
-                <RemoveCircle />
-              </IconButton>
-            </MDBox>
-          ))}
+          {Array.isArray(data.products) &&
+            data.products.map((product, index) => (
+              <MDBox p={3} key={index} sx={{ display: "flex", alignItems: "center" }}>
+                <Autocomplete
+                  options={products}
+                  sx={{ width: 500 }}
+                  getOptionLabel={(option) => option?.name || ""}
+                  value={product || null}
+                  onChange={(event, newValue) => {
+                    handleProductChange(event, newValue, index);
+                  }}
+                  renderInput={(params) => <TextField {...params} label="상품" />}
+                  renderOption={(props, option) => (
+                    <li {...props} key={option.productId}>
+                      {option.name}
+                    </li>
+                  )}
+                />
+                <IconButton color="error" onClick={() => handleDeleteRow(index)}>
+                  <RemoveCircle />
+                </IconButton>
+              </MDBox>
+            ))}
           <Button onClick={handleAddProduct}>상품 추가</Button>
         </Card>
       </DialogContent>
@@ -164,13 +188,8 @@ export const PromotionalVideoEditDialog = ({ rowData, setRowData, isOpen, onClos
 };
 
 PromotionalVideoEditDialog.propTypes = {
-  rowData: PropTypes.object,
-  setRowData: PropTypes.func,
+  rowData: PropTypes.object.isRequired,
+  mode: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-};
-
-PromotionalVideoEditDialog.defaultProps = {
-  rowData: {},
-  setRowData: () => {},
 };

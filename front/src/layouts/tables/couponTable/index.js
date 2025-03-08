@@ -76,9 +76,11 @@ export const CouponTable = () => {
         <MDBox pt={3}>
           <DataTable
             table={{ columns: couponColumns, rows: couponRows }}
-            isSorted={false}
-            entriesPerPage={false}
-            showTotalEntries={false}
+            isSorted={true}
+            entriesPerPage={true}
+            pagination={{ variant: "gradient", color: "info" }}
+            showTotalEntries={true}
+            canSearch={true}
             noEndBorder
             defaultPage={pageIndex}
             onPageChange={handlePageChange}

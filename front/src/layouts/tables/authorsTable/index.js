@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import { DataGrid } from "@mui/x-data-grid";
@@ -15,8 +15,9 @@ import DataTable from "examples/Tables/DataTable";
 import { useDispatch, useSelector } from "react-redux";
 
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { IconButton } from "@mui/material";
+import { IconButton, TextField } from "@mui/material";
 import { fetchMembers } from "reducers/slices/memberSlice";
+import useDebounce from "util/useDebounce";
 
 function AuthorsTable() {
   const dispatch = useDispatch();
@@ -25,6 +26,9 @@ function AuthorsTable() {
   const [addCouponSelectRows, setAddCouponSelectRows] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedMembers, setSelectMembers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // 디바운싱된 검색어
+
   const [pageIndex, setPageIndex] = useState(0);
   const { members } = useSelector((state) => state.members);
 
@@ -32,12 +36,10 @@ function AuthorsTable() {
     setPageIndex(newPageIndex);
   };
 
-  const handleShowAddPointsDialog = () => {
-    setAddPointsSelectRows(!addPointsSelectRows);
-  };
-
-  const handleShowAddCouponDialog = () => {
-    setAddCouponSelectRows(!addCouponSelectRows);
+  const handleShowDialog = (dialogType) => {
+    dialogType === "points"
+      ? setAddPointsSelectRows(!addPointsSelectRows)
+      : setAddCouponSelectRows(!addCouponSelectRows);
   };
 
   const handleSelectedRows = (selectedRows) => {
@@ -54,6 +56,19 @@ function AuthorsTable() {
         console.error("저장 실패:", error);
       });
   };
+
+  const filteredRows = useMemo(() => {
+    return rows.filter((row) => {
+      const search = debouncedSearchTerm.toLowerCase();
+      return (
+        row.id?.toLowerCase().includes(search) ||
+        row.author?.props?.name?.toLowerCase().includes(search) ||
+        row.email?.toLowerCase().includes(search) ||
+        row.phone?.toLowerCase().includes(search) ||
+        row.address?.toLowerCase().includes(search)
+      );
+    });
+  }, [rows, debouncedSearchTerm]);
 
   return (
     <Grid item xs={12}>
@@ -78,10 +93,10 @@ function AuthorsTable() {
             >
               <span>사용자</span>
               <div>
-                <MDButton variant="h2" color="white" onClick={handleShowAddPointsDialog}>
+                <MDButton variant="h2" color="white" onClick={() => handleShowDialog("points")}>
                   적립금 추가
                 </MDButton>
-                <MDButton variant="h2" color="white" onClick={handleShowAddCouponDialog}>
+                <MDButton variant="h2" color="white" onClick={() => handleShowDialog("coupon")}>
                   쿠폰 추가
                 </MDButton>
                 <IconButton color="white" onClick={handleRefresh}>
@@ -92,13 +107,21 @@ function AuthorsTable() {
           </MDTypography>
         </MDBox>
         <MDBox p={3}>
+          <MDBox display="flex" justifyContent="flex-end" mr={2}>
+            <TextField
+              label="상품 검색"
+              variant="outlined"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // 실시간 입력 시 searchTerm 업데이트
+              style={{ width: "200px" }} // 크기 줄이기
+            />
+          </MDBox>
           <DataTable
-            table={{ columns: columns, rows: rows }}
+            table={{ columns: columns, rows: filteredRows }}
             isSorted={true}
             entriesPerPage={true}
             pagination={{ variant: "gradient", color: "info" }}
             showTotalEntries={true}
-            canSearch={true}
             noEndBorder
             defaultPage={pageIndex}
             onPageChange={handlePageChange}

@@ -52,6 +52,7 @@ const BillingInfoPanel = ({ showDetail, toggleDetail, impUid }) => {
         const data = await getBillingInfo(impUid);
 
         setBillingInfo(data);
+        console.log(data);
         if (data?.customData?.coupon?.discount) {
           setDiscountPoints(data.customData?.coupon?.discount);
         }

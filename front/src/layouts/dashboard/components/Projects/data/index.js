@@ -1,19 +1,5 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/function-component-definition */
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
+import { useEffect, useState } from "react";
+import { fetchProductSales } from "api/productSales";
 
 // @mui material components
 import Tooltip from "@mui/material/Tooltip";
@@ -24,64 +10,56 @@ import MDProgress from "components/MDProgress";
 
 // Images
 import logoXD from "assets/images/small-logos/logo-xd.svg";
-import logoAtlassian from "assets/images/small-logos/logo-atlassian.svg";
-import logoSlack from "assets/images/small-logos/logo-slack.svg";
-import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
-import logoJira from "assets/images/small-logos/logo-jira.svg";
-import logoInvesion from "assets/images/small-logos/logo-invision.svg";
-import team1 from "assets/images/team-1.jpg";
-import team2 from "assets/images/team-2.jpg";
-import team3 from "assets/images/team-3.jpg";
-import team4 from "assets/images/team-4.jpg";
-import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
-export default function data() {
+// 상품과 관련된 컴포넌트
+const Company = ({ image, name }) => (
+  <MDBox display="flex" alignItems="center" lineHeight={1}>
+    <MDAvatar src={image} name={name} size="md" sx={{ borderRadius: 2 }} />
+    <MDTypography variant="button" fontWeight="medium" ml={1} lineHeight={1}>
+      {name}
+    </MDTypography>
+  </MDBox>
+);
+
+Company.propTypes = {
+  image: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+};
+
+export default function data(startDate, endDate, refreshKey) {
   const [rowDatas, setRowDatas] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  const calculateCompletion = (amount) => {
+    if (totalAmount === 0) return 0; // 총 판매액이 0일 때 비중은 0
+    return (amount / totalAmount) * 100;
+  };
+
   useEffect(() => {
-    // API 호출 및 데이터 가져오기
-    fetch(
-      "http://localhost:8081/api/logs/orderStatistics?excelStatisticsFilePath=C:/Users/jang/Desktop/Seafood_WebSite/Jang/logs/statistics.xlsx"
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setRowDatas([]);
-      })
-      .catch((error) => console.error("Error fetching order statistics data:", error));
-  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때만 호출
+    const fetchData = async () => {
+      try {
+        console.log(startDate, endDate);
+        const response = await fetchProductSales({ startDate: startDate, endDate: endDate });
+        const { productStatistics, totalAmount } = response;
 
-  const avatars = (members) =>
-    members.map(([image, name]) => (
-      <Tooltip key={name} title={name} placeholder="bottom">
-        <MDAvatar
-          src={image}
-          alt="name"
-          size="xs"
-          sx={{
-            border: ({ borders: { borderWidth }, palette: { white } }) =>
-              `${borderWidth[2]} solid ${white.main}`,
-            cursor: "pointer",
-            position: "relative",
+        setTotalAmount(totalAmount);
 
-            "&:not(:first-of-type)": {
-              ml: -1.25,
-            },
+        const processedData = productStatistics.map((rowData) => ({
+          productName: rowData.productName,
+          productImage: rowData.imageUrl || logoXD,
+          quantity: rowData.quantity,
+          amount: rowData.amount,
+        }));
 
-            "&:hover, &:focus": {
-              zIndex: "10",
-            },
-          }}
-        />
-      </Tooltip>
-    ));
+        setRowDatas(processedData); // 상태 업데이트
+      } catch (error) {
+        console.error("Failed to fetch product sales", error);
+      }
+    };
 
-  const Company = ({ image, name }) => (
-    <MDBox display="flex" alignItems="center" lineHeight={1}>
-      <MDAvatar src={image} name={name} size="sm" />
-      <MDTypography variant="button" fontWeight="medium" ml={1} lineHeight={1}>
-        {name}
-      </MDTypography>
-    </MDBox>
-  );
+    fetchData();
+  }, [startDate, endDate, refreshKey]);
 
   return {
     columns: [
@@ -90,9 +68,8 @@ export default function data() {
       { Header: "수익", accessor: "budget", align: "center" },
       { Header: "판매 비중", accessor: "completion", align: "center" },
     ],
-
     rows: rowDatas.map((rowData) => ({
-      product: <Company image={logoXD} name={rowData.productName} />,
+      product: <Company image={rowData.productImage} name={rowData.productName} />,
       quantity: rowData.quantity,
       budget: (
         <MDTypography variant="caption" color="text" fontWeight="medium">
@@ -100,10 +77,17 @@ export default function data() {
         </MDTypography>
       ),
       completion: (
-        <MDBox width="8rem" textAlign="left">
-          <MDProgress value={rowData.quantity} color="info" variant="gradient" label={false} />
+        <MDBox width="8rem" textAlign="right">
+          <MDProgress
+            value={Math.abs(calculateCompletion(rowData.amount))} // 절대값으로 표현
+            color={rowData.amount < 0 ? "error" : "info"} // 음수면 빨간색
+            variant="gradient"
+            label={false}
+          />
+          {calculateCompletion(rowData.amount).toFixed(1)}%
         </MDBox>
       ),
     })),
+    totalAmount: totalAmount,
   };
 }

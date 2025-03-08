@@ -6,12 +6,12 @@ import lombok.Setter;
 @Getter @Setter
 public class RegistrationData {
     private String message;
-    private String memberId;
+    private Long memberId;
     private String id;
     private String type;
     private String date;
 
-    public RegistrationData(String message, String memberId, String id, String type, String date) {
+    public RegistrationData(String date, String message, Long memberId, String id, String type) {
         this.message = message;
         this.memberId = memberId;
         this.id = id;

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// 광고 비디오 가져오기
 export const fetchPromotionalVideo = createAsyncThunk(
   "promotionalVideo/fetchPromotionalVideo",
   async () => {
@@ -10,12 +11,13 @@ export const fetchPromotionalVideo = createAsyncThunk(
       console.log("video", response.data);
       return response.data;
     } catch (error) {
-      console.error("Error fetching coupons:", error);
+      console.error("Error fetching promotional videos:", error);
       throw error;
     }
   }
 );
 
+// 광고 비디오 업데이트
 export const fetchUpdatePromotionalVideo = createAsyncThunk(
   "promotionalVideo/fetchUpdatePromotionalVideo",
   async (formData) => {
@@ -28,29 +30,48 @@ export const fetchUpdatePromotionalVideo = createAsyncThunk(
       console.log("update video", response.data);
       return response.data;
     } catch (error) {
-      console.error("Error fetching coupons:", error);
+      console.error("Error updating promotional video:", error);
       throw error;
     }
   }
 );
 
-// export const fetchDeleteCarousel = createAsyncThunk(
-//   "carousel/fetchDeleteCarousel",
-//   async (carouselId) => {
-//     try {
-//       const response = await axios.delete(
-//         `${process.env.REACT_APP_API_URL}/carousel/${carouselId}`
-//       );
+// 광고 비디오 생성
+export const fetchCreatePromotionalVideo = createAsyncThunk(
+  "promotionalVideo/fetchCreatePromotionalVideo",
+  async (formData) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/promotionalVideo`,
+        formData
+      );
 
-//       return response.data;
-//     } catch (error) {
-//       console.error("Error fetching coupons:", error);
-//       throw error;
-//     }
-//   }
-// );
+      console.log("create video", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating promotional video:", error);
+      throw error;
+    }
+  }
+);
 
-const categorySlice = createSlice({
+// 광고 비디오 삭제
+export const fetchDeletePromotionalVideo = createAsyncThunk(
+  "promotionalVideo/fetchDeletePromotionalVideo",
+  async (videoId) => {
+    try {
+      console.log("delete video", videoId);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/promotionalVideo?id=${videoId}`);
+
+      return videoId; // 반환된 videoId를 그대로 사용
+    } catch (error) {
+      console.error("Error deleting promotional video:", error);
+      throw error;
+    }
+  }
+);
+
+const promotionalVideoSlice = createSlice({
   name: "promotionalVideo",
   initialState: {
     promotionalVideos: [],
@@ -76,37 +97,48 @@ const categorySlice = createSlice({
       })
       .addCase(fetchUpdatePromotionalVideo.fulfilled, (state, action) => {
         state.status = "succeeded";
-        const updatePromotionalVideo = action.payload;
+        const updatedPromotionalVideo = action.payload;
         const index = state.promotionalVideos.findIndex(
-          (promotionalVideo) => promotionalVideo.carouselId === updatePromotionalVideo.carouselId
+          (promotionalVideo) => promotionalVideo.videoId === updatedPromotionalVideo.videoId
         );
 
         if (index !== -1) {
-          state.promotionalVideos[index] = updatePromotionalVideo;
+          state.promotionalVideos[index] = updatedPromotionalVideo;
         } else {
-          state.promotionalVideos.push(updatePromotionalVideo);
+          state.promotionalVideos.push(updatedPromotionalVideo);
         }
       })
       .addCase(fetchUpdatePromotionalVideo.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-      });
-    //   .addCase(fetchDeleteCarousel.pending, (state) => {
-    //     state.status = "loading";
-    //   })
-    //   .addCase(fetchDeleteCarousel.fulfilled, (state, action) => {
-    //     state.status = "succeeded";
-    //     const deletedCarouselId = action.payload;
+      })
+      .addCase(fetchCreatePromotionalVideo.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchCreatePromotionalVideo.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.promotionalVideos.push(action.payload);
+      })
+      .addCase(fetchCreatePromotionalVideo.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchDeletePromotionalVideo.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchDeletePromotionalVideo.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        const deletedVideoId = action.payload;
 
-    //     state.carouselItems = state.carouselItems.filter(
-    //       (carouselItem) => carouselItem.carouselId !== deletedCarouselId
-    //     );
-    //   })
-    //   .addCase(fetchDeleteCarousel.rejected, (state, action) => {
-    //     state.status = "failed";
-    //     state.error = action.error.message;
-    //   });
+        state.promotionalVideos = state.promotionalVideos.filter(
+          (promotionalVideo) => promotionalVideo.videoId !== deletedVideoId
+        );
+      })
+      .addCase(fetchDeletePromotionalVideo.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      });
   },
 });
 
-export default categorySlice.reducer;
+export default promotionalVideoSlice.reducer;

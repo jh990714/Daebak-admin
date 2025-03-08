@@ -16,9 +16,14 @@ import { useDispatch } from "react-redux";
 
 export const ProductDealTable = () => {
   const dispatch = useDispatch();
+  const [pageIndex, setPageIndex] = useState(0);
   const [showProductDeal, setShowProductDeal] = useState(false);
 
   const { columns: productDealsColumns, rows: productDealsRows } = productDealData();
+
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
+  };
 
   const handleAddProductDeal = () => {
     setShowProductDeal(!showProductDeal);
@@ -71,10 +76,14 @@ export const ProductDealTable = () => {
           <MDBox pt={3}>
             <DataTable
               table={{ columns: productDealsColumns, rows: productDealsRows }}
-              isSorted={false}
-              entriesPerPage={false}
-              showTotalEntries={false}
+              isSorted={true}
+              entriesPerPage={true}
+              pagination={{ variant: "gradient", color: "info" }}
+              showTotalEntries={true}
+              canSearch={true}
               noEndBorder
+              defaultPage={pageIndex}
+              onPageChange={handlePageChange}
             />
           </MDBox>
         </Card>
